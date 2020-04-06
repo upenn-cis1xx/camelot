@@ -1,2 +1,2 @@
-# CamlCheck
-An OCaml style checker for CIS120.
+# Camelot
+An fully-modular, ppx-based OCaml style linter.
