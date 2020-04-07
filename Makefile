@@ -1,3 +1,4 @@
+.PHONY: dump clean
 INCLUDES= checkers
 
 
