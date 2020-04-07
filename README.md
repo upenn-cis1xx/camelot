@@ -1,2 +1,2 @@
 # Camelot
-An fully-modular, ppx-based OCaml style linter.
+A fully-modular, ppx-based OCaml style linter.
