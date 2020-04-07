@@ -1,4 +1,4 @@
-.PHONY: dump clean
+.PHONY: dump clean $(INCLUDES)
 INCLUDES= checkers
 
 
