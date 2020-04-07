@@ -5,6 +5,8 @@ open Parsetree
 open Longident
 open Report
 
+let allchecks = Simplebexp.checks
+
 let rec linter_mapper argv =
   { 
     default_mapper with
