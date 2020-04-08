@@ -44,7 +44,139 @@ module IfReturnLitInv : CHECK = struct
 end
 
 
+
+
+
+(* ------------------ Checks rule: if cond then cond else _ ----------------------------- *)
+module IfReturnsCond : CHECK = struct
+  let check (exp : expr) : warn option =
+    begin match exp with
+      | EIfThenElse (test, b_then, _) ->
+        begin match test, b_then with
+          | Pexp_ident ({txt = Lident x; _}),
+            Pexp_ident ({txt = Lident y; _}) ->
+            if x = y then
+              Some ({
+                  loc = (warn_loc 1 1 1);
+                  violation = (BPat (IfReturnsCond))
+                })
+            else None
+          | _ -> None
+        end
+      | _ -> None
+    end
+end
+
+
+
+(* ------------------ Checks rule: if not cond then x else y ---------------------------- *)
+module IfCondNeg : CHECK = struct
+  let check (exp: expr) : warn option =
+    let open Utils in
+    begin match exp with
+      | EIfThenElse (test, _, _) ->
+        begin match test with
+          | Pexp_apply ( fcall , _ ) ->
+            let fcall = Utils.desc_of_expr fcall in
+            begin match fcall with
+              | Pexp_ident ({txt = Lident "not"}) ->
+                Some
+                  ({
+                    loc = (warn_loc 1 1 1);
+                    violation = (BPat (IfCondNeg))
+                  })
+              | _ -> None
+            end
+          | _ -> None
+        end
+      |_ -> None
+    end
+end
+
+
+(* ------------------ Checks rule: if x then true else y  ------------------------------ *)
+module IfReturnsTrue : CHECK = struct
+  let check (exp: expr) : warn option =
+    let open Utils in
+    begin match exp with
+      | EIfThenElse (_, b_then, b_else) ->
+        begin match b_then, b_else with
+          | Pexp_construct ({txt = Lident "true"}, _),
+            Pexp_ident ({txt = Lident y})
+            -> Some ({
+              loc = (warn_loc 1 1 1);
+              violation = (BPat (IfReturnsTrue))
+            })
+          | _ -> None
+        end
+      | _ -> None
+    end
+end
+
+
+(* ------------------ Checks rule: if x then y else false ------------------------------ *)
+module IfFailFalse : CHECK = struct
+  let check (exp: expr) : warn option =
+    begin match exp with
+      | EIfThenElse (_, b_then, b_else) ->
+        begin match b_else, b_then with
+          | Pexp_construct ({txt = Lident "false"}, _),
+            Pexp_ident ({txt = Lident y})
+            -> Some ({
+              loc = (warn_loc 1 1 1);
+              violation = (BPat (IfFailFalse))
+            })
+          | _ -> None
+        end
+      | _ -> None
+    end
+end
+
+
+(* ------------------ Checks rule: if x then false else y  ----------------------------- *)
+module IfSuccFalse : CHECK = struct
+  let check (exp: expr) : warn option =
+    begin match exp with
+      | EIfThenElse (_, b_then, b_else) ->
+        begin match b_then, b_else with
+          | Pexp_construct ({txt = Lident "false"}, _),
+            Pexp_ident ({txt = Lident y})
+            -> Some ({
+                loc = (warn_loc 1 1 1);
+                violation = (BPat (IfSuccFalse))
+              })
+          | _ -> None
+        end
+      | _ -> None
+        end
+end
+
+(* ------------------ Checks rule: if x then y else true   ----------------------------- *)
+module IfFailTrue : CHECK = struct
+  let check (exp: expr) : warn option =
+    begin match exp with
+      | EIfThenElse (_, b_then, b_else) ->
+        begin match b_then, b_else with
+          | Pexp_ident ({txt = Lident y}),
+            Pexp_construct ({txt = Lident "true"}, _)
+            -> Some ({
+                loc = (warn_loc 1 1 1);
+                violation = (BPat (IfFailTrue))
+              })
+          | _ -> None
+        end
+      | _ -> None
+    end
+end
+
 let checks  = [ IfReturnLit.check
               ; IfReturnLitInv.check
+              ; IfReturnsCond.check
+              ; IfCondNeg.check
+              ; IfReturnsTrue.check
+              ; IfFailFalse.check
+              ; IfSuccFalse.check
+              ; IfFailTrue.check 
               ]
+
 
