@@ -1,6 +1,7 @@
 .PHONY: dump clean $(INCLUDES)
 INCLUDES= checkers
 
+all: build test
 
 # Builds the ppx rewriter names sample
 build:

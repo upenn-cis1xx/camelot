@@ -24,8 +24,10 @@ expr_mapper (mapper: Ast_mapper.mapper) (expr: Parsetree.expression) : Parsetree
     let f = Ifreturnslit.IfReturnsLit.check in
     let ret = f e_lint in
     begin match ret with
-      | None -> print_endline "No suggestions"
-      | Some i -> print_endline "found suggestion"
+      | None -> ()
+      | Some i -> 
+        print_endline @@ 
+        Printf.sprintf "[WARN] %s" (string_of_rule @@ rule_of_warn i)
     end;
     default_mapper.expr mapper expr
   | _ -> default_mapper.expr mapper expr

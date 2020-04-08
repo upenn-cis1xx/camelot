@@ -44,7 +44,8 @@ module IfReturnLitInv : CHECK = struct
 end
 
 
-let checks  = [ IfReturnLit.check
-              ; IfReturnLitInv.check
-              ]
+let checks : CHECK list = 
+  [ IfReturnLit
+  ; IfReturnLitInv
+  ]
 

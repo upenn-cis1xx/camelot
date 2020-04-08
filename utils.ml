@@ -14,6 +14,10 @@ let locstack_of_expr (desc: Parsetree.expression) : Location.t list =
 let attrs_of_expr (desc: Parsetree.expression) : Parsetree.attributes =
   let {pexp_desc; pexp_loc;pexp_loc_stack;pexp_attributes} = desc in pexp_attributes
 
+let doe  = desc_of_expr
+let loe  = loc_of_expr
+let lsoe = locstack_of_expr
+let aoe  = attrs_of_expr
 
 (* ---------- Types from attributes ------------------------------------------------------- *)
 
