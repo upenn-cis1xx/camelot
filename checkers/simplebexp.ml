@@ -7,14 +7,14 @@ open Report
 
 (* ------------------ Checks rule: if cond then true else false ------------------------- *)
 module IfReturnLit : CHECK = struct
-  let check (exp : expr) : warn option =
-    begin match exp with
+  let check ({location;expr} : Report.lctxt) : warn option =
+    begin match expr with
     | EIfThenElse (test, b_then, b_else) ->
       begin match b_then, b_else with
         | Pexp_construct ({txt = Lident "true"}, _),
           Pexp_construct ({txt = Lident "false"}, _) ->
           Some ({
-              loc = (warn_loc 1 1 1);
+              loc = location;
               violation = (BPat (IfReturnsLit));
             })
         | _ -> None
@@ -26,14 +26,14 @@ end
 
 (* ------------------ Checks rule: if cond then false else true ------------------------- *)
 module IfReturnLitInv : CHECK = struct
-  let check (exp : expr) : warn option =
-    begin match exp with
+  let check ({location;expr} : lctxt) : warn option =
+    begin match expr with
     | EIfThenElse (test, b_then, b_else) ->
       begin match b_then, b_else with
         | Pexp_construct ({txt = Lident "false"}, _),
           Pexp_construct ({txt = Lident "true"}, _) ->
           Some ({
-              loc = (warn_loc 1 1 1);
+              loc = (location);
               violation = (BPat (IfReturnsLitInv));
             })
         | _ -> None
@@ -49,15 +49,15 @@ end
 
 (* ------------------ Checks rule: if cond then cond else _ ----------------------------- *)
 module IfReturnsCond : CHECK = struct
-  let check (exp : expr) : warn option =
-    begin match exp with
+  let check ({location;expr} : lctxt) : warn option =
+    begin match expr with
       | EIfThenElse (test, b_then, _) ->
         begin match test, b_then with
           | Pexp_ident ({txt = Lident x; _}),
             Pexp_ident ({txt = Lident y; _}) ->
             if x = y then
               Some ({
-                  loc = (warn_loc 1 1 1);
+                  loc = (location);
                   violation = (BPat (IfReturnsCond))
                 })
             else None
@@ -71,9 +71,9 @@ end
 
 (* ------------------ Checks rule: if not cond then x else y ---------------------------- *)
 module IfCondNeg : CHECK = struct
-  let check (exp: expr) : warn option =
+  let check ({location;expr} : lctxt) : warn option =
     let open Utils in
-    begin match exp with
+    begin match expr with
       | EIfThenElse (test, _, _) ->
         begin match test with
           | Pexp_apply ( fcall , _ ) ->
@@ -82,7 +82,7 @@ module IfCondNeg : CHECK = struct
               | Pexp_ident ({txt = Lident "not"}) ->
                 Some
                   ({
-                    loc = (warn_loc 1 1 1);
+                    loc = (location);
                     violation = (BPat (IfCondNeg))
                   })
               | _ -> None
@@ -96,15 +96,15 @@ end
 
 (* ------------------ Checks rule: if x then true else y  ------------------------------ *)
 module IfReturnsTrue : CHECK = struct
-  let check (exp: expr) : warn option =
+  let check ({location;expr} : lctxt) : warn option =
     let open Utils in
-    begin match exp with
+    begin match expr with
       | EIfThenElse (_, b_then, b_else) ->
-        begin match b_then, b_else with
+          begin match b_then, b_else with
           | Pexp_construct ({txt = Lident "true"}, _),
             Pexp_ident ({txt = Lident y})
             -> Some ({
-              loc = (warn_loc 1 1 1);
+              loc = (location);
               violation = (BPat (IfReturnsTrue))
             })
           | _ -> None
@@ -116,14 +116,14 @@ end
 
 (* ------------------ Checks rule: if x then y else false ------------------------------ *)
 module IfFailFalse : CHECK = struct
-  let check (exp: expr) : warn option =
-    begin match exp with
+  let check ({location;expr} : lctxt) : warn option =
+    begin match expr with
       | EIfThenElse (_, b_then, b_else) ->
         begin match b_else, b_then with
           | Pexp_construct ({txt = Lident "false"}, _),
             Pexp_ident ({txt = Lident y})
             -> Some ({
-              loc = (warn_loc 1 1 1);
+              loc = (location);
               violation = (BPat (IfFailFalse))
             })
           | _ -> None
@@ -135,32 +135,32 @@ end
 
 (* ------------------ Checks rule: if x then false else y  ----------------------------- *)
 module IfSuccFalse : CHECK = struct
-  let check (exp: expr) : warn option =
-    begin match exp with
+  let check ({location;expr} : lctxt) : warn option =
+    begin match expr with
       | EIfThenElse (_, b_then, b_else) ->
         begin match b_then, b_else with
           | Pexp_construct ({txt = Lident "false"}, _),
             Pexp_ident ({txt = Lident y})
             -> Some ({
-                loc = (warn_loc 1 1 1);
+                loc = (location);
                 violation = (BPat (IfSuccFalse))
               })
           | _ -> None
         end
       | _ -> None
-        end
+  end
 end
 
 (* ------------------ Checks rule: if x then y else true   ----------------------------- *)
 module IfFailTrue : CHECK = struct
-  let check (exp: expr) : warn option =
-    begin match exp with
+  let check ({location;expr} : lctxt) : warn option =
+    begin match expr with
       | EIfThenElse (_, b_then, b_else) ->
         begin match b_then, b_else with
           | Pexp_ident ({txt = Lident y}),
             Pexp_construct ({txt = Lident "true"}, _)
             -> Some ({
-                loc = (warn_loc 1 1 1);
+                loc = (location);
                 violation = (BPat (IfFailTrue))
               })
           | _ -> None
