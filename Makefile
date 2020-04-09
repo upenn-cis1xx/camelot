@@ -1,22 +1,14 @@
 .PHONY: dump clean $(INCLUDES)
 INCLUDES= checkers
 
+TOLINT = test.ml destructtest.ml
 
-# Builds the ppx rewriter names sample
-build:
-	ocamlbuild -Is $(INCLUDES) -package compiler-libs.common linter.native
+# Builds the linter and the harness for the linter
+linter:
+	ocamlbuild -Is $(INCLUDES) -package compiler-libs.common linter.native && ocamlbuild -package compiler-libs.common main.native
 
-
-# Runs the ppx rewriter on test code
-test:
-	ocamlfind ppx_tools/rewriter ./linter.native test.ml
-
-
-# Lets you check the AST for an individual expression
-# e.g. make dump "1 + 2"
-dump:
-	ocamlfind ppx_tools/dumpast -e
-
+lint:
+	./main.native ./linter.native $(TOLINT)
 # Clears the current build
 clean:
 	rm -rf _build *.native
