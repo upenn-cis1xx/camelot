@@ -7,8 +7,8 @@ open Report
 
 (* ------------------ Checks rule: if cond then true else false ------------------------- *)
 module IfReturnLit : CHECK = struct
-  let check ({location;expr} : Report.lctxt) : warn option =
-    begin match expr with
+  let check ({location;code} : Report.lctxt) : warn option =
+    begin match code with
     | EIfThenElse (test, b_then, b_else) ->
       begin match b_then, b_else with
         | Pexp_construct ({txt = Lident "true"}, _),
@@ -26,8 +26,8 @@ end
 
 (* ------------------ Checks rule: if cond then false else true ------------------------- *)
 module IfReturnLitInv : CHECK = struct
-  let check ({location;expr} : lctxt) : warn option =
-    begin match expr with
+  let check ({location;code} : lctxt) : warn option =
+    begin match code with
     | EIfThenElse (test, b_then, b_else) ->
       begin match b_then, b_else with
         | Pexp_construct ({txt = Lident "false"}, _),
@@ -49,8 +49,8 @@ end
 
 (* ------------------ Checks rule: if cond then cond else _ ----------------------------- *)
 module IfReturnsCond : CHECK = struct
-  let check ({location;expr} : lctxt) : warn option =
-    begin match expr with
+  let check ({location;code} : lctxt) : warn option =
+    begin match code with
       | EIfThenElse (test, b_then, _) ->
         begin match test, b_then with
           | Pexp_ident ({txt = Lident x; _}),
@@ -71,9 +71,9 @@ end
 
 (* ------------------ Checks rule: if not cond then x else y ---------------------------- *)
 module IfCondNeg : CHECK = struct
-  let check ({location;expr} : lctxt) : warn option =
+  let check ({location;code} : lctxt) : warn option =
     let open Utils in
-    begin match expr with
+    begin match code with
       | EIfThenElse (test, _, _) ->
         begin match test with
           | Pexp_apply ( fcall , _ ) ->
@@ -96,9 +96,9 @@ end
 
 (* ------------------ Checks rule: if x then true else y  ------------------------------ *)
 module IfReturnsTrue : CHECK = struct
-  let check ({location;expr} : lctxt) : warn option =
+  let check ({location;code} : lctxt) : warn option =
     let open Utils in
-    begin match expr with
+    begin match code with
       | EIfThenElse (_, b_then, b_else) ->
           begin match b_then, b_else with
           | Pexp_construct ({txt = Lident "true"}, _),
@@ -116,8 +116,8 @@ end
 
 (* ------------------ Checks rule: if x then y else false ------------------------------ *)
 module IfFailFalse : CHECK = struct
-  let check ({location;expr} : lctxt) : warn option =
-    begin match expr with
+  let check ({location;code} : lctxt) : warn option =
+    begin match code with
       | EIfThenElse (_, b_then, b_else) ->
         begin match b_else, b_then with
           | Pexp_construct ({txt = Lident "false"}, _),
@@ -135,8 +135,8 @@ end
 
 (* ------------------ Checks rule: if x then false else y  ----------------------------- *)
 module IfSuccFalse : CHECK = struct
-  let check ({location;expr} : lctxt) : warn option =
-    begin match expr with
+  let check ({location;code} : lctxt) : warn option =
+    begin match code with
       | EIfThenElse (_, b_then, b_else) ->
         begin match b_then, b_else with
           | Pexp_construct ({txt = Lident "false"}, _),
@@ -153,8 +153,8 @@ end
 
 (* ------------------ Checks rule: if x then y else true   ----------------------------- *)
 module IfFailTrue : CHECK = struct
-  let check ({location;expr} : lctxt) : warn option =
-    begin match expr with
+  let check ({location;code} : lctxt) : warn option =
+    begin match code with
       | EIfThenElse (_, b_then, b_else) ->
         begin match b_then, b_else with
           | Pexp_ident ({txt = Lident y}),

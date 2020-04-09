@@ -7,10 +7,13 @@ open Report
 open List
 
 
-
 let allchecks = Simplebexp.checks
 let allexps = ref []
 
+
+module MapAst = struct
+    let ifthenelse m test b_then b_else = Pexp_ifthenelse (m test, m b_then, Some (m b_else) )
+end
 
 let rec linter_mapper =
   { 
@@ -24,10 +27,12 @@ expr_mapper (mapper: Ast_mapper.mapper) (expr: Parsetree.expression) : Parsetree
   let desc = desc_of_expr expr in
   let loc : Report.warn_loc = loc_of_expr expr in
   begin match desc with
+    
   | Pexp_ifthenelse (test, bthen, Some belse) ->
     let (d_test, d_then, d_else) = (desc_of_expr test, desc_of_expr bthen, desc_of_expr belse) in
     let e_lint = EIfThenElse (d_test, d_then, d_else) in
-    allexps := {location=loc; expr=e_lint} :: !allexps;
+    allexps := {location=loc; code=e_lint} :: !allexps;
+
     default_mapper.expr mapper expr
   | _ -> default_mapper.expr mapper expr
   end        
@@ -47,7 +52,8 @@ let lint : unit -> unit = fun _ ->
 
 
 
-let rec lmap = fun argv -> linter_mapper
+let lmap = fun argv ->
+  linter_mapper
   
 let () =
   register "linter" lmap;
