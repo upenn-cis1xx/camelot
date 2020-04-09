@@ -17,6 +17,7 @@ let warn_loc ls le cs ce = { line_start = ls
 type rule =
   | BPat of bpat    (* Boolean patterns *)
   | MPat of mpat    (* Match Patterns   *)
+  | EqPat of epat
 and bpat =
   | IfReturnsLit    (* If cond then true else false *)
   | IfReturnsLitInv (* If cond then false else true *)
@@ -28,6 +29,9 @@ and bpat =
   | IfFailTrue      (* If x then y else true        *)
 and mpat = 
   | OneArmedMatch   (* match x with | <> -> *)
+and epat =
+  | EqOption
+  | EqList
 
 (* Warning location and rule violated *)
 type warn = {loc: warn_loc; violation:rule}
@@ -39,6 +43,7 @@ type cases = Parsetree.case list
 type code =
   | EIfThenElse of exp * exp * exp
   | PPatternMatch of exp * cases
+  | EqApply of exp * exp
   | Compile_Blank
 
 type lctxt = {location: warn_loc; code: code}
@@ -65,6 +70,10 @@ let string_of_rule : rule -> string = function
     begin match m with
       | OneArmedMatch -> "begin match <> with | _ -> <> end is a one armed match"
     end
+  | EqPat e ->
+    begin match e with
+      | EqOption -> "x = None or x = Some i, checking for structural equality with options"
+      | EqList -> " x = [] or x = [ ... ], checking equality on lists "
     
 
 

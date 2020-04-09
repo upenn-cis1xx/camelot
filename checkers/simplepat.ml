@@ -1,5 +1,9 @@
+open Asttypes
+open Parsetree
+open Longident
 open Report
-    
+open Check    
+
 module OneArmedMatch : CHECK = struct
 
   let check ({location;code} : lctxt) : warn option =
@@ -8,7 +12,7 @@ module OneArmedMatch : CHECK = struct
           loc=location;
           violation = (MPat (OneArmedMatch))
         }) 
-      | -> None
+      | _ -> None
     end
 end
 
