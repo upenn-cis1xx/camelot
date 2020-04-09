@@ -22,6 +22,7 @@ module IfReturnLit : CHECK = struct
       end
     | _ -> None
     end
+
 end
 
 (* ------------------ Checks rule: if cond then false else true ------------------------- *)
