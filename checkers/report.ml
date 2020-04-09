@@ -74,6 +74,7 @@ let string_of_rule : rule -> string = function
     begin match e with
       | EqOption -> "x = None or x = Some i, checking for structural equality with options"
       | EqList -> " x = [] or x = [ ... ], checking equality on lists "
+    end
     
 
 

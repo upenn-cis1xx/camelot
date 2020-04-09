@@ -7,8 +7,7 @@ open Report
 open List
 
 
-let allchecks = Simplebexp.checks @ Simplepat.checks
-let c = Simplepat.checks
+let allchecks = Simplebexp.checks @ Simplepat.checks @ Simpleeq.checks
           
 let allexps = ref []
 
@@ -16,6 +15,7 @@ let allexps = ref []
 module MapAst = struct
   let ifthenelse m test b_then b_else = Pexp_ifthenelse (m test, m b_then, Some (m b_else) )
   let matchcases m e cs = Pexp_match (m e, cs) (* TODO, map expression mapper over each case *)
+  let bopapply m op (l, el) (r, er) = Pexp_apply (m op, [(l, m el); (r, m er)])
 end
 
 let rec linter_mapper =
@@ -42,6 +42,20 @@ expr_mapper (mapper: Ast_mapper.mapper) (expr: Parsetree.expression) : Parsetree
     let e_lint = PPatternMatch (e.pexp_desc, cs) in
     allexps := {location=loc;code = e_lint} :: !allexps;
     {expr with pexp_desc=MapAst.matchcases emap e cs}
+
+  (* Look for binary operands *)
+  | Pexp_apply (e, [i1; i2]) ->
+    let is_bop (op: string) (e : Parsetree.expression_desc) : bool =
+      match e with
+      | Pexp_ident ({txt = Lident x}) -> x = op
+      | _ -> false
+    in
+    (* Unit action *)
+    (if is_bop "=" e.pexp_desc then
+      let e_lint = EqApply ((snd i1).pexp_desc, (snd i2).pexp_desc) in
+      allexps := {location=loc; code=e_lint} :: !allexps);
+
+    {expr with pexp_desc=MapAst.bopapply emap e i1 i2 } 
     
   | _ -> default_mapper.expr mapper expr
   end        

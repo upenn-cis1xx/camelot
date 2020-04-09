@@ -1,7 +1,7 @@
 .PHONY: dump clean $(INCLUDES)
 INCLUDES= checkers
 
-TOLINT = test.ml destructtest.ml
+TOLINT = test/bexptest.ml test/equalitytest.ml test/destructtest.ml
 
 # Builds the linter and the harness for the linter
 linter:
