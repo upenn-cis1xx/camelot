@@ -7,7 +7,7 @@ open Report
 open List
 
 
-let allchecks = Simplebexp.checks @ Simplepat.checks @ Simpleeq.checks
+let allchecks = Simplebexp.checks 
           
 let allexps = ref []
 
@@ -69,7 +69,7 @@ let lint : unit -> unit = fun _ ->
                      List.filter (fun i -> match i with | None -> false | Some _ -> true) |>
                      List.map (fun i -> match i with | Some e -> e | None -> failwith "frick") in
                        
-      List.iter (fun warn -> print_endline @@ "Warning: " ^ string_of_warn warn ) e_linted
+      List.iter (fun hint -> print_endline @@  string_of_hint hint ) e_linted
                        
     ) (List.rev (!allexps))
 

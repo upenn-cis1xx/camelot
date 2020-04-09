@@ -1,5 +1,7 @@
 open Report
 
 module type CHECK = sig 
-  val check : Report.lctxt -> Report.warn option
+  val pattern : pattern
+  val fix : fix
+  val check : Report.lctxt -> hint option
 end

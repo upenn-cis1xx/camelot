@@ -33,9 +33,6 @@ and epat =
   | EqOption
   | EqList
 
-(* Warning location and rule violated *)
-type warn = {loc: warn_loc; violation:rule}
-
 (* Convenience wrappers for Parstree nodes *)
 type exp = Parsetree.expression_desc
 type cases = Parsetree.case list
@@ -54,39 +51,56 @@ type lctxt = {location: warn_loc; code: code}
   from the linting work
  *)
 
+type pattern = string (* pattern matched against *)
+type fix = string (* suggestion to fix pattern *)
+
+type hint = { loc       : warn_loc
+            ; violation : rule
+            ; pattern   : pattern
+            ; fix       : fix
+            }
+
+
+let mk_hint loc violation pattern fix = Some {loc; violation; pattern; fix}
+
+let string_of_warn_loc : warn_loc -> string =
+  fun {line_start; line_end; col_start; col_end} ->
+  "File " ^ !Location.input_name ^ ", " ^ 
+  (if line_start = line_end then
+     "line " ^ (string_of_int line_start)
+   else
+     "lines " ^ (string_of_int line_start) ^ "-" ^ (string_of_int line_end)
+  ) ^ ", " ^
+  (
+    "columns: " ^ (string_of_int col_start) ^ "-" ^ (string_of_int col_end)
+  )    
+                                          
+
 let string_of_rule : rule -> string = function
   | BPat b ->
     begin match b with
-    | IfReturnsLit -> "If cond then true else false"
-    | IfReturnsLitInv -> "If cond then false else true"
-    | IfReturnsCond -> "If cond then cond else y"
-    | IfCondNeg -> "if not cond then x else y"
-    | IfReturnsTrue -> "If x then true else y"
-    | IfFailFalse -> "If x then y else false"
-    | IfSuccFalse -> "If x then false else y"
-    | IfFailTrue -> "If x then y else true"
+    | IfReturnsLit -> "If statement returns true on success and false otherwise"
+    | IfReturnsLitInv -> "If statement returns true on failure and false on success"
+    | IfReturnsCond -> "If statement returns the condition it checks for on success"
+    | IfCondNeg -> "If statement checks using not"
+    | IfReturnsTrue -> "If statement returns true on success and var on fail"
+    | IfFailFalse -> "If statement returns var on success and false on fail "
+    | IfSuccFalse -> "If statement returns false on success and var on fail"
+    | IfFailTrue -> "If statement returns var on success and true on fail"
     end
   | MPat m ->
     begin match m with
-      | OneArmedMatch -> "begin match <> with | _ -> <> end is a one armed match"
+      | OneArmedMatch -> "Pattern match has only one case"
     end
   | EqPat e ->
     begin match e with
-      | EqOption -> "x = None or x = Some i, checking for structural equality with options"
-      | EqList -> " x = [] or x = [ ... ], checking equality on lists "
+      | EqOption -> "Checking for structural equality with an option literal"
+      | EqList -> "Checking equality with list literals"
     end
-    
 
-
-let string_of_warn : warn -> string = function
-  | {loc; violation} ->
-    (string_of_rule violation)
-    ^ "\n\t" ^
-    (
-      (if loc.line_start = loc.line_end then "line: " ^ (string_of_int loc.line_start)
-       else "lines: " ^ (string_of_int loc.line_start) ^ "-" ^ (string_of_int loc.line_end)
-      )
-    ) ^ ", " ^
-    (
-      "columns: " ^ (string_of_int loc.col_start) ^ "-" ^ (string_of_int loc.col_end)
-    )    
+let string_of_hint : hint -> string =
+  fun {loc; violation; pattern; fix} ->
+  string_of_warn_loc loc ^ ":\n" ^
+  "Warning:\n\t" ^ string_of_rule violation ^ "\n" ^
+  "Pattern Found:\n\t" ^ pattern ^ "\n" ^
+  "Consider:\n\t" ^ fix ^ "\n\n"
