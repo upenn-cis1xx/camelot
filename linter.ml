@@ -57,5 +57,5 @@ let lmap = fun argv ->
   
 let () =
   register "linter" lmap;
-  print_endline "Linting: ";
+  print_endline @@ "Linting: " ^ !Location.input_name;
   lint ()
