@@ -5,6 +5,8 @@ A fully-modular, ppx-based OCaml style linter.
 Install the following with `opam install` after creating a switch:
 - ocamlfind
 - ppx_tools
+- compiler-libs
+- ANSITerminal
 
 ### Note:
 This project is dependent on compiler-libs, an inherently unstable library that
