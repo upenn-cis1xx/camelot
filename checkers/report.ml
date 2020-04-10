@@ -1,5 +1,5 @@
 open Parsetree
-
+open Pprintast
 (* Warning location *)
 type warn_loc = { line_start: int
                 ; line_end: int
@@ -43,7 +43,7 @@ type code =
   | EqApply of exp * exp
   | Compile_Blank
 
-type lctxt = {location: warn_loc; code: code}
+type lctxt = {location: warn_loc; code: code; src: string}
 
 
 (* 
@@ -51,7 +51,7 @@ type lctxt = {location: warn_loc; code: code}
   from the linting work
  *)
 
-type pattern = string (* pattern matched against *)
+type pattern = string (* pattern found against *)
 type fix = string (* suggestion to fix pattern *)
 
 type hint = { loc       : warn_loc
@@ -61,7 +61,8 @@ type hint = { loc       : warn_loc
             }
 
 
-let mk_hint loc violation pattern fix = Some {loc; violation; pattern; fix}
+let mk_hint loc violation pattern fix =
+  Some {loc; violation; pattern; fix}
 
 let string_of_warn_loc : warn_loc -> string =
   fun {line_start; line_end; col_start; col_end} ->
@@ -100,7 +101,24 @@ let string_of_rule : rule -> string = function
 
 let string_of_hint : hint -> string =
   fun {loc; violation; pattern; fix} ->
-  string_of_warn_loc loc ^ ":\n" ^
+  string_of_warn_loc loc ^ "\n" ^
   "Warning:\n\t" ^ string_of_rule violation ^ "\n" ^
   "Pattern Found:\n\t" ^ pattern ^ "\n" ^
   "Consider:\n\t" ^ fix ^ "\n\n"
+
+
+let print_hint : hint -> unit = fun {loc; violation; pattern; fix} ->
+  let sep = [ANSITerminal.cyan] in
+  let pat = [ANSITerminal.magenta] in
+  let warn = [ANSITerminal.yellow] in
+  let sugg = [ANSITerminal.green; ANSITerminal.Bold] in
+  let m_warn, m_rule = string_of_warn_loc loc, string_of_rule violation in
+  ANSITerminal.print_string sep
+    "(* ------------------------------------------------------------------------ *)\n";
+  print_endline @@ m_warn ;
+  ANSITerminal.print_string warn "Warning:";
+  ANSITerminal.print_string [] ("\n\t" ^ m_rule ^ "\n");
+  ANSITerminal.print_string pat ("You wrote:");
+  ANSITerminal.print_string [] ("\n\t " ^ pattern ^ "\n");
+  ANSITerminal.print_string sugg ("Consider:");
+  ANSITerminal.print_string [] ("\n\t" ^ fix ^ "\n\n")

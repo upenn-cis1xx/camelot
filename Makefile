@@ -5,7 +5,7 @@ TOLINT = test/bexptest.ml test/equalitytest.ml test/destructtest.ml
 
 # Builds the linter and the harness for the linter
 linter:
-	ocamlbuild -Is $(INCLUDES) -package compiler-libs.common linter.native && ocamlbuild -package compiler-libs.common main.native
+	ocamlbuild -Is $(INCLUDES) -package compiler-libs.common -package ANSITerminal linter.native && ocamlbuild -package compiler-libs.common main.native
 
 lint:
 	./main.native ./linter.native $(TOLINT)

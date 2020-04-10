@@ -6,6 +6,7 @@ open Longident
 open Report
 open List
 
+let soe = Pprintast.string_of_expression
 
 let allchecks = Simplebexp.checks 
           
@@ -28,19 +29,20 @@ and
 expr_mapper (mapper: Ast_mapper.mapper) (expr: Parsetree.expression) : Parsetree.expression =
   let open Utils in
   let desc = desc_of_expr expr in
-  let loc : Report.warn_loc = loc_of_expr expr in
+  let location : Report.warn_loc = loc_of_expr expr in
   let emap = linter_mapper.expr mapper in
+  let src = soe expr in
   begin match desc with
     
   | Pexp_ifthenelse (test, bthen, Some belse) ->
     let (d_test, d_then, d_else) = (desc_of_expr test, desc_of_expr bthen, desc_of_expr belse) in
-    let e_lint = EIfThenElse (d_test, d_then, d_else) in
-    allexps := {location=loc; code=e_lint} :: !allexps;
+    let code = EIfThenElse (d_test, d_then, d_else) in
+    allexps := {location; code; src} :: !allexps;
     {expr with pexp_desc=MapAst.ifthenelse emap test bthen belse}
 
   | Pexp_match (e, cs) ->
-    let e_lint = PPatternMatch (e.pexp_desc, cs) in
-    allexps := {location=loc;code = e_lint} :: !allexps;
+    let code = PPatternMatch (e.pexp_desc, cs) in
+    allexps := {location; code; src} :: !allexps;
     {expr with pexp_desc=MapAst.matchcases emap e cs}
 
   (* Look for binary operands *)
@@ -52,13 +54,16 @@ expr_mapper (mapper: Ast_mapper.mapper) (expr: Parsetree.expression) : Parsetree
     in
     (* Unit action *)
     (if is_bop "=" e.pexp_desc then
-      let e_lint = EqApply ((snd i1).pexp_desc, (snd i2).pexp_desc) in
-      allexps := {location=loc; code=e_lint} :: !allexps);
+      let code = EqApply ((snd i1).pexp_desc, (snd i2).pexp_desc) in
+      allexps := {location; code; src} :: !allexps);
 
     {expr with pexp_desc=MapAst.bopapply emap e i1 i2 } 
     
   | _ -> default_mapper.expr mapper expr
   end        
+
+
+
 
 
 
@@ -69,7 +74,7 @@ let lint : unit -> unit = fun _ ->
                      List.filter (fun i -> match i with | None -> false | Some _ -> true) |>
                      List.map (fun i -> match i with | Some e -> e | None -> failwith "frick") in
                        
-      List.iter (fun hint -> print_endline @@  string_of_hint hint ) e_linted
+      List.iter ( print_hint ) e_linted
                        
     ) (List.rev (!allexps))
 
