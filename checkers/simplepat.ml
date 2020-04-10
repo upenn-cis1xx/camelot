@@ -6,12 +6,12 @@ open Check
 
 module OneArmedMatch : CHECK = struct
 
-  let check ({location;code} : lctxt) : warn option =
+  let fix = "Instead of writing a one armed pattern match, consider using a let statement"
+    
+  let check ({location;code;src} : lctxt) : hint option =
     begin match code with
-      | PPatternMatch (e, [_]) -> Some ({
-          loc=location;
-          violation = (MPat (OneArmedMatch))
-        }) 
+      | PPatternMatch (e, [_]) ->
+        mk_hint location (MPat OneArmedMatch) src fix
       | _ -> None
     end
 end

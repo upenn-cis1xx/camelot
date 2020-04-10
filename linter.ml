@@ -8,7 +8,10 @@ open List
 
 let soe = Pprintast.string_of_expression
 
-let allchecks = Simplebexp.checks 
+let allchecks = Simplebexp.checks
+                @ Simpleeq.checks
+                @ Simplepat.checks
+                    
           
 let allexps = ref []
 
