@@ -62,9 +62,8 @@ let () =
   List.iter ( fun (src_name, parsed_tree) ->
       let pattern_finder = Linter.patterns_of_interest src_name in
       let linterator = Linterator.linterator pattern_finder in
-      print_endline  @@ "Going to lint:" ^ src_name;
-      Printf.printf "%s\n" (Pprintast.string_of_structure parsed_tree);
       Apply.apply_iterator linterator parsed_tree;
+      Linter.lint ();
       Linter.print_lint ()
     ) tolint;
 

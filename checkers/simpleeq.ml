@@ -9,10 +9,8 @@ module EqList : CHECK = struct
   let check st {location; source; pattern} = 
     begin match pattern with
       | EqApply (lhs, rhs) ->
-        (if is_list_literal lhs || is_list_literal rhs then
-           st := mk_hint location source fix (EqPat EqList) :: !st;
-         print_endline @@ "State length: " ^ Int.to_string (List.length !st));
-        ()
+        if is_list_literal lhs || is_list_literal rhs then
+          st := mk_hint location source fix (EqPat EqList) :: !st;
       | _ -> ()
     end
 end
@@ -26,7 +24,7 @@ module EqOption : CHECK = struct
 
   let check st {location; source; pattern} =
     match pattern with
-    | EqApply (lhs, rhs) ->
+    | EqApply (lhs, rhs) -> 
       if is_option_lit lhs || is_option_lit rhs then
         st := mk_hint location source fix (EqPat EqOption) :: !st;
       ()
