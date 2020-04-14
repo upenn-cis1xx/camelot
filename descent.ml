@@ -1,3 +1,6 @@
+(* Utility file providing readable helpers to enable recursive AST traversal via the use
+   of AST iterators *)
+
 open Ast_iterator
 open Parsetree
 open Location

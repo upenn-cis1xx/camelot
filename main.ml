@@ -1,104 +1,59 @@
-(*  This file is part of the ppx_tools package.  It is released  *)
-(*  under the terms of the MIT license (see LICENSE file).       *)
-(*  Copyright 2014  Peter Zotov                                  *)
+(** Entry point for the OCaml linter.
 
-let inputs : ([ `Struct | `Sig ] * [ `String | `Path ] * string) list ref = ref []
-let output_file : string ref = ref "-"
-let tool_name = ref "ocamlc"
+    Parses command line args, and runs the linter
 
-let args =
+*)
+open Lexing
+open Parse
+open ANSITerminal
+open Parsetree
+
+let lint_dir: string ref = ref "./" (* lint the current directory if none provided *)
+
+(* The spec we'll be using to format command line arguments *)
+let spec =
   let open Arg in
   align [
-    "-ppx", String (fun s -> Clflags.all_ppx := s :: !Clflags.all_ppx),
-    "<cmd> Invoke <cmd> as a ppx preprocessor";
+    "-d", Set_string lint_dir, 
+    "Invoke the linter on the provided directory, defaulting to the current directory, non re"
+  ] 
 
-    "-str", String (fun s -> inputs := (`Struct, `String, s) :: !inputs),
-    "<str> Parse <str> as a structure";
 
-    "-sig", String (fun s -> inputs := (`Sig, `String, s) :: !inputs),
-    "<str> Parse <str> as a signature";
+let fail msg = prerr_endline msg; exit 1
 
-    "-impl", String (fun s -> inputs := (`Struct, `Path, s) :: !inputs),
-    "<file> Parse <file> as an implementation (specify - for stdin)";
+let safe_open src =
+  try src, open_in src 
+  with Sys_error msg -> fail msg
 
-    "-intf", String (fun s -> inputs := (`Sig, `Path, s) :: !inputs),
-    "<file> Parse <file> as an interface (specify - for stdin)";
+let lex_src file =
+  let src, f = safe_open file in
+  src, Lexing.from_channel f
 
-    "-o", Set_string output_file,
-    "<file> Write result into <file> (stdout by default)";
+let parse_src (src, lexbuf) = 
+  src, Parse.implementation lexbuf
 
-    "-tool-name", Set_string tool_name,
-    "<str> Set tool name to <str> (ocamlc by default)";
-
-    "-I", String (fun s -> Clflags.include_dirs := s :: !Clflags.include_dirs),
-    "<dir> Add <dir> to the list of include directories";
-
-    "-open", String (fun s -> Clflags.open_modules := s :: !Clflags.open_modules),
-    "<module> Add <module> to the list of opened modules";
-
-    "-for-pack", String (fun s -> Clflags.for_package := Some s),
-    "<ident> Preprocess code as if it will be packed inside <ident>";
-
-    "-g", Set Clflags.debug,
-    " Request debug information from preprocessor";
-  ]
-
-let anon_arg s =
-  match !Clflags.all_ppx with
-  | [] -> Clflags.all_ppx := s :: !Clflags.all_ppx
-  | _  -> inputs := (`Struct, `Path, s) :: !inputs
+let files_in_dir d = 
+  let open Sys in
+  if not (file_exists d && is_directory d) then fail @@ d ^ " doesn't exist or isn't a directory!";
+  readdir d |> Array.to_list |> List.map (fun x -> d ^ x)
 
 let usage_msg =
-  Printf.sprintf
-    "Usage: %s [ppx-rewriter] [options...] [implementations...]\n\
-     If no implementations are specified, parses stdin."
-    Sys.argv.(0)
+  "invoke with -d <dir_name> to specify a directory to lint, or just run the program with default args" 
 
-let wrap_open fn file =
-  try  fn file
-  with Sys_error msg ->
-    prerr_endline msg;
-    exit 1
+let parsed_sources d = 
+  let open Sys in
+  let to_lint = d |>
+                files_in_dir |> (* grab the files in the directory *)
+                List.filter (fun f -> not (is_directory f)) |> (* remove directories *)
+                List.filter (fun f -> Filename.check_suffix f ".ml") |> (* only want to lint *.ml files *)
+                List.map (lex_src) |> (* Lex the files *)
+                List.map (parse_src) (* Parse the files *) in
+  to_lint
 
-let make_lexer source_kind source =
-  match source_kind, source with
-  | `String, _ ->
-      Location.input_name := "//toplevel//";
-      Lexing.from_string source
-  | `Path, "-" ->
-      Location.input_name := "//toplevel//";
-      Lexing.from_channel stdin
-  | `Path, _ ->
-      Location.input_name := source;
-      Lexing.from_channel (wrap_open open_in source)
+let () = 
+  Arg.parse spec (fun _ -> ()) usage_msg;
+  print_endline @@ "Lint directory: " ^ !lint_dir;
+  let tolint = parsed_sources !lint_dir in
+  List.iter (fun (s, _) -> print_endline s) tolint
 
-let () =
-  Arg.parse args anon_arg usage_msg;
-  if !Clflags.all_ppx = [] then begin
-    Arg.usage args usage_msg;
-    exit 1
-  end;
-  if !inputs = [] then
-    inputs := [`Struct, `Path, "-"];
-  let fmt =
-    match !output_file with
-    | "-"  -> Format.std_formatter
-    | file -> Format.formatter_of_out_channel (wrap_open open_out file)
-  in
-  try
-    !inputs |> List.iter (fun (ast_kind, source_kind, source) ->
-        let lexer = make_lexer source_kind source in
-        match ast_kind with
-        | `Struct ->
-            let pstr = Parse.implementation lexer in
-            let pstr = Pparse.apply_rewriters (* ~restore:true *) ~tool_name:!tool_name
-                Pparse.Structure pstr in
-            Format.pp_print_newline fmt ()
-        | `Sig ->
-            let psig = Parse.interface lexer in
-            let psig = Pparse.apply_rewriters (* ~restore:true *) ~tool_name:!tool_name
-                Pparse.Signature psig in
-            Format.pp_print_newline fmt ())
-  with exn ->
-    Location.report_exception Format.err_formatter exn;
-    exit 2
+
