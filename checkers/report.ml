@@ -36,12 +36,16 @@ and epat =
 (* Convenience wrappers for Parstree nodes *)
 type exp = Parsetree.expression_desc
 type cases = Parsetree.case list
-    
-type code =
+
+type pattern =
   | EIfThenElse of exp * exp * exp
   | PPatternMatch of exp * cases
   | EqApply of exp * exp
-  | Compile_Blank
+  | Custom of mypattern
+and mypattern =
+  | Blank
+
+type code = pattern (* Temporary: Gets linter to compile for now lmao *)
 
 type lctxt = {location: warn_loc; code: code; src: string}
 
@@ -75,19 +79,19 @@ let string_of_warn_loc : warn_loc -> string =
   (
     "columns: " ^ (string_of_int col_start) ^ "-" ^ (string_of_int col_end)
   )    
-                                          
+
 
 let string_of_rule : rule -> string = function
   | BPat b ->
     begin match b with
-    | IfReturnsLit -> "If statement returns true on success and false otherwise"
-    | IfReturnsLitInv -> "If statement returns true on failure and false on success"
-    | IfReturnsCond -> "If statement returns the condition it checks for on success"
-    | IfCondNeg -> "If statement checks using not"
-    | IfReturnsTrue -> "If statement returns true on success and var on fail"
-    | IfFailFalse -> "If statement returns var on success and false on fail "
-    | IfSuccFalse -> "If statement returns false on success and var on fail"
-    | IfFailTrue -> "If statement returns var on success and true on fail"
+      | IfReturnsLit -> "If statement returns true on success and false otherwise"
+      | IfReturnsLitInv -> "If statement returns true on failure and false on success"
+      | IfReturnsCond -> "If statement returns the condition it checks for on success"
+      | IfCondNeg -> "If statement checks using not"
+      | IfReturnsTrue -> "If statement returns true on success and var on fail"
+      | IfFailFalse -> "If statement returns var on success and false on fail "
+      | IfSuccFalse -> "If statement returns false on success and var on fail"
+      | IfFailTrue -> "If statement returns var on success and true on fail"
     end
   | MPat m ->
     begin match m with

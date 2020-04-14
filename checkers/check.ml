@@ -1,6 +1,7 @@
 open Report
 
 module type CHECK = sig 
-  val fix : fix
-  val check : Report.lctxt -> hint option
+  type lintstate = Report.hint list ref in
+val fix : fix
+val check : lintstate -> Report.lctxt -> ()
 end
