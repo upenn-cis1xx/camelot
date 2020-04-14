@@ -1,7 +1,6 @@
-open Report
+open Style
 
 module type CHECK = sig 
-  type lintstate = Report.hint list ref in
-val fix : fix
-val check : lintstate -> Report.lctxt -> ()
+  val fix : fix
+  val check : Style.hint list ref -> Style.patternctxt -> unit
 end

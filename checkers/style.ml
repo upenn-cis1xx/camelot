@@ -1,25 +1,28 @@
 open Parsetree
 open Pprintast
+open Location
 (* Warning location *)
-type warn_loc = { line_start: int
+type warn_loc = { file: string
+                ; line_start: int
                 ; line_end: int
                 ; col_start: int
                 ; col_end: int
                 }
 
-let warn_loc ls le cs ce = { line_start = ls
-                           ; line_end = le
-                           ; col_start = cs
-                           ; col_end = ce
-                           } 
+let warn_loc f ls le cs ce = { file = f 
+                             ;line_start = ls
+                             ; line_end = le
+                             ; col_start = cs
+                             ; col_end = ce
+                             } 
 
-let warn_loc_of_loc l : warn_loc =
+let warn_loc_of_loc f l : warn_loc =
   let start = l.loc_start in
   let fin = l.loc_end in
-  warn_loc start.pos_lnum
+  warn_loc f start.pos_lnum
     fin.pos_lnum
     (start.pos_cnum - start.pos_bol)
-    (fin.pos_cnum - fin.pos_bol) in
+    (fin.pos_cnum - fin.pos_bol)
 
 (* Definition of style guide *)
 type rule =
@@ -52,9 +55,51 @@ type cases = Parsetree.case list
    wrapped in our constructors
 *)
 
+(* Patterns we want to match for and wrap in constructors *)
 type pattern = 
   | EqApply of exp * exp
+  | Compile_Blank
 
-type codecontext = {location: warn_loc}
+(* Useful information about the region of code we're working with
+   Contains the location information if a warning is neede, the pattern in question,
+   and the string source.
+*)
+type patternctxt = {location: warn_loc; source: string; pattern: pattern }
+
+let mk_pc location source pattern = {location; source; pattern}
 
 
+type fix = string (* Suggestion to fix *)
+
+(* A hint - what we want after checking a patternctxt *)
+type hint = { loc       : warn_loc (* location to hint at *)
+            ; raw       : string   (* raw src code *)
+            ; fix       : fix      (* the fix *)
+            ; violation : rule     (* the rule being violated *)
+            }
+
+let mk_hint loc raw fix violation =
+  {loc; raw; fix; violation}
+
+let string_of_rule : rule -> string = function
+  | Custom _ -> "Overload this yourself"
+  | BPat b ->
+    begin match b with
+      | IfReturnsLit -> "If statement returns true on success and false otherwise"
+      | IfReturnsLitInv -> "If statement returns true on failure and false on success"
+      | IfReturnsCond -> "If statement returns the condition it checks for on success"
+      | IfCondNeg -> "If statement checks using not"
+      | IfReturnsTrue -> "If statement returns true on success and var on fail"
+      | IfFailFalse -> "If statement returns var on success and false on fail "
+      | IfSuccFalse -> "If statement returns false on success and var on fail"
+      | IfFailTrue -> "If statement returns var on success and true on fail"
+    end
+  | MPat m ->
+    begin match m with
+      | OneArmedMatch -> "Pattern match has only one case"
+    end
+  | EqPat e ->
+    begin match e with
+      | EqOption -> "Checking for structural equality with an option literal"
+      | EqList -> "Checking equality with list literals"
+    end

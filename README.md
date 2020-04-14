@@ -1,5 +1,5 @@
 # Camelot
-An extensible OCaml Linter / Style Checker
+An OCaml Linter / Style Checker
 
 ## Dependencies 
 Install the following with `opam install` after creating a switch:

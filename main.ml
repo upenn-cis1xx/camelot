@@ -5,8 +5,9 @@
 *)
 open Lexing
 open Parse
-open ANSITerminal
+
 open Parsetree
+open Linter
 
 let lint_dir: string ref = ref "./" (* lint the current directory if none provided *)
 
