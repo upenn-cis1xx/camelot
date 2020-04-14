@@ -8,15 +8,16 @@ open Descent
    Defines a linter iterator for traversing the OCaml AST.
    You can write your own Custom expression handler 
 *)
-let rec linterator exp_handler case_handler = 
+let rec linterator exp_handler = 
   {
     default_iterator with
-    expr = expr_iterator;
+    expr = expr_iterator exp_handler;
   }
 
 (* Iterator for traversing expressions *)
-and expr_iterator (iterator: Ast_iterator.iterator) (expr: Parsetree.expression) : unit =
+and expr_iterator (handler: Parsetree.expression -> 'a) (iterator: Ast_iterator.iterator) (expr: Parsetree.expression) : unit =
   let {pexp_desc; pexp_loc; pexp_loc_stack; pexp_attributes} = expr in
+  handler expr;
   iterator.location iterator pexp_loc;
   iterator.attributes iterator pexp_attributes;
   match pexp_desc with

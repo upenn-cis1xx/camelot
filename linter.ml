@@ -15,10 +15,7 @@ let hints : Style.hint list ref = ref []
 let rules = Simpleeq.checks
 let file : string ref = ref ""
 
-let clear = fun _ ->
-  pats := [];
-  hints := [];
-  file := ""
+
 
 
 (** This is the handler function passed into linterator 
@@ -31,8 +28,9 @@ let patterns_of_interest (f: string) (expr: Parsetree.expression) : unit =
   let location = Style.warn_loc_of_loc f pexp_loc in
   let source = Pprintast.string_of_expression expr in
   match pexp_desc with
-  | Pexp_apply (e, [(_,el); (_,er)]) -> if is_id e "=" then 
-      pats := {location; source; pattern = Style.EqApply (el.pexp_desc, er.pexp_desc)} :: !pats;
+  | Pexp_apply (e, [(_,el); (_,er)]) ->  print_endline "In BOP case";
+    (if is_id e "=" then 
+       pats := {location; source; pattern = Style.EqApply (el.pexp_desc, er.pexp_desc)} :: !pats);
     ()
   | _ -> ()
 
@@ -43,6 +41,7 @@ let lint : unit -> unit = fun _ ->
     ) !pats
 
 let print_lint : unit -> unit = fun _ -> 
+  print_endline @@ "Found" ^ Int.to_string(List.length !hints)  ^ " possible errors";
   List.iter (Report.print_hint) !hints
 
 

@@ -5,9 +5,10 @@
 *)
 open Lexing
 open Parse
-
 open Parsetree
 open Linter
+open Apply
+open Linterator
 
 let lint_dir: string ref = ref "./" (* lint the current directory if none provided *)
 
@@ -51,10 +52,21 @@ let parsed_sources d =
                 List.map (parse_src) (* Parse the files *) in
   to_lint
 
+
+
 let () = 
   Arg.parse spec (fun _ -> ()) usage_msg;
   print_endline @@ "Lint directory: " ^ !lint_dir;
   let tolint = parsed_sources !lint_dir in
-  List.iter (fun (s, _) -> print_endline s) tolint
+  print_endline @@ "length " ^ Int.to_string (List.length (tolint));
+  List.iter ( fun (src_name, parsed_tree) ->
+      let pattern_finder = Linter.patterns_of_interest src_name in
+      let linterator = Linterator.linterator pattern_finder in
+      print_endline  @@ "Going to lint:" ^ src_name;
+      Printf.printf "%s\n" (Pprintast.string_of_structure parsed_tree);
+      Apply.apply_iterator linterator parsed_tree;
+      Linter.print_lint ()
+    ) tolint;
+
 
 
