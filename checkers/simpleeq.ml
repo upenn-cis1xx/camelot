@@ -2,6 +2,7 @@ open Check
 open Style
 open Astutils
 
+(* ------------------ Checks rules: _ = [literals] | [literals] = _  ----------------------- *)
 module EqList : CHECK = struct
   open Check
   let fix = "using a pattern match to check whether a list has a certain value"
@@ -15,9 +16,7 @@ module EqList : CHECK = struct
     end
 end
 
-
-
-
+(* ------------------ Checks rules: x = y where either x | y is an option ------------------ *)
 module EqOption : CHECK = struct
 
   let fix = "using a pattern match to unwrap the option"
@@ -31,9 +30,6 @@ module EqOption : CHECK = struct
 
 end
 
-
-
 let checks = [ EqList.check
              ; EqOption.check
              ]  
-

@@ -1,6 +1,6 @@
 .PHONY: all clean test
 INCLUDES := checkers
-TESTS := $(wildcard test/*)
+TESTS := test/
 
 all: camelot
 

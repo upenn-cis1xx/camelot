@@ -7,7 +7,6 @@ open Lexing
 open Parse
 open Parsetree
 open Linter
-open Apply
 open Linterator
 
 let lint_dir: string ref = ref "./" (* lint the current directory if none provided *)
@@ -34,17 +33,18 @@ let lex_src file =
 let parse_src (src, lexbuf) = 
   src, Parse.implementation lexbuf
 
-let files_in_dir d = 
+let files_in_dir dirname = 
   let open Sys in
-  if not (file_exists d && is_directory d) then fail @@ d ^ " doesn't exist or isn't a directory!";
-  readdir d |> Array.to_list |> List.map (fun x -> d ^ x)
+  if not (file_exists dirname && is_directory dirname) 
+  then fail @@ dirname ^ " doesn't exist or isn't a directory!";
+  readdir dirname |> Array.to_list |> List.map (fun file -> dirname ^ file)
 
 let usage_msg =
   "invoke with -d <dir_name> to specify a directory to lint, or just run the program with default args" 
 
-let parsed_sources d = 
+let parse_sources_in dirname = 
   let open Sys in
-  let to_lint = d |>
+  let to_lint = dirname |>
                 files_in_dir |> (* grab the files in the directory *)
                 List.filter (fun f -> not (is_directory f)) |> (* remove directories *)
                 List.filter (fun f -> Filename.check_suffix f ".ml") |> (* only want to lint *.ml files *)
@@ -56,15 +56,13 @@ let parsed_sources d =
 
 let () = 
   Arg.parse spec (fun _ -> ()) usage_msg;
-  print_endline @@ "Lint directory: " ^ !lint_dir;
-  let tolint = parsed_sources !lint_dir in
-  print_endline @@ "length " ^ Int.to_string (List.length (tolint));
+  let tolint = parse_sources_in !lint_dir in
   List.iter ( fun (src_name, parsed_tree) ->
       let pattern_finder = Linter.patterns_of_interest src_name in
       let linterator = Linterator.linterator pattern_finder in
-      Apply.apply_iterator linterator parsed_tree;
+      Linterator.apply_iterator linterator parsed_tree;
       Linter.lint ();
-      Linter.print_lint ()
+      Linter.hint ()
     ) tolint;
 
 

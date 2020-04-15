@@ -9,18 +9,18 @@ open Report
 module IfReturnLit : CHECK = struct
 
   let fix = "replacing the if statement with just the condition"
-    
+
   let check ({location;code; src} : Report.lctxt) : hint option =
     begin match code with
-    | EIfThenElse (test, b_then, b_else) ->
-      begin match b_then, b_else with
-        | Pexp_construct ({txt = Lident "true"}, _),
-          Pexp_construct ({txt = Lident "false"}, _) ->
-          mk_hint location (BPat IfReturnsLit) src fix
-        | _ -> None
-        
-      end
-    | _ -> None
+      | EIfThenElse (test, b_then, b_else) ->
+        begin match b_then, b_else with
+          | Pexp_construct ({txt = Lident "true"}, _),
+            Pexp_construct ({txt = Lident "false"}, _) ->
+            mk_hint location (BPat IfReturnsLit) src fix
+          | _ -> None
+
+        end
+      | _ -> None
     end
 
 end
@@ -29,18 +29,18 @@ end
 module IfReturnLitInv : CHECK = struct
 
   let fix = "replacing the if statement with (not condition)"
-    
+
   let check ({location;code; src} : lctxt) : hint option =
     begin match code with
-    | EIfThenElse (test, b_then, b_else) ->
-      begin match b_then, b_else with
-        | Pexp_construct ({txt = Lident "false"}, _),
-          Pexp_construct ({txt = Lident "true"}, _) ->
-          mk_hint location (BPat IfReturnsLitInv) src fix
-        | _ -> None
-        
-      end
-    | _ -> None
+      | EIfThenElse (test, b_then, b_else) ->
+        begin match b_then, b_else with
+          | Pexp_construct ({txt = Lident "false"}, _),
+            Pexp_construct ({txt = Lident "true"}, _) ->
+            mk_hint location (BPat IfReturnsLitInv) src fix
+          | _ -> None
+
+        end
+      | _ -> None
     end
 end
 
@@ -52,7 +52,7 @@ end
 module IfReturnsCond : CHECK = struct
 
   let fix = "replacing the if statement with the condition || fail_branch "
-    
+
   let check ({location; code; src} : lctxt) : hint option =
     begin match code with
       | EIfThenElse (test, b_then, _) ->
@@ -74,7 +74,7 @@ end
 module IfCondNeg : CHECK = struct
 
   let fix = "swapping the then and else branches"
-    
+
   let check ({location; code; src} : lctxt) : hint option =
     let open Utils in
     begin match code with
@@ -98,12 +98,12 @@ end
 module IfReturnsTrue : CHECK = struct
 
   let fix = "rewriting using a boolean operator like && or ||"
-    
+
   let check ({location;code; src} : lctxt) : hint option =
     let open Utils in
     begin match code with
       | EIfThenElse (_, b_then, b_else) ->
-          begin match b_then, b_else with
+        begin match b_then, b_else with
           | Pexp_construct ({txt = Lident "true"}, _),
             Pexp_ident ({txt = Lident y}) ->
             mk_hint location (BPat IfReturnsTrue) src fix
@@ -118,7 +118,7 @@ end
 module IfFailFalse : CHECK = struct
 
   let fix = "rewriting using a boolean operator like && or ||"
-    
+
   let check ({location;code;src} : lctxt) : hint option =
     begin match code with
       | EIfThenElse (_, b_then, b_else) ->
@@ -148,13 +148,13 @@ module IfSuccFalse : CHECK = struct
           | _ -> None
         end
       | _ -> None
-  end
+    end
 end
 
 (* ------------------ Checks rule: if x then y else true   ----------------------------- *)
 module IfFailTrue : CHECK = struct
 
-  let fix = "rewriting using a boolean operator like && or ||"
+  let fix = "rewriting using && or ||"
 
   let check ({location;code;src} : lctxt) : hint option =
     begin match code with

@@ -39,11 +39,5 @@ let lint : unit -> unit = fun _ ->
       List.iter (fun f -> f hints pctxt) rules
     ) !pats
 
-let print_lint : unit -> unit = fun _ -> 
+let hint : unit -> unit = fun _ -> 
   List.iter (Report.print_hint) !hints
-
-
-
-
-
-

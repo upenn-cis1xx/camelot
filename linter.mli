@@ -11,4 +11,4 @@ val patterns_of_interest : string -> Parsetree.expression -> unit
 val lint : unit -> unit
 
 (* Prints linter contents *)
-val print_lint : unit -> unit
+val hint : unit -> unit

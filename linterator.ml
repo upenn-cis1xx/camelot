@@ -4,6 +4,10 @@ open Asttypes
 open Parsetree
 open Descent
 
+(* Iterates through the ast structure, applying the given iterator *)
+let apply_iterator (iter: Ast_iterator.iterator) (structure: Parsetree.structure) : unit = 
+  iter.structure iter structure
+
 (**
    Defines a linter iterator for traversing the OCaml AST.
    You can write your own Custom expression handler 
