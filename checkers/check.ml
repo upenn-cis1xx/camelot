@@ -1,5 +1,6 @@
-open Report
+open Style
 
 module type CHECK = sig 
-  val check : Report.lctxt -> Report.warn option
+  val fix : fix
+  val check : Style.hint list ref -> Style.patternctxt -> unit
 end

@@ -1,17 +1,19 @@
-.PHONY: dump clean $(INCLUDES)
-INCLUDES= checkers
+.PHONY: all clean test
+INCLUDES := checkers
+TESTS := test/
 
-TOLINT = test.ml destructtest.ml
+all: camelot
 
 # Builds the linter and the harness for the linter
-linter:
-	ocamlbuild -Is $(INCLUDES) -package compiler-libs.common linter.native && ocamlbuild -package compiler-libs.common main.native
+camelot:
+	ocamlbuild -Is $(INCLUDES) -package compiler-libs.common -package ANSITerminal main.native && mv ./main.native camelot
 
-lint:
-	./main.native ./linter.native $(TOLINT)
+test:
+	./camelot -d $(TESTS)
+
 # Clears the current build
 clean:
-	rm -rf _build *.native
+	rm -rf _build *.native camelot
 
 
 

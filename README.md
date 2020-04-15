@@ -1,15 +1,20 @@
 # Camelot
-A fully-modular, ppx-based OCaml style linter.
+An OCaml Linter / Style Checker
 
 ## Dependencies 
 Install the following with `opam install` after creating a switch:
-- ocamlfind
-- ppx_tools
+- ocamlfind (for debugging / dev)
+- ocamlbuild
+- ppx_tools ( for debugging / dev )
+- compiler-libs
+- ANSITerminal
 
 ### Note:
 This project is dependent on compiler-libs, an inherently unstable library that
 changes between OCaml installations.
 
 ### Overview of command line options
-`make linter` to build the linter, and `make lint` to run the linter on the files in the
-TOLINT Makefile variable.
+`make` to build `camelot`. This produces the `camelot` binary that can be run
+through the command line.
+
+For dev purposes the `make test` rule is setup so that you can run the binary on files in a particular directory, as specified in the `TESTS` variable.

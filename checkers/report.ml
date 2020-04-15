@@ -1,82 +1,43 @@
 open Parsetree
+open Pprintast
+open Style
+open ANSITerminal
 
-(* Warning location *)
-type warn_loc = { line_start: int
-                ; line_end: int
-                ; col_start: int
-                ; col_end: int
-                }
-
-let warn_loc ls le cs ce = { line_start = ls
-                           ; line_end = le
-                           ; col_start = cs
-                           ; col_end = ce
-                           } 
-
-(* Definition of style guide *)
-type rule =
-  | BPat of bpat    (* Boolean patterns *)
-  | MPat of mpat    (* Match Patterns   *)
-and bpat =
-  | IfReturnsLit    (* If cond then true else false *)
-  | IfReturnsLitInv (* If cond then false else true *)
-  | IfReturnsCond   (* If cond then cond else _     *)
-  | IfCondNeg       (* If not cond then x else y    *)
-  | IfReturnsTrue   (* If x then true else y        *)
-  | IfFailFalse     (* If x then y else false       *)
-  | IfSuccFalse     (* If x then false else y       *)
-  | IfFailTrue      (* If x then y else true        *)
-and mpat = 
-  | OneArmedMatch   (* match x with | <> -> *)
-
-(* Warning location and rule violated *)
-type warn = {loc: warn_loc; violation:rule}
-
-(* Convenience wrappers for Parstree nodes *)
-type exp = Parsetree.expression_desc
-type cases = Parsetree.case list
-    
-type code =
-  | EIfThenElse of exp * exp * exp
-  | PPatternMatch of exp * cases
-  | Compile_Blank
-
-type lctxt = {location: warn_loc; code: code}
+let string_of_warn_loc : Style.warn_loc -> string =
+  fun {file; line_start; line_end; col_start; col_end} ->
+  "File " ^ file ^ ", " ^ 
+  (if line_start = line_end then
+     "line " ^ (string_of_int line_start)
+   else
+     "lines " ^ (string_of_int line_start) ^ "-" ^ (string_of_int line_end)
+  ) ^ ", " ^
+  (
+    "columns: " ^ (string_of_int col_start) ^ "-" ^ (string_of_int col_end)
+  )    
 
 
-(* 
-  Useful for separating the actions of the ParseTree and the mappers open recursion
-  from the linting work
- *)
-
-let string_of_rule : rule -> string = function
-  | BPat b ->
-    begin match b with
-    | IfReturnsLit -> "If cond then true else false"
-    | IfReturnsLitInv -> "If cond then false else true"
-    | IfReturnsCond -> "If cond then cond else y"
-    | IfCondNeg -> "if not cond then x else y"
-    | IfReturnsTrue -> "If x then true else y"
-    | IfFailFalse -> "If x then y else false"
-    | IfSuccFalse -> "If x then false else y"
-    | IfFailTrue -> "If x then y else true"
-    end
-  | MPat m ->
-    begin match m with
-      | OneArmedMatch -> "begin match <> with | _ -> <> end is a one armed match"
-    end
-    
 
 
-let string_of_warn : warn -> string = function
-  | {loc; violation} ->
-    (string_of_rule violation)
-    ^ "\n\t" ^
-    (
-      (if loc.line_start = loc.line_end then "line: " ^ (string_of_int loc.line_start)
-       else "lines: " ^ (string_of_int loc.line_start) ^ "-" ^ (string_of_int loc.line_end)
-      )
-    ) ^ ", " ^
-    (
-      "columns: " ^ (string_of_int loc.col_start) ^ "-" ^ (string_of_int loc.col_end)
-    )    
+let string_of_hint : Style.hint -> string =
+  fun {loc; raw; fix; violation} ->
+  string_of_warn_loc loc ^ "\n" ^
+  "Warning:\n\t" ^ string_of_rule violation ^ "\n" ^
+  "Pattern Found:\n\t" ^ raw ^ "\n" ^
+  "Consider:\n\t" ^ fix ^ "\n\n"
+
+
+let print_hint : Style.hint -> unit = fun {loc; raw; fix; violation} ->
+  let sep = [ANSITerminal.cyan] in
+  let pat = [ANSITerminal.magenta] in
+  let warn = [ANSITerminal.yellow] in
+  let sugg = [ANSITerminal.green; ANSITerminal.Bold] in
+  let m_warn, m_rule = string_of_warn_loc loc, string_of_rule violation in
+  ANSITerminal.print_string sep
+    "(* ------------------------------------------------------------------------ *)\n";
+  print_endline @@ m_warn ;
+  ANSITerminal.print_string warn "Warning:";
+  ANSITerminal.print_string [] ("\n\t" ^ m_rule ^ "\n");
+  ANSITerminal.print_string pat ("You wrote:");
+  ANSITerminal.print_string [] ("\n\t " ^ raw ^ "\n");
+  ANSITerminal.print_string sugg ("Consider:");
+  ANSITerminal.print_string [] ("\n\t" ^ fix ^ "\n\n")

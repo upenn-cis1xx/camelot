@@ -3,3 +3,5 @@ S .
 B _build
 B _build/*
 B _ build/*/*
+
+PKG compiler-libs.common ANSITerminal 

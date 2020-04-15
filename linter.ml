@@ -1,61 +1,43 @@
-open Ast_mapper
-open Ast_helper
-open Asttypes
 open Parsetree
-open Longident
+open Astutils
+open Pprintast
+open Style
 open Report
-open List
+
+(** Modify this file, checkers/report.ml,
+    checkers/custom.ml 
+    to extend the linter with custom rules
+*)
+
+(* These are refs used to store important information in the context *)
+let pats : Style.patternctxt list ref = ref []
+let hints : Style.hint list ref = ref []
+let rules = Simpleeq.checks
+let file : string ref = ref ""
 
 
-let allchecks = Simplebexp.checks
-let allexps = ref []
 
 
-module MapAst = struct
-    let ifthenelse m test b_then b_else = Pexp_ifthenelse (m test, m b_then, Some (m b_else) )
-end
+(** This is the handler function passed into linterator 
+    It extracts patterns of interest so that we can match
+    them against the predefined rules in checkers
+*)
 
-let rec linter_mapper =
-  { 
-    default_mapper with
-    expr = expr_mapper;
-  }
-
-and 
-expr_mapper (mapper: Ast_mapper.mapper) (expr: Parsetree.expression) : Parsetree.expression =
-  let open Utils in
-  let desc = desc_of_expr expr in
-  let loc : Report.warn_loc = loc_of_expr expr in
-  begin match desc with
-    
-  | Pexp_ifthenelse (test, bthen, Some belse) ->
-    let (d_test, d_then, d_else) = (desc_of_expr test, desc_of_expr bthen, desc_of_expr belse) in
-    let e_lint = EIfThenElse (d_test, d_then, d_else) in
-    allexps := {location=loc; code=e_lint} :: !allexps;
-
-    default_mapper.expr mapper expr
-  | _ -> default_mapper.expr mapper expr
-  end        
-
+let patterns_of_interest (f: string) (expr: Parsetree.expression) : unit = 
+  let {pexp_desc; pexp_loc; pexp_loc_stack; pexp_attributes} = expr in
+  let location = Style.warn_loc_of_loc f pexp_loc in
+  let source = Pprintast.string_of_expression expr in
+  match pexp_desc with
+  | Pexp_apply (e, [(_,el); (_,er)]) ->
+    if is_id e "=" then 
+      pats := {location; source; pattern = Style.EqApply (el.pexp_desc, er.pexp_desc)} :: !pats;
+  | _ -> ()
 
 
 let lint : unit -> unit = fun _ ->
-  List.iter (fun e ->
-      let e_linted = allchecks |>
-                     List.map (fun fc -> fc e) |>
-                     List.filter (fun i -> match i with | None -> false | Some _ -> true) |>
-                     List.map (fun i -> match i with | Some e -> e | None -> failwith "frick") in
-                       
-      List.iter (fun warn -> print_endline @@ "Warning: " ^ string_of_warn warn ) e_linted
-                       
-    ) (List.rev (!allexps))
+  List.iter (fun pctxt -> 
+      List.iter (fun f -> f hints pctxt) rules
+    ) !pats
 
-
-
-let lmap = fun argv ->
-  linter_mapper
-  
-let () =
-  register "linter" lmap;
-  print_endline @@ "Linting: " ^ !Location.input_name;
-  lint ()
+let hint : unit -> unit = fun _ -> 
+  List.iter (Report.print_hint) !hints
