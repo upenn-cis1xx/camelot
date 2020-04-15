@@ -17,4 +17,4 @@ changes between OCaml installations.
 `make` to build `camelot`. This produces the `camelot` binary that can be run
 through the command line.
 
-For dev purposes the `make lint` rule is setup so that you can run the binary on files in a particular directory, as specified in the `TO_LINT` variable.
+For dev purposes the `make test` rule is setup so that you can run the binary on files in a particular directory, as specified in the `TESTS` variable.
