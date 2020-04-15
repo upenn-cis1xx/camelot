@@ -6,8 +6,8 @@ open Check
 
 module OneArmedMatch : CHECK = struct
 
-  let fix = "Instead of writing a one armed pattern match, consider using a let statement"
-    
+  let fix = "using a let statement instead of a one-armed pattern match"
+
   let check ({location;code;src} : lctxt) : hint option =
     begin match code with
       | PPatternMatch (e, [_]) ->
