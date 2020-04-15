@@ -7,7 +7,7 @@ open Lexing
 open Parse
 open Parsetree
 open Linter
-open Linterator
+open Traverse
 
 let lint_dir: string ref = ref "./" (* lint the current directory if none provided *)
 
@@ -59,8 +59,8 @@ let () =
   let tolint = parse_sources_in !lint_dir in
   List.iter ( fun (src_name, parsed_tree) ->
       let pattern_finder = Linter.patterns_of_interest src_name in
-      let linterator = Linterator.linterator pattern_finder in
-      Linterator.apply_iterator linterator parsed_tree;
+      let linterator = Traverse.linterator pattern_finder in
+      Traverse.apply_iterator linterator parsed_tree;
       Linter.lint ();
       Linter.hint ()
     ) tolint;
