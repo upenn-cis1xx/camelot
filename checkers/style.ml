@@ -10,7 +10,7 @@ type warn_loc = { file: string
                 }
 
 let warn_loc f ls le cs ce = { file = f 
-                             ;line_start = ls
+                             ; line_start = ls
                              ; line_end = le
                              ; col_start = cs
                              ; col_end = ce

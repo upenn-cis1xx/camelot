@@ -25,9 +25,8 @@ module EqOption : CHECK = struct
   let check st {location; source; pattern} =
     match pattern with
     | EqApply (lhs, rhs) -> 
-      if is_option_lit lhs || is_option_lit rhs then
-        st := mk_hint location source fix (EqPat EqOption) :: !st;
-      ()
+      if is_option_lit lhs || is_option_lit rhs 
+      then st := mk_hint location source fix (EqPat EqOption) :: !st;
     | _ -> ()
 
 end

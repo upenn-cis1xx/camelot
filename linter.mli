@@ -1,4 +1,3 @@
-
 (* List of rules to lint *)
 val rules : (Style.hint list ref -> Style.patternctxt -> unit) list 
 

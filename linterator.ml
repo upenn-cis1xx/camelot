@@ -22,7 +22,6 @@ and expr_iterator (handler: Parsetree.expression -> 'a) (iterator: Ast_iterator.
   iterator.attributes iterator pexp_attributes;
   match pexp_desc with
 
-
   (** Simple Expressions - values, constants, functions, matches, f appls *) 
   | Pexp_ident x -> d_ident iterator x
   | Pexp_constant _ -> () 
