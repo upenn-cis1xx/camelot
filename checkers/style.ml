@@ -26,9 +26,10 @@ let warn_loc_of_loc f l : warn_loc =
 
 (* Definition of style guide *)
 type rule =
-  | BPat of bpat    (* Boolean patterns *)
-  | MPat of mpat    (* Match Patterns   *)
-  | EqPat of epat
+  | BPat of bpat    (* Boolean patterns  *)
+  | MPat of mpat    (* Match Patterns    *)
+  | EqPat of epat   (* Equality Patterns *)
+  | HofPat of hpat  (* HOF patterns      *)
   | Custom of custom (* Extensible rule *)
 and bpat =
   | IfReturnsLit    (* If cond then true else false *)
@@ -44,11 +45,16 @@ and mpat =
 and epat =
   | EqOption
   | EqList
+and hpat =
+  | MapFxn
+  | IterFxn
+  | FoldFxn
 and custom =
   | Blank
 
 (* Convenience wrappers for Parstree nodes *)
 type exp = Parsetree.expression_desc
+type pat = Parsetree.pattern_desc
 type cases = Parsetree.case list
 
 (* Relevant information to extract from the parsetree 
@@ -58,6 +64,9 @@ type cases = Parsetree.case list
 (* Patterns we want to match for and wrap in constructors *)
 type pattern = 
   | EqApply of exp * exp
+  (* the pattern is the stmt you're declaring, 
+     and the exp is the match *)
+  | RecDecMatch of pat * exp 
   | Compile_Blank
 
 (* Useful information about the region of code we're working with
@@ -102,4 +111,8 @@ let string_of_rule : rule -> string = function
     begin match e with
       | EqOption -> "Checking for structural equality with an option literal"
       | EqList -> "Checking equality with list literals"
+    end
+  | HofPat h ->
+    begin match h with
+      | MapFxn |IterFxn | FoldFxn -> "Complex code that could use a hof"
     end
