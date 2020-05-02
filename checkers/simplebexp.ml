@@ -1,8 +1,6 @@
-open Asttypes
-open Parsetree
-open Longident
 open Check
-open Report
+open Style
+open Astutils
 
 
 (* ------------------ Checks rule: if cond then true else false ------------------------- *)
@@ -10,21 +8,16 @@ module IfReturnLit : CHECK = struct
 
   let fix = "replacing the if statement with just the condition"
 
-  let check ({location;code; src} : Report.lctxt) : hint option =
-    begin match code with
-      | EIfThenElse (test, b_then, b_else) ->
-        begin match b_then, b_else with
-          | Pexp_construct ({txt = Lident "true"}, _),
-            Pexp_construct ({txt = Lident "false"}, _) ->
-            mk_hint location (BPat IfReturnsLit) src fix
-          | _ -> None
-
-        end
-      | _ -> None
+  let check st {location; source; pattern} = 
+    begin match pattern with
+      | IfUse (_, e_then, e_else) ->
+        if is_true_lit e_then && is_false_lit e_else then
+          st := mk_hint location source fix (BPat IfReturnsLit) :: !st;
+      | _ -> ()
     end
-
 end
 
+(* 
 (* ------------------ Checks rule: if cond then false else true ------------------------- *)
 module IfReturnLitInv : CHECK = struct
 
@@ -168,15 +161,15 @@ module IfFailTrue : CHECK = struct
       | _ -> None
     end
 end
-
+*)
 let checks  = [ IfReturnLit.check
-              ; IfReturnLitInv.check
+            (*  ; IfReturnLitInv.check
               ; IfReturnsCond.check
               ; IfCondNeg.check
               ; IfReturnsTrue.check
               ; IfFailFalse.check
               ; IfSuccFalse.check
-              ; IfFailTrue.check 
+              ; IfFailTrue.check *)
               ]
 
 

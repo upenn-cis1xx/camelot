@@ -1,6 +1,7 @@
 open Parsetree
 open Pprintast
 open Location
+
 (* Warning location *)
 type warn_loc = { file: string
                 ; line_start: int
@@ -64,6 +65,7 @@ type cases = Parsetree.case list
 (* Patterns we want to match for and wrap in constructors *)
 type pattern = 
   | EqApply of exp * exp
+  | IfUse of exp * exp * exp
   (* the pattern is the stmt you're declaring, 
      and the exp is the match *)
   | RecDecMatch of pat * exp 

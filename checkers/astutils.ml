@@ -16,9 +16,19 @@ let is_list_literal (e : exp) : bool =
 
 let is_option_lit (e : exp) : bool =
   match e with
-  (* None case *)
-  | Pexp_construct ({txt = Lident "None"}, _) -> true
-  (* Some case *)
-  | Pexp_construct ({txt = Lident "Some"}, _) -> true
+  | Pexp_construct ({txt = Lident "None"}, _) (* None case *)
+  | Pexp_construct ({txt = Lident "Some"}, _) -> true (* Some case *)
   | _ -> false
+
+let is_true_lit (e: exp) : bool = 
+  match e with
+  | Pexp_construct ({txt = Lident "true"}, _) -> true
+  | _ -> false
+
+let is_false_lit (e: exp) : bool = 
+  match e with
+  | Pexp_construct ({txt = Lident "false"}, _) -> true
+  | _ -> false
+  
+let is_bool_lit (e: exp) : bool = is_true_lit e || is_false_lit e
 

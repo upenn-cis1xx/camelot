@@ -12,7 +12,7 @@ open Report
 (* These are refs used to store important information in the context *)
 let pats : Style.patternctxt list ref = ref []
 let hints : Style.hint list ref = ref []
-let rules = Simpleeq.checks
+let rules = Simpleeq.checks @ Simplebexp.checks
 let file : string ref = ref ""
 
 
@@ -31,6 +31,9 @@ let patterns_of_interest (f: string) (expr: Parsetree.expression) : unit =
   | Pexp_apply (e, [(_,el); (_,er)]) ->
     if is_id e "=" then 
       pats := {location; source; pattern = Style.EqApply (el.pexp_desc, er.pexp_desc)} :: !pats;
+  | Pexp_ifthenelse (test,  next, Some default) -> 
+    pats := 
+      {location; source; pattern = Style.IfUse (test.pexp_desc, next.pexp_desc, default.pexp_desc) } :: !pats
   | _ -> ()
 
 
