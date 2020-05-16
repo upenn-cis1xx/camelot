@@ -7,6 +7,7 @@ Make sure you have ocaml version 4.09.0, otherwise the parsetree will be differe
 - ocamlc v4.09.0
 - ocamlfind (for debugging / dev)
 - compiler-libs.common
+- fswatch (for Build + Watch)
 - ANSITerminal
 
 ### Note:
