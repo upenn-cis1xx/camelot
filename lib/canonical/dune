@@ -1,0 +1,4 @@
+(library
+ (name        canonical)
+ (public_name canonical)
+ (libraries compiler-libs.common))

@@ -3,20 +3,27 @@
     Parses command line args, and runs the linter
 
 *)
-open Lexing
-open Parse
-open Parsetree
-open Linter
-open Traverse
+
+module Hint = Canonical.Hint
 
 let lint_dir: string ref = ref "./" (* lint the current directory if none provided *)
-
+let show_type : (Hint.hint list -> unit) ref = ref Report.Display.student_display (* default to showing hints for students *)
 (* The spec we'll be using to format command line arguments *)
+
+
+let set_display_type : string -> unit = fun s ->
+  let module Disp = Report.Display in
+  match s with
+    | "ta" -> show_type := Disp.ta_display
+    | _ -> show_type := Disp.student_display
+      
 let spec =
   let open Arg in
   align [
     "-d", Set_string lint_dir, 
     "Invoke the linter on the provided directory, defaulting to the current directory, non re"
+  ; "-show", String set_display_type,
+      "Make the linter output display for either ta's or students"
   ] 
 
 
@@ -30,7 +37,7 @@ let lex_src file =
   let src, f = safe_open file in
   src, Lexing.from_channel f
 
-let parse_src (src, lexbuf) = 
+let parse_src (src, lexbuf) =
   src, Parse.implementation lexbuf
 
 let files_in_dir dirname = 
@@ -40,7 +47,8 @@ let files_in_dir dirname =
   readdir dirname |> Array.to_list |> List.map (fun file -> dirname ^ file)
 
 let usage_msg =
-  "invoke with -d <dir_name> to specify a directory to lint, or just run the program with default args" 
+  "invoke with -d <dir_name> to specify a directory to lint, or just run the program with default args\n" ^
+  "invoke with -show <student | ta> to select the display type - usually ta's want a briefer summary"
 
 let parse_sources_in dirname = 
   let open Sys in
@@ -56,14 +64,8 @@ let parse_sources_in dirname =
 
 let () = 
   Arg.parse spec (fun _ -> ()) usage_msg;
-  let tolint = parse_sources_in !lint_dir in
-  List.iter ( fun (src_name, parsed_tree) ->
-      let pattern_finder = Linter.patterns_of_interest src_name in
-      let linterator = Traverse.linterator pattern_finder 1 in
-      Traverse.apply_iterator linterator parsed_tree ;
-      Linter.lint ();
-      Linter.hint ()
-    ) tolint;
-
-
+  (* Lint the files in the lint directory *)
+  parse_sources_in !lint_dir |> Linter.lint;
+  (* Display the hints *)
+  Linter.hints () |> !show_type
 

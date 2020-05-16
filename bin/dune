@@ -1,0 +1,4 @@
+(executable
+(name camelot)
+(libraries compiler-libs.common canonical traverse checkers report) 
+(modes exe))
