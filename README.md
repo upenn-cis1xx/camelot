@@ -22,3 +22,10 @@ Build + Watch:
 
 Run 'tests':
 `dune exec -- bin/camelot.exe <camelot args here>`
+
+## Camelot flags
+
+`-d <lintdir>` : Specify the directory in which to lint
+
+`-show <ta | student>` : Specify the reporting type - does a student see this output or a ta?
+If this argument is malformed or not present, the reporting type defaults to student

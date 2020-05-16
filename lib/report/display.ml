@@ -36,14 +36,11 @@ let display_verbose : Hint.hint -> unit =
 
 let display_brief : Hint.hint -> unit =
   fun hint ->
-  let sep = [ANSITerminal.cyan] in
   let warn = [ANSITerminal.yellow] in
   let m_warn = string_of_warnloc hint.loc in
-  ANSITerminal.print_string sep
-    "(* ------------------------------------------------------------------------ *)\n";
   print_endline @@ m_warn ;
   ANSITerminal.print_string warn "Warning:";
-  ANSITerminal.print_string [] (hint.violation ^ "\n")
+  ANSITerminal.print_string [] (hint.violation ^ "\n\n")
 
 
 (* Display methods to expose *)
