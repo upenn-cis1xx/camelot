@@ -1,20 +1,32 @@
 # Camelot
-An OCaml Linter / Style Checker
+An OCaml Linter / Style Checker for the OCaml compiler version 4.09.0.
+Make sure you have ocaml version 4.09.0, otherwise the parsetree will be different
 
 ## Dependencies 
-Install the following with `opam install` after creating a switch:
+- dune (v 2.4.0) - dune will manage installing the appropriate dependencies for you I believe
+- ocamlc v4.09.0
 - ocamlfind (for debugging / dev)
-- ocamlbuild
-- ppx_tools ( for debugging / dev )
-- compiler-libs
+- compiler-libs.common
+- fswatch (for Build + Watch)
 - ANSITerminal
 
 ### Note:
 This project is dependent on compiler-libs, an inherently unstable library that
 changes between OCaml installations.
 
-### Overview of command line options
-`make` to build `camelot`. This produces the `camelot` binary that can be run
-through the command line.
+### Build and run instructions
+Build:
+`dune build bin/camelot.exe`
 
-For dev purposes the `make test` rule is setup so that you can run the binary on files in a particular directory, as specified in the `TESTS` variable.
+Build + Watch:
+`dune build bin/camelot.exe -w`
+
+Run 'tests':
+`dune exec -- bin/camelot.exe <camelot args here>`
+
+## Camelot flags
+
+`-d <lintdir>` : Specify the directory in which to lint
+
+`-show <ta | student>` : Specify the reporting type - does a student see this output or a ta?
+If this argument is malformed or not present, the reporting type defaults to student

@@ -1,0 +1,4 @@
+(library
+(name checkers)
+(public_name checkers)
+(libraries compiler-libs.common canonical astutils))

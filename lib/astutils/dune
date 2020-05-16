@@ -1,0 +1,4 @@
+(library
+ (name        astutils)
+ (public_name astutils)
+ (libraries compiler-libs.common))
