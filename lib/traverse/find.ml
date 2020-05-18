@@ -1,17 +1,10 @@
-open Parsetree
-open Astutils
-
 module Pat = Canonical.Patternctxt
 module L = Canonical.Warnloc
+module H = Canonical.Hint
+             
 
-
-let find_exprs (pats: Pat.patternctxt list ref) (f: string) (expr: Parsetree.expression) : unit =
-  let location = L.warn_loc_of_loc f expr.pexp_loc in
-  let source = Pprintast.string_of_expression expr in
-  match expr.pexp_desc with
-  | Pexp_apply (e, [_; _]) ->
-    if e =~ "=" then
-      pats := {location; source; pattern=expr.pexp_desc} :: !pats;
-  | _ -> ()
-
-      
+let pass_checks (store: H.hint list ref) (f: string) (expr : Parsetree.expression) : unit =
+  let pc = Pat.pc_of_expr f expr in
+  let checks = Checkers.checks in
+  List.iter (fun check -> check store pc) checks
+  
