@@ -4,18 +4,18 @@
 
 *)
 
-module Hint = Canonical.Hint
-
+open Canonical
+open Report
+    
 let lint_dir: string ref = ref "./" (* lint the current directory if none provided *)
 let show_type : (Hint.hint list -> unit) ref = ref Report.Display.student_display (* default to showing hints for students *)
 (* The spec we'll be using to format command line arguments *)
 
 
 let set_display_type : string -> unit = fun s ->
-  let module Disp = Report.Display in
   match s with
-    | "ta" -> show_type := Disp.ta_display
-    | _ -> show_type := Disp.student_display
+    | "ta" -> show_type := Display.ta_display
+    | _ -> show_type := Display.student_display
       
 let spec =
   let open Arg in

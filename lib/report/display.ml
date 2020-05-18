@@ -1,6 +1,4 @@
-
-module Warn = Canonical.Warnloc
-module Hint = Canonical.Hint
+open Canonical
 
 let string_of_warnloc : Warn.warn_loc -> string =
   fun {file; line_start; line_end; col_start; col_end} ->
