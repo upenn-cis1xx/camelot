@@ -1,4 +1,5 @@
 open Canonical
+open Utils
 open Astutils
     
 (* ------------------ Checks rules: _ = [literals] | [literals] = _  ----------------------- *)

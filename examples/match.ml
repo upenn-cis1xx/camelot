@@ -26,6 +26,6 @@ let b () =
 
 let b l =
   match l with
-  | x ::   [] -> ()
+  | _ :: [] -> ()
   | _ -> ()
          

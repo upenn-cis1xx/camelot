@@ -1,4 +1,4 @@
 (library
 (name style)
 (public_name style)
-(libraries compiler-libs.common canonical astutils str))
+(libraries compiler-libs.common canonical utils str))
