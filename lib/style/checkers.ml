@@ -5,4 +5,5 @@ let checks = [
 ; Match.MatchBool.check
 ; Match.MatchInt.check
 ; Match.MatchListVerbose.check
+; Verbose.LitPrepend.check
 ]

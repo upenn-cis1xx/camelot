@@ -2,8 +2,9 @@ open Canonical
     
 let read_at_loc (loc: Warn.warn_loc) =
   (* Produce a line-by-line stream from a file *)
-  let stream_of_chan file =
-    let chan = open_in file in
+  
+  let chan = open_in loc.file in
+  let stream_of_chan chan =
     Stream.from
       (fun _ -> try (Some (input_line chan))
         with End_of_file -> None)
@@ -18,7 +19,9 @@ let read_at_loc (loc: Warn.warn_loc) =
     in
     consume 0 stream in
 
-  loc.file |>
+  chan |>
   stream_of_chan |>
   code_at_line loc.line_start |>
-  (fun s -> String.sub s loc.col_start loc.col_end)
+  (fun s -> print_endline @@ "found: " ^ s; s ) |>
+  (fun s -> print_endline @@ string_of_int loc.col_start ^ ", " ^ string_of_int loc.col_end; s) |>
+  (fun s -> String.sub s loc.col_start (loc.col_end - loc.col_start))
