@@ -22,3 +22,15 @@ let is_list_lit : exp -> bool = fun e ->
 
 let is_option_lit : exp -> bool = fun e ->
   e =| "Some" || e =| "None"
+
+let is_pat_constr (case: Parsetree.case) lident_name =
+  begin match case.pc_lhs.ppat_desc with 
+    | Ppat_construct ({txt = Lident l; loc = _}, _) -> l = lident_name
+    | _ -> false
+  end
+
+let is_pat_const (case: Parsetree.case) =
+  begin match case.pc_lhs.ppat_desc with 
+    | Ppat_constant _ -> true
+    | _ -> false
+  end
