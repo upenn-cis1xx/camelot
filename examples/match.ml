@@ -23,7 +23,6 @@ let b () =
   end in ()
 
 (* Pattern matching with a overly complex cons case *)
-
 let b l =
   match l with
   | _ :: [] -> ()
