@@ -21,3 +21,11 @@ let b () =
     | [] -> true
     | [3] -> false
   end in ()
+
+(* Pattern matching with a overly complex cons case *)
+
+let b l =
+  match l with
+  | x ::   [] -> ()
+  | _ -> ()
+         

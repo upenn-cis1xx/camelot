@@ -4,4 +4,5 @@ let checks = [
 ; Lexical.LineLength.check
 ; Match.MatchBool.check
 ; Match.MatchInt.check
+; Match.MatchListVerbose.check
 ]
