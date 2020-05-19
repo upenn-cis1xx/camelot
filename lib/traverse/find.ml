@@ -12,6 +12,8 @@ let find_exprs (pats: Pat.patternctxt list ref) (f: string) (expr: Parsetree.exp
   | Pexp_apply (e, [_; _]) ->
     if e =~ "=" then
       pats := {location; source; pattern=expr.pexp_desc} :: !pats;
+  | Pexp_match (_, [_; _]) ->
+        pats := {location; source; pattern=expr.pexp_desc} :: !pats;
   | _ -> ()
 
       

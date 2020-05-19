@@ -1,6 +1,24 @@
 (*Pattern match with booleans*)
-let b = false in 
-begin match b with 
-  | false -> failwith ""
-  | true -> failwith ""
-end
+let b () = 
+  let b = false in 
+  let result = begin match b with 
+    | false -> true
+    | true -> false
+  end in ()
+               
+(*Pattern match with numbers*)
+let b () = 
+  let b = 1 in 
+  let result = begin match b with 
+    | 2 -> true
+    | 3 -> false
+  end in ()
+
+(*Pattern match with lists*)
+let b () = 
+  let b = [] in 
+  let result = begin match b with 
+    | [] -> true
+    | [3] -> false
+  end in ()
+               
