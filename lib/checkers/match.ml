@@ -12,6 +12,7 @@ module MatchBool : Check.CHECK = struct
   let check st {location; source; pattern} = 
     let pred (case: Parsetree.case) =
       begin match case.pc_lhs.ppat_desc with 
+        | Ppat_constant _
         | Ppat_construct ({txt = Lident "false"; loc = _}, _)
         | Ppat_construct ({txt = Lident "true"; loc = _}, _) -> true
         | _ -> false
