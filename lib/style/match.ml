@@ -24,6 +24,21 @@ module MatchInt : Check.CHECK = struct
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
 end
 
+module MatchRecord : Check.CHECK = struct
+  let fix = "using a let pattern match statement to extract record fields"
+  let violation = "using pattern matching on a record"
+  let check = make_check (fun case -> is_pat_record case.pc_lhs)
+                         ( fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
+end 
+
+
+module MatchTuple : Check.CHECK = struct
+  let fix = "using a let pattern match statement to extract tuple fields"
+  let violation = "using pattern matching on a tuple"
+  let check = make_check (fun case -> is_pat_tuple case.pc_lhs)
+                         ( fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
+end
+
 module MatchListVerbose : Check.CHECK = struct
   let fix = "expressing this match case more compactly"
   let violation = "using an overly complex match clause"

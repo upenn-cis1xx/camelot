@@ -16,3 +16,14 @@ module LitPrepend : Check.CHECK = struct
 end
 
 
+module TupleProj : Check.CHECK = struct
+  let fix = "using a let pattern match statement instead"
+  let violation = "using fst / snd to project values out of a tuple"
+  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+    begin match pattern with
+      | Pexp_apply (application, [_]) ->
+        if application =~ "fst" || application =~ "snd" then
+          st := Hint.mk_hint location source fix violation :: !st
+      | _ -> ()
+    end
+end

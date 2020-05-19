@@ -50,7 +50,17 @@ let is_option_lit : exp -> bool = fun e ->
 let is_pat_constr (pat: Parsetree.pattern) lident_name =
   match pat.ppat_desc with
   | Ppat_construct ({txt = Lident l; loc = _}, _) -> l = lident_name
-  | _ -> false 
+  | _ -> false
+
+let is_pat_tuple (pat: Parsetree.pattern) : bool =
+  match pat.ppat_desc with
+  | Ppat_tuple _ -> true
+  | _ -> false
+
+let is_pat_record (pat: Parsetree.pattern) : bool =
+  match pat.ppat_desc with
+  | Ppat_record _ -> true
+  |  _ -> false
 
 let is_case_constr (case: Parsetree.case) = is_pat_constr case.pc_lhs
 

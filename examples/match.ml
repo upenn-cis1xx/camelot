@@ -27,4 +27,16 @@ let b l =
   match l with
   | _ :: [] -> ()
   | _ -> ()
+
+
+type t = {x: int; y: int}
+(* Pattern matching on a record *)
          
+let b (r: t) =
+  match r with
+  | {x; y} -> ()
+
+let b (r: int * int) =
+  match r with
+  | (x,y) -> ()
+             

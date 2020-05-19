@@ -22,6 +22,4 @@ let read_at_loc (loc: Warn.warn_loc) =
   chan |>
   stream_of_chan |>
   code_at_line loc.line_start |>
-  (fun s -> print_endline @@ "found: " ^ s; s ) |>
-  (fun s -> print_endline @@ string_of_int loc.col_start ^ ", " ^ string_of_int loc.col_end; s) |>
   (fun s -> String.sub s loc.col_start (loc.col_end - loc.col_start))
