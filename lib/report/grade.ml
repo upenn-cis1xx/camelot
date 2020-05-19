@@ -1,3 +1,3 @@
-module Hint = Canonical.Hint
-
+open Canonical
+    
 let simple : Hint.hint list -> int = List.length

@@ -1,6 +1,14 @@
 open Ast_iterator
 open Parsetree
 open Descent
+open Find
+
+
+
+(** Iterates through the ast structure, applying the given iterator *)
+let apply_iterator (structure: Parsetree.structure) (iter: Ast_iterator.iterator) : unit = 
+  iter.structure iter structure
+
 
 (**
    Defines a linter iterator for traversing the OCaml AST.
@@ -71,3 +79,11 @@ and expr_iterator (handler: Parsetree.expression -> 'a) (iterator: Ast_iterator.
   (* Might be useful in the future if you want to tweak the OCaml that students are writing *)
   | Pexp_extension ext -> E.d_extension iterator ext
   | Pexp_unreachable -> ()
+
+
+
+(** Given a list ref and a filename, produce an iterator that runs the pass_checks method at each expression node in the
+    OCaml ast. This will mutate the store by appending new hints the checkers find as they analyse the source code.
+*)
+let make_linterator = fun store fname -> 
+	linterator (pass_checks store fname)
