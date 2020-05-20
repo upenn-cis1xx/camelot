@@ -16,4 +16,6 @@ let checks = [
 ; Verbose.IfToAnd.check
 ; Verbose.IfToAndInv.check
 ; Verbose.IfToOrInv.check
+; Verbose.NestedIf.check
+; Verbose.NestedMatch.check
 ]
