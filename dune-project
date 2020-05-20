@@ -51,5 +51,5 @@
 (package
  (name camelot-utils)
  (version 0.2)
- (synopsis "Utility modules for extracting information from the AST and the raw ml file for that AST ")
+ (synopsis "Utility modules for extracting information from the AST and the raw ml file for that AST")
 )
