@@ -29,6 +29,53 @@ module TupleProj : Check.CHECK = struct
 end
 
 
+module NestedIf : Check.CHECK = struct
+  let fix = "using let statements or helper methods / rethinking logic"
+  let violation = "using nested if statements more than three layers deep"
+  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+    begin match pattern with
+    | Pexp_ifthenelse (_, bthen, Some belse) ->
+      let lside = match get_branches bthen with | Some (e1, e2) -> [e1;e2] | None -> [] in
+      let rside = match get_branches belse with | Some (e1, e2) -> [e1; e2] | None -> [] in
+      let branches_three = (lside @ rside) |>
+                           List.map (fun (e: Parsetree.expression) -> skip_seq_let e) |> 
+                           List.exists (
+                             fun (e: Parsetree.expression) -> match e.pexp_desc with
+                               | Parsetree.Pexp_ifthenelse (_) -> true
+                               | _ -> false
+                             ) in
+      if branches_three then
+        st := Hint.mk_hint location source fix violation :: !st
+    | _ -> ()
+    end
+end
+
+module NestedMatch : Check.CHECK = struct
+  let fix = "using let statements or helper methods / rethinking logic"
+  let violation = "using nested match statements more than three layers deep"
+  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+    begin match pattern with
+      (* Layer one *)
+      | Pexp_match (_, cs) ->
+        let matches_three = List.map (fun (c: Parsetree.case) -> c.pc_rhs |> skip_seq_let) cs |>
+                     (* Grab the second layer *)
+                     List.map (fun (e: Parsetree.expression) ->
+                         match e.pexp_desc with
+                         | Pexp_match (_, cs) ->
+                           List.map (fun (c: Parsetree.case) -> c.pc_rhs |> skip_seq_let) cs
+                         | _ -> []
+                       ) |> List.flatten |>
+                       (* Grab the third layer *)
+                       List.exists (fun (e: Parsetree.expression) ->
+                           match e.pexp_desc with
+                           | Pexp_match _ -> true
+                           | _ -> false ) in
+        if matches_three then
+          st := Hint.mk_hint location source fix violation :: !st
+      | _ -> ()
+    end
+end
+
 
 module IfReturnsLit : Check.CHECK = struct
   let fix = "returning just the condition (+ some tweaks)"

@@ -16,6 +16,18 @@ let is_construct (e : exp) id : bool =
 
 let (=|) : exp -> string -> bool = fun e x -> is_construct e x
 
+let rec skip_seq_let (e: Parsetree.expression) : Parsetree.expression =
+  match e.pexp_desc with
+  | Pexp_sequence (_, e') -> skip_seq_let e'
+  | Pexp_let (_, _, e') -> skip_seq_let e'
+  | _ -> e
+
+let get_branches (e: Parsetree.expression) : (Parsetree.expression * Parsetree.expression) option =
+  let e = skip_seq_let e in
+  match e.pexp_desc with
+  | Pexp_ifthenelse(_, bthen, Some belse) -> Some (bthen, belse)
+  | _ -> None
+
 
 let is_list_lit : exp -> bool = fun e ->
   e =| "::" || e =| "[]"
