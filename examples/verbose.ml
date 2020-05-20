@@ -9,8 +9,6 @@ let f t = 1 :: [] @ t
 (* Tuple projection bad! *)
 
 let f (t: int * int) = fst t + snd t
-<<<<<<< HEAD
-
 
 (* Nested ifs :( - we skip local lets and sequencing to get the actual return type for now *)
 let x = true
@@ -43,9 +41,3 @@ let f () =
     end
   | _ -> true
   end
-  
-    
-          
-      
-=======
->>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686

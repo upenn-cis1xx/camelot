@@ -27,8 +27,6 @@ module TupleProj : Check.CHECK = struct
       | _ -> ()
     end
 end
-<<<<<<< HEAD
-
 
 module NestedIf : Check.CHECK = struct
   let fix = "using let statements or helper methods / rethinking logic"
@@ -170,5 +168,3 @@ module IfToOrInv : Check.CHECK = struct
     end
   
 end
-=======
->>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
