@@ -52,4 +52,8 @@ let ta_display : Hint.hint list -> unit = fun l ->
   let score = "Final score: " ^ string_of_int (Grade.simple l ) ^ " mistakes" in
   let set = [ANSITerminal.green; ANSITerminal.Bold] in
   ANSITerminal.print_string set score
+
+let gradescope_display : Hint.hint list -> unit = fun l ->
+  let score = string_of_int (Grade.simple l) in
+  print_string score
     
