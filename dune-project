@@ -2,12 +2,12 @@
 (name camelot)
 (generate_opam_files true)
 
-(version 1.0.0)
+(version 1.0.1)
 
 (source (github upenn-cis1xx/camelot))
 (license "Apache License 2.0")
 (authors "Vighnesh Vijay" "Daniel Like" "William Goeller")
-(maintainers "cis120@seas.upenn.edu")
+(maintainers "William Goeller <william@williamgoeller.com>")
 
 (package
  (name camelot)
