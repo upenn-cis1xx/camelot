@@ -1,4 +1,3 @@
 (library
 (name traverse)
-(public_name camelot-traverse)
 (libraries compiler-libs.common camelot-canonical camelot-style))

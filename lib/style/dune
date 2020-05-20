@@ -1,4 +1,3 @@
 (library
 (name style)
-(public_name camelot-style)
 (libraries compiler-libs.common camelot-canonical camelot-utils str))

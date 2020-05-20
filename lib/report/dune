@@ -1,4 +1,3 @@
 (library
- (name        report)
- (public_name camelot-report)
+ (name report)
  (libraries compiler-libs.common ANSITerminal camelot-canonical))
