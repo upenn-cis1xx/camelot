@@ -1,8 +1,4 @@
 (library
 (name traverse)
-<<<<<<< HEAD
-(public_name traverse)
-=======
 (public_name camelot-traverse)
->>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
 (libraries compiler-libs.common canonical style))
