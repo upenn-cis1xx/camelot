@@ -4,7 +4,8 @@ Make sure you have ocaml version 4.09.0, otherwise the parsetree will be differe
 
 ## Acknowledgements
 This project wouldn't have been possible without the following three repos:
-[sml-style-check](https://github.com/jluningp/sml-style-check), for guiding the design of the linter, as well as basically contributing the structure of our project (especially the extendable checker modules :) ),
+
+[sml-style-check](https://github.com/jluningp/sml-style-check) from the folks at CMU: for guiding the design of the linter, as well as basically contributing the structure of our project (especially the extendable checker modules :) ),
 
 [hlint](https://github.com/ndmitchell/hlint) for a good reference on building a linter,
 
