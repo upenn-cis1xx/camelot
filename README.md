@@ -2,6 +2,14 @@
 An OCaml Linter / Style Checker for the OCaml compiler version 4.09.0.
 Make sure you have ocaml version 4.09.0, otherwise the parsetree will be different
 
+## Acknowledgements
+This project wouldn't have been possible without the following three repos:
+[sml-style-check](https://github.com/jluningp/sml-style-check), for guiding the design of the linter, as well as basically contributing the structure of our project (especially the extendable checker modules :) ),
+
+[hlint](https://github.com/ndmitchell/hlint) for a good reference on building a linter,
+
+and [ppx_tools/rewriter](https://github.com/ocaml-ppx/ppx_tools/blob/master/rewriter.ml), for giving us useful starter code and being the building block on which camelot started. 
+
 ## Dependencies 
 - dune (v 2.4.0) - dune will manage installing the appropriate dependencies for you I believe
 - ocamlc v4.09.0
@@ -32,3 +40,4 @@ Run 'tests':
 If this argument is malformed or not present, the reporting type defaults to student
 
 `-f <filename>` : Lints the given file
+
