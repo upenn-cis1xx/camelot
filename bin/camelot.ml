@@ -68,7 +68,7 @@ let files_in_dir dirname =
 let usage_msg =
   "invoke with -r (only works if -d is set too) to recurse into subdirectories\n" ^
   "invoke with -d <dir_name> to specify a directory to lint, or just run the program with default args\n" ^
-  "invoke with -show <student | ta | gradescope> to select the display type - usually ta's want a briefer summary" ^
+  "invoke with -show <student | ta | gradescope> to select the display type - usually ta's want a briefer summary\n" ^
   "invoke with -f <.ml filename> to lint a particular file"
 
 let rec parse_sources_in dirname : (string * Parsetree.structure) list = 
@@ -99,4 +99,3 @@ let () =
   parse_sources_in !lint_dir |> Linter.lint;
   (* Display the hints *)
   Linter.hints () |> !show_type
-
