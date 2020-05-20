@@ -1,4 +1,8 @@
 (library
 (name style)
+<<<<<<< HEAD
 (public_name style)
+=======
+(public_name camelot-style)
+>>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
 (libraries compiler-libs.common canonical utils str))

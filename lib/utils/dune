@@ -1,4 +1,8 @@
 (library
  (name        utils)
+<<<<<<< HEAD
  (public_name utils)
+=======
+ (public_name camelot-utils)
+>>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
  (libraries compiler-libs.common canonical))

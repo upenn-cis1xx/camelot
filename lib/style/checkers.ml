@@ -9,6 +9,7 @@ let checks = [
 ; Match.MatchTuple.check
 ; Verbose.LitPrepend.check
 ; Verbose.TupleProj.check
+<<<<<<< HEAD
 ; Verbose.IfReturnsLit.check
 ; Verbose.IfCondThenCond.check
 ; Verbose.IfNotCond.check
@@ -18,4 +19,6 @@ let checks = [
 ; Verbose.IfToOrInv.check
 ; Verbose.NestedIf.check
 ; Verbose.NestedMatch.check
+=======
+>>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
 ]

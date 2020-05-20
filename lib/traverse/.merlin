@@ -1,12 +1,22 @@
 EXCLUDE_QUERY_DIR
+<<<<<<< HEAD
 B /Users/vighnesh/.opam/camelot/lib/ocaml
 B /Users/vighnesh/.opam/camelot/lib/ocaml/compiler-libs
+=======
+B /Users/williamgoeller/.opam/default/lib/ocaml
+B /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
+>>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
 B ../../_build/default/lib/canonical/.canonical.objs/byte
 B ../../_build/default/lib/style/.style.objs/byte
 B ../../_build/default/lib/traverse/.traverse.objs/byte
 B ../../_build/default/lib/utils/.utils.objs/byte
+<<<<<<< HEAD
 S /Users/vighnesh/.opam/camelot/lib/ocaml
 S /Users/vighnesh/.opam/camelot/lib/ocaml/compiler-libs
+=======
+S /Users/williamgoeller/.opam/default/lib/ocaml
+S /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
+>>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
 S ../canonical
 S ../style
 S .

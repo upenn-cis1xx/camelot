@@ -27,6 +27,7 @@ module TupleProj : Check.CHECK = struct
       | _ -> ()
     end
 end
+<<<<<<< HEAD
 
 
 module NestedIf : Check.CHECK = struct
@@ -169,3 +170,5 @@ module IfToOrInv : Check.CHECK = struct
     end
   
 end
+=======
+>>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686

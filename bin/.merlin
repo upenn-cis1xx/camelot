@@ -1,18 +1,32 @@
 EXCLUDE_QUERY_DIR
+<<<<<<< HEAD
 B /Users/vighnesh/.opam/camelot/lib/ANSITerminal
 B /Users/vighnesh/.opam/camelot/lib/bytes
 B /Users/vighnesh/.opam/camelot/lib/ocaml
 B /Users/vighnesh/.opam/camelot/lib/ocaml/compiler-libs
+=======
+B /Users/williamgoeller/.opam/default/lib/ANSITerminal
+B /Users/williamgoeller/.opam/default/lib/bytes
+B /Users/williamgoeller/.opam/default/lib/ocaml
+B /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
+>>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
 B ../_build/default/bin/.camelot.eobjs/byte
 B ../_build/default/lib/canonical/.canonical.objs/byte
 B ../_build/default/lib/report/.report.objs/byte
 B ../_build/default/lib/style/.style.objs/byte
 B ../_build/default/lib/traverse/.traverse.objs/byte
 B ../_build/default/lib/utils/.utils.objs/byte
+<<<<<<< HEAD
 S /Users/vighnesh/.opam/camelot/lib/ANSITerminal
 S /Users/vighnesh/.opam/camelot/lib/bytes
 S /Users/vighnesh/.opam/camelot/lib/ocaml
 S /Users/vighnesh/.opam/camelot/lib/ocaml/compiler-libs
+=======
+S /Users/williamgoeller/.opam/default/lib/ANSITerminal
+S /Users/williamgoeller/.opam/default/lib/bytes
+S /Users/williamgoeller/.opam/default/lib/ocaml
+S /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
+>>>>>>> 2ecef28b469813b113d004f061244e21f2dd6686
 S .
 S ../lib/canonical
 S ../lib/report
