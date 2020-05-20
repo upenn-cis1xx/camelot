@@ -33,7 +33,7 @@ let spec =
     "-r", Set recurse, 
     "\tIf calling on a directory using -d, recurse into its subdirectories"
   ;  "-d", Set_string lint_dir, 
-    "Invoke the linter on the provided directory, defaulting to the current directory, non re"
+    "\tInvoke the linter on the provided directory, defaulting to the current directory, non re"
   ; "-show", String set_display_type,
     "Make the linter output display for either ta's | students | gradescope"
   ; "-f", String set_lint_file,
