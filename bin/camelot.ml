@@ -7,7 +7,8 @@
 open Canonical
 open Report
     
-let lint_dir: string ref = ref "./" (* lint the current directory if none provided *)
+let lint_dir : string ref = ref "./" (* lint the current directory if none provided *)
+let recurse : bool ref = ref false (* Do not recurse the directory by default *)
 let lint_file : string option ref = ref None (*  lint a given file*)
 let show_type : (Hint.hint list -> unit) ref = ref Report.Display.student_display (* default to showing hints for students *)
 (* The spec we'll be using to format command line arguments *)
@@ -29,7 +30,9 @@ let set_lint_file : string -> unit = fun s ->
 let spec =
   let open Arg in
   align [
-    "-d", Set_string lint_dir, 
+    "-r", Set recurse, 
+    "If calling on a directory using -d, recurse into its subdirectories"
+  ;  "-d", Set_string lint_dir, 
     "Invoke the linter on the provided directory, defaulting to the current directory, non re"
   ; "-show", String set_display_type,
     "Make the linter output display for either ta's | students | gradescope"
@@ -51,11 +54,12 @@ let lex_src file =
 let parse_src (src, lexbuf) =
   src, Parse.implementation lexbuf
 
+let sanitize_dir d =
+    if d.[String.length d - 1] = '/' then d 
+    else d ^ "/"
+
 let files_in_dir dirname = 
   let open Sys in
-  let sanitize_dir d =
-    if d.[String.length d - 1] = '/' then d 
-    else d ^ "/" in
   let dir = sanitize_dir dirname in
   if not (file_exists dir && is_directory dir) 
   then fail @@ dir ^ " doesn't exist or isn't a directory!";
@@ -66,19 +70,27 @@ let usage_msg =
   "invoke with -show <student | ta | gradescope> to select the display type - usually ta's want a briefer summary" ^
   "invoke with -f <.ml filename> to lint a particular file"
 
-let parse_sources_in dirname = 
+let rec parse_sources_in dirname : (string * Parsetree.structure) list = 
   let open Sys in
-  let to_lint = (match !lint_file with
+  let files_in_dir = (match !lint_file with
       | Some f -> [ f ]
       | None -> dirname |> files_in_dir
-    ) |> (* Prefer linting single files *) 
+    ) in (* Prefer linting single files *) 
+  let children : (string * Parsetree.structure) list = 
+    files_in_dir |>
     List.filter (fun f -> not (is_directory f)) |> (* remove directories *)
     List.filter (fun f -> Filename.check_suffix f ".ml") |> (* only want to lint *.ml files *)
     List.map (lex_src) |> (* Lex the files *)
     List.map (parse_src) (* Parse the files *) in
-  to_lint
-
-
+  let recursed : (string * Parsetree.structure) list = (* recurse on subdirectories *)
+    if !recurse then
+      List.concat (List.map (fun d ->
+        if is_directory d 
+        then parse_sources_in d
+        else []
+      ) files_in_dir)
+    else [] in
+  children @ recursed
 
 let () = 
   Arg.parse spec (fun _ -> ()) usage_msg;
