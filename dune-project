@@ -15,7 +15,6 @@
  (depends
   (dune (>= 2.5))
   (ocaml (>= 4.09.0))
-  (ocamlfind (>= 1.8.1))
   (ANSITerminal (>= 0.8))
  )
 )
