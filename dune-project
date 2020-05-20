@@ -5,7 +5,7 @@
 (version 0.1)
 
 (source (github upenn-cis1xx/camelot))
-(license Apache)
+(license "Apache License 2.0")
 (authors "Vighnesh Vijay" "Daniel Like" "William Goeller")
 (maintainers "cis120@seas.upenn.edu")
 
