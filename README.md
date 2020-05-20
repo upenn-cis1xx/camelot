@@ -28,5 +28,7 @@ Run 'tests':
 
 `-d <lintdir>` : Specify the directory in which to lint
 
-`-show <ta | student>` : Specify the reporting type - does a student see this output or a ta?
+`-show <ta | student | gradescope>` : Specify the reporting type - does a student see this output or a ta?
 If this argument is malformed or not present, the reporting type defaults to student
+
+`-f <filename>` : Lints the given file
