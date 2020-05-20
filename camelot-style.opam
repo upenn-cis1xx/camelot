@@ -2,7 +2,7 @@
 opam-version: "2.0"
 version: "0.2"
 synopsis:
-  "Style Checking Modules implemented here. Used by the Camelot package."
+  "Style Checking Modules implemented here. Used by the Camelot package"
 maintainer: ["cis120@seas.upenn.edu"]
 authors: ["Vighnesh Vijay" "Daniel Like" "William Goeller"]
 license: "Apache License 2.0"

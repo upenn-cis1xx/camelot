@@ -27,29 +27,29 @@
 (package
  (name camelot-canonical)
  (version 0.2)
- (synopsis "Core types for the camelot linter internals. Used by the Camelot package.")
+ (synopsis "Core types for the camelot linter internals. Used by the Camelot package")
 )
 
 (package
  (name camelot-report)
  (version 0.2)
- (synopsis "Output modules for reporting and grading linted code. Used by the Camelot package.")
+ (synopsis "Output modules for reporting and grading linted code. Used by the Camelot package")
 )
 
 (package
  (name camelot-style)
  (version 0.2)
- (synopsis "Style Checking Modules implemented here. Used by the Camelot package.")
+ (synopsis "Style Checking Modules implemented here. Used by the Camelot package")
 )
 
 (package
  (name camelot-traverse)
  (version 0.2)
- (synopsis "Core modules for traversing the OCaml AST and calculating the style hints. Used by the Camelot package.")
+ (synopsis "Core modules for traversing the OCaml AST and calculating the style hints. Used by the Camelot package")
 )
 
 (package
  (name camelot-utils)
  (version 0.2)
- (synopsis "Utility modules for extracting information from the AST and the raw ml file for that AST. Used by the Camelot package.")
+ (synopsis "Utility modules for extracting information from the AST and the raw ml file for that AST. Used by the Camelot package")
 )
