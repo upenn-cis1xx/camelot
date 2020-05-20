@@ -14,7 +14,7 @@
  (synopsis "An OCaml Linter / Style Checker")
  (depends
   (dune (>= 2.5))
-  (ocamlc (>= 4.09.0))
+  (ocaml-base-compiler (>= 4.09.0))
   (ocamlfind (>= 1.8.1))
   (camelot-canonical (>= 0.2))
   (camelot-report (>= 0.2))
