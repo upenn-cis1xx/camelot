@@ -31,7 +31,7 @@ let spec =
   let open Arg in
   align [
     "-r", Set recurse, 
-    "If calling on a directory using -d, recurse into its subdirectories"
+    "\tIf calling on a directory using -d, recurse into its subdirectories"
   ;  "-d", Set_string lint_dir, 
     "Invoke the linter on the provided directory, defaulting to the current directory, non re"
   ; "-show", String set_display_type,
