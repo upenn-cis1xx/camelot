@@ -53,9 +53,13 @@ let parse_src (src, lexbuf) =
 
 let files_in_dir dirname = 
   let open Sys in
-  if not (file_exists dirname && is_directory dirname) 
-  then fail @@ dirname ^ " doesn't exist or isn't a directory!";
-  readdir dirname |> Array.to_list |> List.map (fun file -> dirname ^ file)
+  let sanitize_dir d =
+    if d.[String.length d - 1] = '/' then d 
+    else d ^ "/" in
+  let dir = sanitize_dir dirname in
+  if not (file_exists dir && is_directory dir) 
+  then fail @@ dir ^ " doesn't exist or isn't a directory!";
+  readdir dir |> Array.to_list |> List.map (fun file -> dir ^ file)
 
 let usage_msg =
   "invoke with -d <dir_name> to specify a directory to lint, or just run the program with default args\n" ^
