@@ -14,7 +14,7 @@
  (synopsis "An OCaml Linter / Style Checker")
  (depends
   (dune (>= 2.5))
-  (ocaml (>= 4.09.0))
+  (ocaml (>= 4.10.0))
   (ANSITerminal (>= 0.8))
  )
 )
