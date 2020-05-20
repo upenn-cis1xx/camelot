@@ -81,13 +81,13 @@ let spec =
   let open Arg in
   [
     "-r", Set recurse, 
-    "\tIf calling on a directory using -d, recurse into its subdirectories"
+    "\t If calling on a directory using -d, recurse into its subdirectories"
   ;  "-d", Set_string lint_dir, 
-    "\tInvoke the linter on the provided directory, defaulting to the current directory, non re"
+    "\t Invoke the linter on the provided directory, defaulting to the current directory, non re"
   ; "-show", String set_display_type,
-    "\tMake the linter output display for either ta's | students | gradescope"
+    " Make the linter output display for either ta's | students | gradescope"
   ; "-f", String set_lint_file,
-    "Invoke the linter on a single file"
+    "\t Invoke the linter on a single file"
   ] 
 
 let () = 
