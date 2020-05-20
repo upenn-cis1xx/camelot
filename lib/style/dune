@@ -1,3 +1,3 @@
 (library
 (name style)
-(libraries compiler-libs.common camelot-canonical camelot-utils str))
+(libraries compiler-libs.common canonical utils str))
