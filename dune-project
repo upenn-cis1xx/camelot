@@ -2,7 +2,7 @@
 (name camelot)
 (generate_opam_files true)
 
-(version 0.1)
+(version 0.2)
 
 (source (github upenn-cis1xx/camelot))
 (license "Apache License 2.0")
@@ -16,40 +16,40 @@
   (dune (>= 2.5))
   (ocamlc (>= 4.09.0))
   (ocamlfind (>= 1.8.1))
-  (camelot-canonical (>= 0.1))
-  (camelot-report (>= 0.1))
-  (camelot-style (>= 0.1))
-  (camelot-traverse (>= 0.1))
-  (camelot-utils (>= 0.1))
+  (camelot-canonical (>= 0.2))
+  (camelot-report (>= 0.2))
+  (camelot-style (>= 0.2))
+  (camelot-traverse (>= 0.2))
+  (camelot-utils (>= 0.2))
   )
 )
 
 (package
  (name camelot-canonical)
- (version 0.1)
- (synopsis "Part of the Camelot package")
+ (version 0.2)
+ (synopsis "Core types for the camelot linter internals. Used by the Camelot package.")
 )
 
 (package
  (name camelot-report)
- (version 0.1)
- (synopsis "Part of the Camelot package")
+ (version 0.2)
+ (synopsis "Output modules for reporting and grading linted code. Used by the Camelot package.")
 )
 
 (package
  (name camelot-style)
- (version 0.1)
- (synopsis "Part of the Camelot package")
+ (version 0.2)
+ (synopsis "Style Checking Modules implemented here. Used by the Camelot package.")
 )
 
 (package
  (name camelot-traverse)
- (version 0.1)
- (synopsis "Part of the Camelot package")
+ (version 0.2)
+ (synopsis "Core modules for traversing the OCaml AST and calculating the style hints. Used by the Camelot package.")
 )
 
 (package
  (name camelot-utils)
- (version 0.1)
- (synopsis "Part of the Camelot package")
+ (version 0.2)
+ (synopsis "Utility modules for extracting information from the AST and the raw ml file for that AST. Used by the Camelot package.")
 )

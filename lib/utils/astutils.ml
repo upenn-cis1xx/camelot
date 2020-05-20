@@ -17,6 +17,18 @@ let is_construct (e : exp) id : bool =
 
 let (=|) : exp -> string -> bool = fun e x -> is_construct e x
 
+let rec skip_seq_let (e: Parsetree.expression) : Parsetree.expression =
+  match e.pexp_desc with
+  | Pexp_sequence (_, e') -> skip_seq_let e'
+  | Pexp_let (_, _, e') -> skip_seq_let e'
+  | _ -> e
+
+let get_branches (e: Parsetree.expression) : (Parsetree.expression * Parsetree.expression) option =
+  let e = skip_seq_let e in
+  match e.pexp_desc with
+  | Pexp_ifthenelse(_, bthen, Some belse) -> Some (bthen, belse)
+  | _ -> None
+
 
 let is_list_lit : exp -> bool = fun e ->
   e =| "::" || e =| "[]"
@@ -31,6 +43,11 @@ let is_exp_id : exp -> bool = fun e ->
   | Pexp_ident _ -> true
   | _ ->  false
 
+let are_idents_same (el: Parsetree.expression) (er: Parsetree.expression) =
+  match el.pexp_desc, er.pexp_desc with
+  | Pexp_ident {txt = Lident i; _} , Pexp_ident {txt = Lident j; _} -> i = j
+  | _ -> false
+
 let is_singleton_list : exp -> bool = fun e ->
   begin match e.pexp_desc with
   | Pexp_construct ({txt = Lident "::";_}, Some cons) ->
@@ -41,7 +58,7 @@ let is_singleton_list : exp -> bool = fun e ->
     end
   | _ -> false
   end
-  
+
 
 let is_option_lit : exp -> bool = fun e ->
   e =| "Some" || e =| "None"

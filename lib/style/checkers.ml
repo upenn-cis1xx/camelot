@@ -9,4 +9,13 @@ let checks = [
 ; Match.MatchTuple.check
 ; Verbose.LitPrepend.check
 ; Verbose.TupleProj.check
+; Verbose.IfReturnsLit.check
+; Verbose.IfCondThenCond.check
+; Verbose.IfNotCond.check
+; Verbose.IfToOr.check
+; Verbose.IfToAnd.check
+; Verbose.IfToAndInv.check
+; Verbose.IfToOrInv.check
+; Verbose.NestedIf.check
+; Verbose.NestedMatch.check
 ]
