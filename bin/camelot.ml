@@ -66,6 +66,7 @@ let files_in_dir dirname =
   readdir dir |> Array.to_list |> List.map (fun file -> dir ^ file)
 
 let usage_msg =
+  "invoke with -r (only works if -d is set too) to recurse into subdirectories\n" ^
   "invoke with -d <dir_name> to specify a directory to lint, or just run the program with default args\n" ^
   "invoke with -show <student | ta | gradescope> to select the display type - usually ta's want a briefer summary" ^
   "invoke with -f <.ml filename> to lint a particular file"
