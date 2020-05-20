@@ -12,8 +12,8 @@ This project wouldn't have been possible without the following three repos:
 and [ppx_tools/rewriter](https://github.com/ocaml-ppx/ppx_tools/blob/master/rewriter.ml), for giving us useful starter code and being the building block on which camelot started. 
 
 ## Dependencies 
+- ocaml >= v4.10.0
 - dune (v 2.4.0) - dune will manage installing the appropriate dependencies for you I believe
-- ocaml-base-compiler >= v4.09.0
 - compiler-libs.common
 - fswatch (for Build + Watch)
 - ANSITerminal
