@@ -1,4 +1,4 @@
 (library
  (name        canonical)
- (public_name canonical)
+ (public_name camelot-canonical)
  (libraries compiler-libs.common))
