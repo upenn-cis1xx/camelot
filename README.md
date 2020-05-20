@@ -13,7 +13,7 @@ and [ppx_tools/rewriter](https://github.com/ocaml-ppx/ppx_tools/blob/master/rewr
 
 ## Dependencies 
 - dune (v 2.4.0) - dune will manage installing the appropriate dependencies for you I believe
-- ocamlc v4.09.0
+- ocaml-base-compiler >= v4.09.0
 - ocamlfind (for debugging / dev)
 - compiler-libs.common
 - fswatch (for Build + Watch)
