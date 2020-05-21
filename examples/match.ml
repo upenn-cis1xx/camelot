@@ -14,6 +14,20 @@ let b () =
     | 3 -> false
   end in ()
 
+(*Pattern match with a long list of strings (this is considered OK)*)
+let b () = 
+  let b = "Tuesday" in 
+  let result = begin match b with 
+    | "Monday" -> "Tuesday"
+    | "Tuesday" -> "Friday"
+    | "Wednesday" -> "Thursday"
+    | "Thursday" -> "Friday"
+    | "Friday" -> "Saturday"
+    | "Saturday" -> "Sunday"
+    | "Sunday" -> "Monday"
+    | _ -> failwith "not a valid day"
+  end in ()
+
 (*Pattern match with lists*)
 let b () = 
   let b = [] in 
@@ -39,4 +53,9 @@ let b (r: t) =
 let b (r: int * int) =
   match r with
   | (x,y) -> ()
+
+  let b (r: int * int) =
+    match r with
+    | (1,2) -> ()
+    | (3,4) -> ()
              
