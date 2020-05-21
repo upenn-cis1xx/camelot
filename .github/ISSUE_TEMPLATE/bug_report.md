@@ -25,14 +25,10 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+ - OCaml version: [e.g. 4.09.0, 4.10.0]
+ - Dune version : [e.g. 2.4.2, 2.5.2]
+ - Camelot version : [e.g. 1.0.0]
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
 
 **Additional context**
 Add any other context about the problem here.
