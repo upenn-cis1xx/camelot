@@ -1,11 +1,15 @@
 open Canonical
 open Utils
 open Astutils
-    
-let make_check pred gen_error = 
+
+(* A pattern match that is considered long enough to override usual checks*)
+let long_pattern_match = 5
+
+let make_check pred gen_error override_len= 
   fun st ({location; source; pattern} : Pctxt.patternctxt) -> 
     begin match pattern with
       | Pexp_match (_, cases) -> 
+          if List.length cases >= override_len then () else
           if List.find_opt pred cases <> None then gen_error location source st
       | _ -> ()
     end
@@ -15,6 +19,7 @@ module MatchBool : Check.CHECK = struct
   let violation = "using pattern matching when `=` is better"
   let check = make_check (fun case -> is_case_constr case "true" || is_case_constr case "false") 
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
+                         long_pattern_match
 end
 
 module MatchInt : Check.CHECK = struct
@@ -22,6 +27,7 @@ module MatchInt : Check.CHECK = struct
   let violation = "using pattern matching when `=` is better"
   let check = make_check is_case_const 
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
+                         long_pattern_match
 end
 
 module MatchRecord : Check.CHECK = struct
@@ -29,6 +35,7 @@ module MatchRecord : Check.CHECK = struct
   let violation = "using pattern matching on a record"
   let check = make_check (fun case -> is_pat_record case.pc_lhs)
                          ( fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
+                         long_pattern_match
 end 
 
 
@@ -37,6 +44,7 @@ module MatchTuple : Check.CHECK = struct
   let violation = "using pattern matching on a tuple"
   let check = make_check (fun case -> is_pat_tuple case.pc_lhs)
                          ( fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
+                         2
 end
 
 module MatchListVerbose : Check.CHECK = struct

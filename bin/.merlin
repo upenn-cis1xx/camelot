@@ -1,18 +1,18 @@
 EXCLUDE_QUERY_DIR
-B /Users/williamgoeller/.opam/default/lib/ANSITerminal
-B /Users/williamgoeller/.opam/default/lib/bytes
-B /Users/williamgoeller/.opam/default/lib/ocaml
-B /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
+B /home/dlike/.opam/4.09.0/lib/ANSITerminal
+B /home/dlike/.opam/4.09.0/lib/bytes
+B /home/dlike/.opam/4.09.0/lib/ocaml
+B /home/dlike/.opam/4.09.0/lib/ocaml/compiler-libs
 B ../_build/default/bin/.camelot.eobjs/byte
 B ../_build/default/lib/canonical/.canonical.objs/byte
 B ../_build/default/lib/report/.report.objs/byte
 B ../_build/default/lib/style/.style.objs/byte
 B ../_build/default/lib/traverse/.traverse.objs/byte
 B ../_build/default/lib/utils/.utils.objs/byte
-S /Users/williamgoeller/.opam/default/lib/ANSITerminal
-S /Users/williamgoeller/.opam/default/lib/bytes
-S /Users/williamgoeller/.opam/default/lib/ocaml
-S /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
+S /home/dlike/.opam/4.09.0/lib/ANSITerminal
+S /home/dlike/.opam/4.09.0/lib/bytes
+S /home/dlike/.opam/4.09.0/lib/ocaml
+S /home/dlike/.opam/4.09.0/lib/ocaml/compiler-libs
 S .
 S ../lib/canonical
 S ../lib/report
