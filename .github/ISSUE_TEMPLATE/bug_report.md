@@ -25,8 +25,8 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
- - OCaml version: [e.g. 4.09.0, 4.10.0]
- - Dune version : [e.g. 2.4.2, 2.5.2]
+ - OCaml version: [e.g. 4.10.0]
+ - Dune version : [e.g. 2.5.2]
  - Camelot version : [e.g. 1.0.0]
 
 
