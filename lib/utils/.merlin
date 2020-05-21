@@ -1,8 +1,8 @@
 EXCLUDE_QUERY_DIR
-B /Users/vighnesh/.opam/arthur/lib/ocaml/compiler-libs
+B /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
 B ../../_build/default/lib/canonical/.canonical.objs/byte
 B ../../_build/default/lib/utils/.utils.objs/byte
-S /Users/vighnesh/.opam/arthur/lib/ocaml/compiler-libs
+S /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
 S ../canonical
 S .
 FLG -open Utils__ -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs
