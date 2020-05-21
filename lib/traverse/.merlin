@@ -1,12 +1,12 @@
 EXCLUDE_QUERY_DIR
-B /home/dlike/.opam/4.09.0/lib/ocaml
-B /home/dlike/.opam/4.09.0/lib/ocaml/compiler-libs
+B /Users/williamgoeller/.opam/default/lib/ocaml
+B /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
 B ../../_build/default/lib/canonical/.canonical.objs/byte
 B ../../_build/default/lib/style/.style.objs/byte
 B ../../_build/default/lib/traverse/.traverse.objs/byte
 B ../../_build/default/lib/utils/.utils.objs/byte
-S /home/dlike/.opam/4.09.0/lib/ocaml
-S /home/dlike/.opam/4.09.0/lib/ocaml/compiler-libs
+S /Users/williamgoeller/.opam/default/lib/ocaml
+S /Users/williamgoeller/.opam/default/lib/ocaml/compiler-libs
 S ../canonical
 S ../style
 S .
