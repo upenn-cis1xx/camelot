@@ -12,7 +12,7 @@ module LineLength : Check.CHECK = struct
     if (ctxt.location.col_start > max_line_length || ctxt.location.col_end > max_line_length)
        && not (!seen_line_exceed)
     then
-      let raw = read_at_loc ctxt.location in
+      let raw = code_at_loc ctxt.location ctxt.source in
       st := Hint.mk_hint ctxt.location raw fix violation :: !st;
       seen_line_exceed := true
       

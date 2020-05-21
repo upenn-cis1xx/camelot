@@ -79,7 +79,7 @@ module MatchListVerbose : Check.CHECK = struct
         | None -> ()
         | Some c ->
           let refined_loc = Warn.warn_loc_of_loc ctxt.location.file c.pc_lhs.ppat_loc in
-          let raw_source = IOUtils.read_at_loc refined_loc in
+          let raw_source = IOUtils.code_at_loc refined_loc ctxt.source in
           if test raw_source then
             st := Hint.mk_hint refined_loc ("| " ^ raw_source ^ " -> ...") fix violation :: !st 
         end

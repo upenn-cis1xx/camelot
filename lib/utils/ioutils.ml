@@ -1,5 +1,5 @@
 open Canonical
-    
+
 let read_at_loc (loc: Warn.warn_loc) =
   (* Produce a line-by-line stream from a file *)
   
@@ -23,3 +23,7 @@ let read_at_loc (loc: Warn.warn_loc) =
   stream_of_chan |>
   code_at_line loc.line_start |>
   (fun s -> String.sub s loc.col_start (loc.col_end - loc.col_start))
+
+let code_at_loc (loc: Warn.warn_loc) (default: string) =
+  try read_at_loc loc
+        with _ -> default
