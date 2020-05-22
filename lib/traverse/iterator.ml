@@ -86,4 +86,4 @@ and expr_iterator (handler: Parsetree.expression -> 'a) (iterator: Ast_iterator.
     OCaml ast. This will mutate the store by appending new hints the checkers find as they analyse the source code.
 *)
 let make_linterator = fun store fname -> 
-	linterator (pass_checks store fname)
+	linterator (pass_exprs store fname)
