@@ -124,10 +124,25 @@ let uses_func_recursively_list (case: Parsetree.case) func_name tail_binding : b
   | _ -> false
   end
 
-let body_of_fun (pat: Parsetree.value_binding) : Parsetree.expression =
-  let skipped = skip_seq_let pat.pvb_expr in
+
+(** Has to be recursive, since functions of multiple arguments are curried 
+    That's why we interleave skipping sequencing and lets with calls to
+    body_of_fun, til we reach a `fixpoint`.
+*)
+let rec body_of_fun (exp: Parsetree.expression) : Parsetree.expression =
+  let skipped = skip_seq_let exp in
   begin match skipped.pexp_desc with
-    | Pexp_fun (_, _, _, e) -> skip_seq_let e
+    | Pexp_fun (_, _, _, e) -> e |> skip_seq_let |> body_of_fun
     | _ -> skipped
   end
+
+let uses_func_recursively_seq (case: Parsetree.case) func_name tail_binding : bool = 
+  let rhs = case.pc_rhs in
+  let rhs_fixpoint = rhs |> body_of_fun |> skip_seq_let in
+  match rhs_fixpoint.pexp_desc with
+  | Pexp_apply (func, args) ->
+            func =~ func_name &&
+            List.exists (fun (_, arg) ->  arg =~ tail_binding) args
+  | _ -> false
+
   
