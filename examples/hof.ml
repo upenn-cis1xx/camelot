@@ -12,4 +12,10 @@ let rec print_l (l: int list) =
   match l with
   | [] -> ()
   | h :: t -> h |> string_of_int |> print_endline;
-              print_l t
+    print_l t
+
+let rec sum_verbose (l: int list) =
+  match l with
+  | [] -> 0
+  | h :: t -> h + sum_verbose t
+

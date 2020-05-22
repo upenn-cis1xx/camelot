@@ -125,6 +125,23 @@ let uses_func_recursively_list (case: Parsetree.case) func_name tail_binding : b
   end
 
 
+let uses_func_recursively_list_any (case: Parsetree.case) func_name tail_binding : bool =
+  let skipped = case.pc_rhs |> skip_seq_let in
+  let contains_recursive_call : Parsetree.expression -> bool = fun e ->
+    match e.pexp_desc with
+    | Pexp_apply (func, args) -> func =~ func_name &&
+                                 List.exists (fun (_, arg) -> arg =~ tail_binding) args
+    | _ -> false in
+  
+  begin match skipped.pexp_desc with
+    | Pexp_apply ( func, l) ->
+
+      not (func =~ "::") && List.exists (fun (_, combine_arg) ->
+          contains_recursive_call combine_arg
+        ) l
+  | _ -> false
+    end
+
 (** Has to be recursive, since functions of multiple arguments are curried 
     That's why we interleave skipping sequencing and lets with calls to
     body_of_fun, til we reach a `fixpoint`.
