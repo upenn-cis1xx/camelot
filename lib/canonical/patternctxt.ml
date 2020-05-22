@@ -18,5 +18,6 @@ let ctxt_of_expr filename (expr: Parsetree.expression) : Parsetree.expression_de
 
 let ctxt_of_structure source (structure: Parsetree.structure_item) : Parsetree.structure_item_desc pctxt =
   let loc = Warnloc.warn_loc_of_loc source structure.pstr_loc in
-  P {location = loc; source; pattern = structure.pstr_desc}
+  let raw = Pprintast.string_of_structure [structure] in
+  P {location = loc; source = raw; pattern = structure.pstr_desc}
 

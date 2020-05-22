@@ -2,6 +2,7 @@ open Canonical
 open Utils
 open Astutils
 open Check
+
     
 (* ------------------ Checks rules: _ = [literals] | [literals] = _  ----------------------- *)
 module EqList : EXPRCHECK = struct

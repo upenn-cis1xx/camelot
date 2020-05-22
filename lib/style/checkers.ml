@@ -21,4 +21,5 @@ let expr_checks = [
 ]
 
 let struct_checks = [
+  Hof.UseMap.check
 ]

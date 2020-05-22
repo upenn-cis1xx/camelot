@@ -86,3 +86,48 @@ let is_case_const (case: Parsetree.case) =
     | Ppat_constant _ -> true
     | _ -> false
   end
+
+let ident_of_let (pat: Parsetree.value_binding) : string =
+  match pat.pvb_pat.ppat_desc with
+  | Ppat_var {txt = i; loc = _} -> i
+  | _ -> ""
+
+
+let binding_of_lcase (case: Parsetree.case) : string =
+  begin match case.pc_lhs.ppat_desc with
+  | Ppat_construct ({txt = Lident "::"; loc = _}, Some bound) ->
+   begin match bound.ppat_desc with
+    | Ppat_tuple [_; tail] ->
+      begin match tail.ppat_desc with
+        | Ppat_var {txt = t; loc = _} -> t
+        | _ -> ""
+      end
+    | _ -> ""
+   end
+    | _ -> ""
+  end
+
+let uses_func_recursively_list (case: Parsetree.case) func_name tail_binding : bool =
+  begin match case.pc_rhs.pexp_desc with
+  | Pexp_construct ({txt = Lident "::"; loc = _},
+                    Some bound) ->
+    begin match bound.pexp_desc with
+      | Pexp_tuple ([_; tl]) ->
+        begin match tl.pexp_desc with
+          | Pexp_apply (func, args) ->
+            func =~ func_name &&
+            List.exists (fun (_, arg) ->  arg =~ tail_binding) args
+          | _ -> false
+        end
+      | _ -> false
+    end
+  | _ -> false
+  end
+
+let body_of_fun (pat: Parsetree.value_binding) : Parsetree.expression =
+  let skipped = skip_seq_let pat.pvb_expr in
+  begin match skipped.pexp_desc with
+    | Pexp_fun (_, _, _, e) -> skip_seq_let e
+    | _ -> skipped
+  end
+  
