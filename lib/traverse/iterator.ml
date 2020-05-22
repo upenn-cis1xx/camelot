@@ -3,7 +3,6 @@ open Descent
 open Find
 
 
-
 (** Iterates through the ast structure, applying the given iterator *)
 let apply_iterator (structure: Parsetree.structure) (iter: Ast_iterator.iterator) : unit = 
   iter.structure iter structure
