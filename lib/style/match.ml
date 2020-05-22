@@ -1,7 +1,8 @@
 open Canonical
 open Utils
 open Astutils
-    open Check
+open Check
+
 (* A pattern match that is considered long enough to override usual checks*)
 let long_pattern_match = 5
 
