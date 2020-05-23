@@ -32,15 +32,6 @@ Build + Watch:
 Run 'tests':
 `dune exec -- bin/camelot.exe <camelot args here>`
 
-## Camelot flags
-
-`-d <lintdir>` : Specify the directory in which to lint
-
-`-show <ta | student | gradescope>` : Specify the reporting type - does a student see this output or a ta?
-If this argument is malformed or not present, the reporting type defaults to student
-
-`-f <filename>` : Lints the given file
-
 ### Writing and running tests
 To run tests:
 `dune test`
@@ -62,6 +53,16 @@ If you implement a new rule, you'll have to do the following:
   fix the issue, and then promote.
 * Reloading test.ml should show that the difference was added to the appropriate expect tests. In a PR, mention this - the reviewer
   should examine the expect test and make sure it makes sense (e.g. that the old prints were not messed up + the new test case appropriately printed).
+
+## Camelot flags
+
+`-d <lintdir>` : Specify the directory in which to lint
+
+`-show <ta | student | gradescope>` : Specify the reporting type - does a student see this output or a ta?
+If this argument is malformed or not present, the reporting type defaults to student
+
+`-f <filename>` : Lints the given file
+
 
 
 
