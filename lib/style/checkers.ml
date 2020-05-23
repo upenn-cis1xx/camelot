@@ -1,4 +1,4 @@
-let checks = [
+let expr_checks = [
   Equality.EqList.check
 ; Equality.EqOption.check
 ; Lexical.LineLength.check
@@ -18,4 +18,10 @@ let checks = [
 ; Verbose.IfToOrInv.check
 ; Verbose.NestedIf.check
 ; Verbose.NestedMatch.check
+]
+
+let struct_checks = [
+  Hof.UseMap.check
+; Hof.UseFold.check
+; Hof.UseIter.check
 ]

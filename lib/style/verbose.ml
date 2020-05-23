@@ -1,11 +1,14 @@
 open Canonical
 open Utils
 open Astutils
+open Check
 
-module LitPrepend : Check.CHECK = struct
+
+module LitPrepend : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using `::` instead"
   let violation = "using `@` to prepend an element to a list"
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_apply (application, [(_, lop); _]) ->
         if application =~ "@" && is_singleton_list lop then
@@ -16,10 +19,11 @@ module LitPrepend : Check.CHECK = struct
 end
 
 
-module TupleProj : Check.CHECK = struct
+module TupleProj : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a let pattern match statement instead"
   let violation = "using fst / snd to project values out of a tuple"
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_apply (application, [_]) ->
         if application =~ "fst" || application =~ "snd" then
@@ -28,10 +32,11 @@ module TupleProj : Check.CHECK = struct
     end
 end
 
-module NestedIf : Check.CHECK = struct
+module NestedIf : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using let statements or helper methods / rethinking logic"
   let violation = "using nested if statements more than three layers deep"
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
     | Pexp_ifthenelse (_, bthen, Some belse) ->
       let lside = match get_branches bthen with | Some (e1, e2) -> [e1;e2] | None -> [] in
@@ -49,10 +54,11 @@ module NestedIf : Check.CHECK = struct
     end
 end
 
-module NestedMatch : Check.CHECK = struct
+module NestedMatch : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using let statements or helper methods / rethinking logic"
   let violation = "using nested match statements more than three layers deep"
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       (* Layer one *)
       | Pexp_match (_, cs) ->
@@ -76,10 +82,11 @@ module NestedMatch : Check.CHECK = struct
 end
 
 
-module IfReturnsLit : Check.CHECK = struct
+module IfReturnsLit : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "returning just the condition (+ some tweaks)"
   let violation = "using an if statement to return `true | false` literally"
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (_, bthen, Some belse) ->
         if (bthen =| "true" && belse =| "false") ||
@@ -90,10 +97,11 @@ module IfReturnsLit : Check.CHECK = struct
 end
 
 
-module IfCondThenCond : Check.CHECK = struct
+module IfCondThenCond : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "returning just the condition"
   let violation = "returning the condition of an if statement on success and false otherwise"
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (cond, bthen, Some belse) ->
         if are_idents_same cond bthen && belse =| "false" then
@@ -103,10 +111,11 @@ module IfCondThenCond : Check.CHECK = struct
 end
 
 
-module IfNotCond : Check.CHECK = struct
+module IfNotCond : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "swapping the then and else branches of the if statement"
   let violation = "checking negation in the if condition"
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (cond, _, _) ->
         begin match cond.pexp_desc with
@@ -118,11 +127,12 @@ module IfNotCond : Check.CHECK = struct
     end
 end
 
-module IfToOr : Check.CHECK = struct
+module IfToOr : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewriting using a boolean operator like `||`"
   let violation = "overly verbose if statement that can be simplified"
     
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (cond, bthen, Some belse) ->
         if is_exp_id cond && is_exp_id belse && bthen =| "true" then
@@ -131,11 +141,12 @@ module IfToOr : Check.CHECK = struct
     end
 end
 
-module IfToAnd : Check.CHECK = struct
+module IfToAnd : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewriting using a boolean operator like `&&`"
   let violation = "overly verbose if statement that can be simplified"
     
-  let check st ({location; source; pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (cond, bthen, Some belse) ->
         if is_exp_id cond && is_exp_id bthen && belse =| "false" then
@@ -144,10 +155,11 @@ module IfToAnd : Check.CHECK = struct
     end
 end
 
-module IfToAndInv : Check.CHECK = struct
+module IfToAndInv : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewariting using a boolean operator like `&&` and `not`"
   let violation = "overly verbose if statement that can be simplified"
-  let check st ({location;source;pattern} : Pctxt.patternctxt) =
+  let check st (E {location;source;pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (cond, bthen, Some belse) ->
         if is_exp_id cond && is_exp_id belse && bthen =| "false" then
@@ -156,10 +168,11 @@ module IfToAndInv : Check.CHECK = struct
     end
 end
 
-module IfToOrInv : Check.CHECK = struct
+module IfToOrInv : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewariting using a boolean operator like `||` and `not`"
   let violation = "overly verbose if statement that can be simplified"
-  let check st ({location;source;pattern} : Pctxt.patternctxt) =
+  let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (cond, bthen, Some belse) ->
         if is_exp_id cond && is_exp_id bthen && belse =| "true" then

@@ -2,7 +2,7 @@
 (name camelot)
 (generate_opam_files true)
 
-(version 1.1.1)
+(version 1.2.0)
 
 (source (github upenn-cis1xx/camelot))
 (license "Apache License 2.0")
