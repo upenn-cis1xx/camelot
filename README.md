@@ -52,10 +52,10 @@ To write tests, see the dune documentation for [expect-tests](https://dune.readt
 If you implement a new rule, you'll have to do the following:
 * Add your test case ( a program that you expect the linter to show a match for) to either a new file or an existing file
   in the `examples/` directory.
-** If you create a new file in the `examples/` directory, edit the `dune` file's deps stanza to make it visible to the
+  * If you create a new file in the `examples/` directory, edit the `dune` file's deps stanza to make it visible to the
   build system. If you create a new programs file in `examples/`, you'll have to add a new `let%expect_test` in the style of the ones prior to the
   file `test.ml`, except with the ``[%expect {| ... |} ]``` clause blank.
-** If you added a test program to an existing file, it'll automatically be linted by the appropriate expect_test.
+  * If you added a test program to an existing file, it'll automatically be linted by the appropriate expect_test.
 * Run `dune runtest`. If you wrote a test case like the previous ones, and your code for linting worked, `runtest` should
   highlight that there was a difference due to your new rule - run `dune promote` to accept this difference.
   Only promote if the difference that `dune` shows is appropriate - if there is a difference in the linted output, verify that your code did not break things,
