@@ -32,6 +32,28 @@ Build + Watch:
 Run 'tests':
 `dune exec -- bin/camelot.exe <camelot args here>`
 
+### Writing and running tests
+To run tests:
+`dune test`
+
+If any changes you make break code, `dune test` will flag it and highlight the differences. If there are no issues,
+dune will not print anything.
+
+To write tests, see the dune documentation for [expect-tests](https://dune.readthedocs.io/en/stable/tests/html).
+If you implement a new rule, you'll have to do the following:
+* Add your test case ( a program that you expect the linter to show a match for) to either a new file or an existing file
+  in the `examples/` directory.
+  * If you create a new file in the `examples/` directory, edit the `dune` file's deps stanza to make it visible to the
+  build system. If you create a new programs file in `examples/`, you'll have to add a new `let%expect_test` in the style of the ones prior to the
+  file `test.ml`, except with the ``[%expect {| ... |} ]``` clause blank.
+  * If you added a test program to an existing file, it'll automatically be linted by the appropriate expect_test.
+* Run `dune runtest`. If your code for linting worked, `runtest` should
+  highlight that there was a difference due to your new rule - run `dune promote` to accept this difference.
+  Only promote if the difference that `dune` shows is appropriate - if there is a difference in the linted output, verify that your code did not break things,
+  fix the issue, and then promote.
+* Reloading test.ml should show that the difference was added to the appropriate expect tests. In a PR, mention this - the reviewer
+  should examine the expect test and make sure it makes sense (e.g. that the old prints were not messed up + the new test case appropriately printed).
+
 ## Camelot flags
 
 `-d <lintdir>` : Specify the directory in which to lint
@@ -40,4 +62,7 @@ Run 'tests':
 If this argument is malformed or not present, the reporting type defaults to student
 
 `-f <filename>` : Lints the given file
+
+
+
 
