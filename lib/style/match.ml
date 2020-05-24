@@ -1,12 +1,13 @@
 open Canonical
 open Utils
 open Astutils
+open Check
 
 (* A pattern match that is considered long enough to override usual checks*)
 let long_pattern_match = 5
 
-let make_check pred gen_error override_len= 
-  fun st ({location; source; pattern} : Pctxt.patternctxt) -> 
+let make_check (pred: Parsetree.case -> bool) gen_error override_len = 
+  fun st (E {location; source; pattern} : Parsetree.expression_desc Pctxt.pctxt) -> 
     begin match pattern with
       | Pexp_match (_, cases) -> 
           if List.length cases >= override_len then () else
@@ -14,7 +15,8 @@ let make_check pred gen_error override_len=
       | _ -> ()
     end
 
-module MatchBool : Check.CHECK = struct
+module MatchBool : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using an if statement"
   let violation = "using pattern matching when `=` is better"
   let check = make_check (fun case -> is_case_constr case "true" || is_case_constr case "false") 
@@ -22,7 +24,8 @@ module MatchBool : Check.CHECK = struct
                          long_pattern_match
 end
 
-module MatchInt : Check.CHECK = struct
+module MatchInt : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using an if statement and `=`"
   let violation = "using pattern matching when `=` is better"
   let check = make_check is_case_const 
@@ -30,7 +33,8 @@ module MatchInt : Check.CHECK = struct
                          long_pattern_match
 end
 
-module MatchRecord : Check.CHECK = struct
+module MatchRecord : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a let pattern match statement to extract record fields"
   let violation = "using pattern matching on a record"
   let check = make_check (fun case -> is_pat_record case.pc_lhs)
@@ -39,7 +43,8 @@ module MatchRecord : Check.CHECK = struct
 end 
 
 
-module MatchTuple : Check.CHECK = struct
+module MatchTuple : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a let pattern match statement to extract tuple fields"
   let violation = "using pattern matching on a tuple"
   let check = make_check (fun case -> is_pat_tuple case.pc_lhs)
@@ -47,10 +52,11 @@ module MatchTuple : Check.CHECK = struct
                          2
 end
 
-module MatchListVerbose : Check.CHECK = struct
+module MatchListVerbose : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "expressing this match case more compactly"
   let violation = "using an overly complex match clause"
-  let check st (ctxt : Pctxt.patternctxt) =
+  let check st (E ctxt : Parsetree.expression_desc Pctxt.pctxt) =
 
     (* Predicate for checking that a match case looks like x :: [] *) 
     let case_pred (case: Parsetree.case) : bool =
@@ -87,4 +93,3 @@ module MatchListVerbose : Check.CHECK = struct
     end
     
 end
-

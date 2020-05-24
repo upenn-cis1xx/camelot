@@ -1,0 +1,5 @@
+( library
+  (name tester)
+  (inline_tests (deps examples/lexical.ml examples/equality.ml examples/verbose.ml examples/if.ml examples/match.ml examples/hof.ml))
+  (libraries report canonical traverse)
+  (preprocess (pps ppx_expect)))
