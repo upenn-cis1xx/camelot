@@ -19,5 +19,6 @@ module LineLength : EXPRCHECK = struct
       let raw = code_at_loc ctxt.location ctxt.source in
       st := Hint.mk_hint ctxt.location raw fix violation :: !st;
       seen_line_exceed := true
-      
+
+  let name = "LineLength", check
 end

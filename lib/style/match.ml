@@ -22,6 +22,8 @@ module MatchBool : EXPRCHECK = struct
   let check = make_check (fun case -> is_case_constr case "true" || is_case_constr case "false") 
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
+
+  let name = "MatchBool", check
 end
 
 module MatchInt : EXPRCHECK = struct
@@ -31,6 +33,8 @@ module MatchInt : EXPRCHECK = struct
   let check = make_check is_case_const 
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
+  let name = "MatchInt", check
+             
 end
 
 module MatchRecord : EXPRCHECK = struct
@@ -40,6 +44,8 @@ module MatchRecord : EXPRCHECK = struct
   let check = make_check (fun case -> is_pat_record case.pc_lhs)
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
+  let name = "MatchRecord", check
+             
 end 
 
 
@@ -50,6 +56,8 @@ module MatchTuple : EXPRCHECK = struct
   let check = make_check (fun case -> is_pat_tuple case.pc_lhs)
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
                          2
+  let name = "MatchTuple", check
+             
 end
 
 module MatchListVerbose : EXPRCHECK = struct
@@ -91,5 +99,5 @@ module MatchListVerbose : EXPRCHECK = struct
         end
       | _ -> ()
     end
-    
+   let name = "MatchListVerbose", check 
 end
