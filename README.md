@@ -17,7 +17,8 @@ and [ppx_tools/rewriter](https://github.com/ocaml-ppx/ppx_tools/blob/master/rewr
 - compiler-libs.common
 - fswatch (for Build + Watch)
 - ANSITerminal
-- ppx_expect
+- ppx_expect (for testing)
+- odoc (for documentation builds)
 
 ### Note:
 This project is dependent on compiler-libs, an inherently unstable library that
