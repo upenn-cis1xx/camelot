@@ -88,6 +88,15 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 50, columns: 8-85
+    Warning:
+    	using nested if statements more than three layers deep
+    You wrote:
+    	 if x then 1 else if y then 2 else if x & y then 3 else if z = 4 then 3 else 9
+    Consider:
+    	using let statements or helper methods / rethinking logic
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/verbose.ml, lines 32-43, columns: 2-5
     Warning:
     	using nested match statements more than three layers deep
@@ -98,17 +107,6 @@ let%expect_test _ =
          | [] -> let z = [] in (match z with | _ -> true)
          | _ -> false)
     | _ -> true
-    Consider:
-    	using let statements or helper methods / rethinking logic
-
-    (* ------------------------------------------------------------------------ *)
-    File ./examples/verbose.ml, lines 20-25, columns: 11-8
-    Warning:
-    	using nested if statements more than three layers deep
-    You wrote:
-    	 if x
-    then (if x then x else (let z = 3 in dounit (); if z = 2 then x else y))
-    else y
     Consider:
     	using let statements or helper methods / rethinking logic
 

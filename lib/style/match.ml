@@ -4,7 +4,7 @@ open Astutils
 open Check
 
 (* A pattern match that is considered long enough to override usual checks*)
-let long_pattern_match = 5
+let long_pattern_match = 3
 
 let make_check (pred: Parsetree.case -> bool) gen_error override_len = 
   fun st (E {location; source; pattern} : Parsetree.expression_desc Pctxt.pctxt) -> 
