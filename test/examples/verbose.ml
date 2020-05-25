@@ -41,3 +41,10 @@ let f () =
     end
   | _ -> true
   end
+
+
+(* If statement three layers deep *)
+let z = if x then 1 else if y then 2 else if x & y then 3 else 4
+
+(* If statement four layers deep *)
+let z = if x then 1 else if y then 2 else if x & y then 3 else if z = 4 then 3 else 9

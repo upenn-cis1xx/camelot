@@ -37,21 +37,17 @@ module NestedIf : EXPRCHECK = struct
   let fix = "using let statements or helper methods / rethinking logic"
   let violation = "using nested if statements more than three layers deep"
   let check st (E {location; source; pattern} : ctxt) =
-    begin match pattern with
-    | Pexp_ifthenelse (_, bthen, Some belse) ->
-      let lside = match get_branches bthen with | Some (e1, e2) -> [e1;e2] | None -> [] in
-      let rside = match get_branches belse with | Some (e1, e2) -> [e1; e2] | None -> [] in
-      let branches_three = (lside @ rside) |>
-                           List.map (fun (e: Parsetree.expression) -> skip_seq_let e) |> 
-                           List.exists (
-                             fun (e: Parsetree.expression) -> match e.pexp_desc with
-                               | Parsetree.Pexp_ifthenelse (_) -> true
-                               | _ -> false
-                             ) in
-      if branches_three then
-        st := Hint.mk_hint location source fix violation :: !st
-    | _ -> ()
-    end
+    let rec find_nesting (p: Parsetree.expression_desc) depth= 
+      depth = 0 ||
+      begin match p with 
+        | Pexp_ifthenelse (_, bthen, Some belse) -> 
+          if depth = 1 then true else 
+          find_nesting ((skip_seq_let bthen).pexp_desc) (depth - 1) ||
+          find_nesting ((skip_seq_let belse).pexp_desc) (depth - 1) 
+        | _ -> false
+      end 
+    in 
+    if find_nesting pattern 4 then st := Hint.mk_hint location source fix violation :: !st
 end
 
 module NestedMatch : EXPRCHECK = struct
