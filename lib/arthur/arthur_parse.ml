@@ -5,8 +5,11 @@
 
 
 (* Internal Config type *)
+type file = string
+type files = file list
+    
 type config =
-  | Flags of flag list
+  | Flags of files * flag list
 
 (** Will be extended with an enable flag  *)
 and flag =
@@ -20,19 +23,19 @@ let from_file : Yojson.Basic.t option =
 
 (** Converts an optional json file to a config *)
 let to_config : Yojson.Basic.t option -> config = function
-  | None -> Flags []
-  | Some config ->  Flags (
-      config |>
+  | None -> Flags ([], [])
+  | Some config -> 
+      let _flags = config |>
       Yojson.Basic.Util.member "disabled" |>
       (fun field -> try Yojson.Basic.Util.to_list field with _ -> []) |>
       List.filter_map (fun jstring -> try Some (jstring |> Yojson.Basic.Util.to_string) with _ -> None) |>
-      List.map (fun rule -> Disable rule)
-    )
+      List.map (fun rule -> Disable rule) in
+    Flags ([],[])
 
 
 (** Pretty Prints the config list *)
 let pp_config : config -> unit = function
-  | Flags fs ->
+  | Flags (_,fs) ->
     let print_flags _ =
       let rec sep : string list -> string = fun l ->
         match l with

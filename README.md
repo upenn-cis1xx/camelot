@@ -17,6 +17,8 @@ and [ppx_tools/rewriter](https://github.com/ocaml-ppx/ppx_tools/blob/master/rewr
 - compiler-libs.common
 - fswatch (for Build + Watch)
 - ANSITerminal
+- ppx_expect >= 0.13.1
+- yojson >= 1.7.0
 
 ### Note:
 This project is dependent on compiler-libs, an inherently unstable library that
