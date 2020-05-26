@@ -8,8 +8,8 @@ let lint_config_file : string ref = ref "arthur.json"
 let print_config : t -> unit = fun v ->
   print_string @@ Arthur_parse.pp_arthur v
     
-let parse : unit -> t = fun _ ->
-  Arthur_parse.json_to_arthur (Arthur_parse.from_file !lint_config_file)
+let parse : unit -> t lazy_t = fun _ ->
+  lazy (Arthur_parse.json_to_arthur (Arthur_parse.from_file !lint_config_file))
 
 let extract : t -> (string * 'a) list -> (string * 'a) list = fun c rules ->
   match c with
@@ -39,4 +39,6 @@ let refine : t -> string -> (string * 'a) list -> 'a list = fun config func rule
     else
       (* If the config has no rule - only globals apply *)
       all
+
+
 let default = Arthur_parse.default

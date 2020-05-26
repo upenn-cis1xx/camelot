@@ -20,6 +20,9 @@ let set_display_type : string -> unit = fun s ->
   | "gradescope" -> show_type := Display.gradescope_display
   | _ -> show_type := Display.student_display
 
+let set_config_file : string -> unit = fun s ->
+  Arthur.lint_config_file := s
+
 let set_lint_file : string -> unit = fun s ->
   let exist = try
       let _ = open_in s in
@@ -89,7 +92,7 @@ let spec =
     " Make the linter output display for either ta's | students | gradescope"
   ; "-f", String set_lint_file,
     "\t Invoke the linter on a single file"
-  ; "-c", Set_string (Arthur.lint_config_file),
+  ; "-c", String (set_config_file),
     "\t Invoke the linter using the provided arthur.json config file"
   ] 
 

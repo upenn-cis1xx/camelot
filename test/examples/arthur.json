@@ -1,0 +1,9 @@
+{
+    "global": {
+	"disable": ["UseMap", "UseIter", "UseFold"]
+    },
+    "locals":
+    [
+	{"not_called_test": {"disable": ["EqList"]}}
+    ]
+}
