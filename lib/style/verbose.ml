@@ -16,6 +16,7 @@ module LitPrepend : EXPRCHECK = struct
           st := Hint.mk_hint location raw fix violation :: !st
       | _ -> ()
     end
+    let name = "LitPrepend", check
 end
 
 
@@ -30,6 +31,7 @@ module TupleProj : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+    let name = "TupleProj", check
 end
 
 module NestedIf : EXPRCHECK = struct
@@ -48,6 +50,7 @@ module NestedIf : EXPRCHECK = struct
       end 
     in 
     if find_nesting pattern 4 then st := Hint.mk_hint location source fix violation :: !st
+    let name = "NestedIf", check
 end
 
 module NestedMatch : EXPRCHECK = struct
@@ -75,6 +78,7 @@ module NestedMatch : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+    let name = "NestedMatch", check
 end
 
 
@@ -90,6 +94,7 @@ module IfReturnsLit : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+    let name = "IfReturnsLit", check
 end
 
 
@@ -104,6 +109,7 @@ module IfCondThenCond : EXPRCHECK = struct
                st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+    let name = "IfCondThenCond", check
 end
 
 
@@ -121,6 +127,7 @@ module IfNotCond : EXPRCHECK = struct
         end
       | _ -> ()
     end
+    let name = "IfNotCond", check
 end
 
 module IfToOr : EXPRCHECK = struct
@@ -135,6 +142,8 @@ module IfToOr : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+
+  let name = "IfToOr", check
 end
 
 module IfToAnd : EXPRCHECK = struct
@@ -149,6 +158,7 @@ module IfToAnd : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+    let name = "IfToAnd", check
 end
 
 module IfToAndInv : EXPRCHECK = struct
@@ -162,6 +172,7 @@ module IfToAndInv : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+    let name = "IfToAndInv", check
 end
 
 module IfToOrInv : EXPRCHECK = struct
@@ -175,5 +186,5 @@ module IfToOrInv : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-  
+    let name = "IfToOrInv", check
 end

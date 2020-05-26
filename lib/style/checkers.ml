@@ -1,27 +1,27 @@
 let expr_checks = [
-  Equality.EqList.check
-; Equality.EqOption.check
-; Lexical.LineLength.check
-; Match.MatchBool.check
-; Match.MatchInt.check
-; Match.MatchListVerbose.check
-; Match.MatchRecord.check
-; Match.MatchTuple.check
-; Verbose.LitPrepend.check
-; Verbose.TupleProj.check
-; Verbose.IfReturnsLit.check
-; Verbose.IfCondThenCond.check
-; Verbose.IfNotCond.check
-; Verbose.IfToOr.check
-; Verbose.IfToAnd.check
-; Verbose.IfToAndInv.check
-; Verbose.IfToOrInv.check
-; Verbose.NestedIf.check
-; Verbose.NestedMatch.check
+  Equality.EqList.name
+; Equality.EqOption.name
+; Lexical.LineLength.name
+; Match.MatchBool.name
+; Match.MatchInt.name
+; Match.MatchListVerbose.name
+; Match.MatchRecord.name
+; Match.MatchTuple.name
+; Verbose.LitPrepend.name
+; Verbose.TupleProj.name
+; Verbose.IfReturnsLit.name
+; Verbose.IfCondThenCond.name
+; Verbose.IfNotCond.name
+; Verbose.IfToOr.name
+; Verbose.IfToAnd.name
+; Verbose.IfToAndInv.name
+; Verbose.IfToOrInv.name
+; Verbose.NestedIf.name
+; Verbose.NestedMatch.name
 ]
 
 let struct_checks = [
-  Hof.UseMap.check
-; Hof.UseFold.check
-; Hof.UseIter.check
+  Hof.UseMap.name
+; Hof.UseFold.name
+; Hof.UseIter.name
 ]

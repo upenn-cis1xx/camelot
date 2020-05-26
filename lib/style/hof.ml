@@ -27,6 +27,8 @@ module UseMap : STRUCTURECHECK = struct
       end
     | _ -> ()
     end
+
+  let name = "UseMap", check
 end
 
 
@@ -54,6 +56,8 @@ module UseFold : STRUCTURECHECK = struct
       end
     | _ -> ()
     end
+
+  let name = "UseFold", check
 end
 
 module UseIter : STRUCTURECHECK = struct
@@ -81,4 +85,6 @@ module UseIter : STRUCTURECHECK = struct
       end
     | _ -> ()
     end
+
+  let name = "UseIter", check
 end

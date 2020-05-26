@@ -16,6 +16,7 @@ module EqList : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+  let name = "EqList", check
 end
 
 
@@ -32,4 +33,5 @@ module EqOption : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
+    let name = "EqOption", check
 end
