@@ -1,6 +1,6 @@
 # Camelot
-An OCaml Linter / Style Checker for the OCaml compiler version 4.09.0.
-Make sure you have ocaml version 4.09.0, otherwise the parsetree will be different
+An OCaml Linter / Style Checker for the OCaml compiler version 4.10.0.
+Make sure you have ocaml version 4.10.0, otherwise the parsetree will be different
 
 ## Acknowledgements
 This project wouldn't have been possible without the following three repos:
