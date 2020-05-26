@@ -1,10 +1,15 @@
 type t = Arthur_parse.arthur
 
+
+let lint_config_file : string ref = ref "arthur.json"
+
+
+
 let print_config : t -> unit = fun v ->
   print_string @@ Arthur_parse.pp_arthur v
     
 let parse : unit -> t = fun _ ->
-  Arthur_parse.json_to_arthur (Arthur_parse.from_file "arthur.json")
+  Arthur_parse.json_to_arthur (Arthur_parse.from_file !lint_config_file)
 
 let extract : t -> (string * 'a) list -> (string * 'a) list = fun c rules ->
   match c with

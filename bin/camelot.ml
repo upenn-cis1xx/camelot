@@ -75,7 +75,8 @@ let usage_msg =
   "invoke with -r (only works if -d is set too) to recurse into subdirectories\n" ^
   "invoke with -d <dir_name> to specify a directory to lint, or just run the program with default args\n" ^
   "invoke with -show <student | ta | gradescope> to select the display type - usually ta's want a briefer summary\n" ^
-  "invoke with -f <.ml filename> to lint a particular file"
+  "invoke with -f <.ml filename> to lint a particular file\n"^
+  "invoke with -c <path/to/arthur.json> to inform the linter of where the config file is"
 
 let spec =
   let open Arg in
@@ -88,6 +89,8 @@ let spec =
     " Make the linter output display for either ta's | students | gradescope"
   ; "-f", String set_lint_file,
     "\t Invoke the linter on a single file"
+  ; "-c", Set_string (Arthur.lint_config_file),
+    "\t Invoke the linter using the provided arthur.json config file"
   ] 
 
 let () =
