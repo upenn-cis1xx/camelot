@@ -30,3 +30,14 @@ let t7 = if x then false else y
 (* if x then y else true *)
 let t8 = if x then y else true
     
+(* More complex examples *)
+
+let rec exists (l : int list) (i : int) =
+  match l with
+  | [] -> false
+  | h :: t -> if h = i then true else exists t i
+
+let ref forall (p: 'a -> bool) (l : 'a list) =
+  match l with
+  | [] -> true
+  | h :: t -> if p h then forall p t else false

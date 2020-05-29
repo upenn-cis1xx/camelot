@@ -48,6 +48,7 @@ let are_idents_same (el: Parsetree.expression) (er: Parsetree.expression) =
   | Pexp_ident {txt = Lident i; _} , Pexp_ident {txt = Lident j; _} -> i = j
   | _ -> false
 
+
 let is_singleton_list : exp -> bool = fun e ->
   begin match e.pexp_desc with
   | Pexp_construct ({txt = Lident "::";_}, Some cons) ->
