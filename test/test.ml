@@ -154,6 +154,42 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 53, columns: 14-48
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if p h then nonsense p t else true
+    Consider:
+    	rewariting using a boolean operator like `||` and `not`
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 48, columns: 14-45
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if p h then false else none p t
+    Consider:
+    	rewriting using a boolean operator like `&&` and `not`
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 43, columns: 14-47
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if p h then forall p t else false
+    Consider:
+    	rewriting using a boolean operator like `&&`
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 38, columns: 14-48
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if h = i then true else exists t i
+    Consider:
+    	rewriting using a boolean operator like `||`
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 31, columns: 9-30
     Warning:
     	overly verbose if statement that can be simplified
@@ -169,7 +205,7 @@ let%expect_test _ =
     You wrote:
     	 if x then false else y
     Consider:
-    	rewariting using a boolean operator like `&&` and `not`
+    	rewriting using a boolean operator like `&&` and `not`
 
     (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 25, columns: 9-31

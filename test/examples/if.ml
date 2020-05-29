@@ -37,7 +37,17 @@ let rec exists (l : int list) (i : int) =
   | [] -> false
   | h :: t -> if h = i then true else exists t i
 
-let ref forall (p: 'a -> bool) (l : 'a list) =
+let rec forall (p: 'a -> bool) (l : 'a list) =
   match l with
   | [] -> true
   | h :: t -> if p h then forall p t else false
+
+let rec none (p: 'a -> bool) (l: 'a list) =
+  match l with
+  | [] -> true
+  | h :: t -> if p h then false else none p t
+
+let rec nonsense (p: 'a -> bool) (l : 'a list) =
+  match l with
+  | [] -> false
+  | h :: t -> if p h then nonsense p t else true

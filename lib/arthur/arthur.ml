@@ -13,10 +13,12 @@ let parse : unit -> t lazy_t = fun _ ->
 
 let extract : t -> (string * 'a) list -> (string * 'a) list = fun c rules ->
   match c with
-  | Arthur (Global (Disable toDisable), _) ->
+  | Arthur (_, Global (Disable toDisable), _) ->
     List.filter
       (fun (name,_) ->  not (List.exists (fun dis -> dis = name) toDisable)  )
       rules
+
+let files : t -> string list = fun (Arthur(l, _, _)) -> l
 
 let refine : t -> string -> (string * 'a) list -> 'a list = fun config func rules ->
   let open Arthur_parse in
@@ -30,7 +32,7 @@ let refine : t -> string -> (string * 'a) list -> 'a list = fun config func rule
   in 
   let all = List.map snd rules in
   match config with
-  | Arthur (_, fs) ->
+  | Arthur (_, _, fs) ->
     if config_has_rule fs then
       let toDisable = rule_for_func func fs in
       List.filter

@@ -62,12 +62,23 @@ let rec files_in_dir_rec dirname =
     let children = files_in_dir dirname in
     children @ List.concat_map files_in_dir_rec children
 
+let files_to_lint dirname =
+  let config = Lazy.force (Arthur.parse ()) in
+  let files = Arthur.files config in
+  begin match files with
+  | [] -> begin match !lint_file with
+    | Some f -> [f]
+    | None -> dirname |> if ! recurse then files_in_dir_rec else files_in_dir
+    end
+  | _ -> files
+end
+
+
 let parse_sources_in dirname : (string * Parsetree.structure) list = 
   let open Sys in
-  let to_lint = (match !lint_file with
-      | Some f -> [ f ]
-      | None -> dirname |> if !recurse then files_in_dir_rec else files_in_dir
-    ) |> (* Prefer linting single files *) 
+  let to_lint =
+    dirname |>
+    files_to_lint |>
     List.filter (fun f -> not (is_directory f)) |> (* remove directories *)
     List.filter (fun f -> Filename.check_suffix f ".ml") |> (* only want to lint *.ml files *)
     List.map (lex_src) |> (* Lex the files *)
