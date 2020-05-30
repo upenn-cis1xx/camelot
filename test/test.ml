@@ -13,9 +13,24 @@ let to_ast file =
   let src, f = safe_open file in
   src, ( f |> Lexing.from_channel |> Parse.implementation )
 
+let line_lint : bool ref = ref false 
 
 let lint_and_hint : (string * Parsetree.structure) -> unit = fun (file, ast) ->
   let store : Canonical.Hint.hint list ref = ref [] in
+  let line_length_lint : string -> unit = fun file ->
+    if not !line_lint then ()
+    else
+    let chan = open_in file in
+    let lref : int ref = ref 1 in
+    try
+      while true; do
+        let line = input_line chan in
+        (if (String.length line > 79) then store := Canonical.Hint.line_hint file !lref line :: !store;);
+        incr lref
+      done; ()
+    with End_of_file ->
+      close_in chan; () in
+  line_length_lint file;
   file |>
   Traverse.Iter.make_linterator store |>
   Traverse.Iter.apply_iterator ast;
@@ -24,19 +39,29 @@ let lint_and_hint : (string * Parsetree.structure) -> unit = fun (file, ast) ->
 
 (* Run the tests in lexical.ml *)
 let%expect_test _ =
+  line_lint := true;
   let file : string = "./examples/lexical.ml" in
   let to_lint = to_ast file in
   lint_and_hint to_lint;
+  line_lint := false;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/lexical.ml, line 2, columns: 40-197
+    File ./examples/lexical.ml, line 5, columns: 0-80
     Warning:
-    	exceeding the 80 character line limit. Only showing (1) such violation of this kind, although there may be others - fix this and re-run the linter to find them.
+    	exceeding the 80 character line limit
     You wrote:
-    	 [1;2;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]
+    	 let verylongvariablenamethisispainful = [1;2;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]
     Consider:
-    	indenting to avoid exceeding the line limit
-  |}]
+    	indenting to avoid exceeding the 80 character line limit
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/lexical.ml, line 2, columns: 0-80
+    Warning:
+    	exceeding the 80 character line limit
+    You wrote:
+    	 let verylongvariablenamethisispainful = [1;2;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]
+    Consider:
+    	indenting to avoid exceeding the 80 character line limit |}]
 
 (* Run the tests in equality.ml *)
 let%expect_test _ =

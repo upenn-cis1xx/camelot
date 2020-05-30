@@ -13,7 +13,7 @@ loc: warn_loc
 
 
 
-let line_hint file line =
+let line_hint file line content =
   let warn = {file;
               line_start = line;
               line_end = line;
@@ -21,7 +21,7 @@ let line_hint file line =
               col_end = 80
              } in
   {loc = warn;
-   raw = "Ommitted";
+   raw = content;
    fix = "indenting to avoid exceeding the 80 character line limit";
   violation = "exceeding the 80 character line limit"}
 
