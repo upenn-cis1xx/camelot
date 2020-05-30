@@ -112,4 +112,4 @@ let () =
   (* Lint the files in the lint directory *)
   parse_sources_in !lint_dir |> Linter.lint;
   (* Display the hints *)
-  Linter.hints () |> !show_type
+  Linter.hints () |> List.rev |> !show_type
