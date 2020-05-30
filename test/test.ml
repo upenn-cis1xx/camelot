@@ -70,20 +70,20 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/equality.ml, line 9, columns: 8-20
+    File ./examples/equality.ml, line 15, columns: 8-41
     Warning:
-    	using `=` with lists
+    	using `=` with lists as a condition in an if statement
     You wrote:
-    	 [1; 2; 3] = []
+    	 if [1; 2; 3] = q then None else x
     Consider:
     	using a pattern match to check whether a list has a certain value
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/equality.ml, line 8, columns: 8-16
+    File ./examples/equality.ml, line 14, columns: 8-37
     Warning:
-    	using `=` with lists
+    	using `=` with lists as a condition in an if statement
     You wrote:
-    	 [] = [1]
+    	 if q = [1] then x else None
     Consider:
     	using a pattern match to check whether a list has a certain value
 
