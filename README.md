@@ -2,7 +2,7 @@
 An OCaml Linter / Style Checker for the OCaml compiler version 4.10.0.
 Make sure you have ocaml version 4.10.0, otherwise the parsetree will be different
 
-## Dependencies
+## Dependencies (handled by opam)
 - ocaml >= v4.10.0
 - dune >= 2.5.0
 - compiler-libs.common
@@ -15,6 +15,9 @@ Make sure you have ocaml version 4.10.0, otherwise the parsetree will be differe
 ### Note:
 This project is dependent on compiler-libs, an inherently unstable library that
 changes between OCaml installations.
+
+## Installation
+To install from the latest opam release, run: `opam install camelot`
 
 ## Building From Source
 Build:
