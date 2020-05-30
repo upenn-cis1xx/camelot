@@ -1,4 +1,4 @@
-# Camelot
+# Camelot [![Build and Test Status](https://github.com/upenn-cis1xx/camelot/workflows/Build%20&%20Test/badge.svg)](https://github.com/upenn-cis1xx/camelot/actions?query=workflow%3A%22Build+%26+Test%22)
 An OCaml Linter / Style Checker for the OCaml compiler version 4.10.0.
 Make sure you have ocaml version 4.10.0, otherwise the parsetree will be different
 
