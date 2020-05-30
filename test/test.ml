@@ -242,7 +242,16 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, lines 54-55, columns: 2-15
+    File ./examples/match.ml, lines 77-79, columns: 2-15
+    Warning:
+    	using pattern matching when `=` is better
+    You wrote:
+    	 match r with | (1, 2) -> () | (3, 4) -> ()
+    Consider:
+    	using an if statement and `=`
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, lines 73-74, columns: 2-15
     Warning:
     	using pattern matching on a tuple
     You wrote:
@@ -251,13 +260,22 @@ let%expect_test _ =
     	using a let pattern match statement to extract tuple fields
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, lines 50-51, columns: 2-16
+    File ./examples/match.ml, lines 69-70, columns: 2-16
     Warning:
     	using pattern matching on a record
     You wrote:
     	 match r with | { x; y } -> ()
     Consider:
     	using a let pattern match statement to extract record fields
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, line 47, columns: 4-11
+    Warning:
+    	using an overly complex match clause
+    You wrote:
+    	 | x :: [] -> ...
+    Consider:
+    	expressing this match case more compactly
 
     (* ------------------------------------------------------------------------ *)
     File ./examples/match.ml, line 42, columns: 4-11

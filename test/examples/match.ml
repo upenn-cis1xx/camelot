@@ -42,9 +42,28 @@ let b l =
   | _ :: [] -> ()
   | _ -> ()
 
+let b l =
+  match l with
+  | x :: [] -> ()
+  | x :: y :: [] -> ()
+  | _ -> ()
 
-type t = {x: int; y: int}
+let b l1 l2 =
+  match l1, l2 with
+  | x :: [], _ -> ()
+  | x :: y :: [], _ -> ()
+  | _ -> ()
+
+(* should not fire *)
+let b l =
+  match l with
+  | [x] -> ()
+  | [x; y] -> ()
+  | _ -> ()
+
+
 (* Pattern matching on a record *)
+type t = {x: int; y: int}
          
 let b (r: t) =
   match r with
@@ -54,8 +73,15 @@ let b (r: int * int) =
   match r with
   | (x,y) -> ()
 
-  let b (r: int * int) =
-    match r with
-    | (1,2) -> ()
-    | (3,4) -> ()
+let b (r: int * int) =
+  match r with
+  | (1,2) -> ()
+  | (3,4) -> ()
+
+(* Should not fire (3 or more) *)
+let b (r: int * int) =
+  match r with
+  | (1,2) -> ()
+  | (3,4) -> ()
+  | (5,6) -> ()
              
