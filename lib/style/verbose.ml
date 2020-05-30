@@ -100,12 +100,12 @@ end
 
 module IfCondThenCond : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
-  let fix = "returning just the condition"
-  let violation = "returning the condition of an if statement on success and false otherwise"
+  let fix = "returning just the condition or simplifying further"
+  let violation = "returning the condition of an if statement on success and a boolean literal otherwise"
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (cond, bthen, Some belse) ->
-        if are_idents_same cond bthen && belse =| "false" then
+        if e_eq cond bthen && (belse =| "false" || belse =| "true") then
                st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
@@ -138,7 +138,9 @@ module IfToOr : EXPRCHECK = struct
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (_cond, bthen, Some belse) ->
-        if not (belse =| "true") && not (belse =| "false")  && bthen =| "true" then
+        if not (belse =| "true") &&
+           not (belse =| "false") &&
+           bthen =| "true" then
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
@@ -153,8 +155,12 @@ module IfToAnd : EXPRCHECK = struct
     
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
-      | Pexp_ifthenelse (_cond, bthen, Some belse) ->
-        if not (bthen =| "true") && not (bthen =| "false") && belse =| "false" then
+      | Pexp_ifthenelse (cond, bthen, Some belse) ->
+        if not (bthen =| "true") &&
+           not (bthen =| "false") &&
+           belse =| "false" &&
+           e_neq cond bthen
+        then
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
@@ -177,7 +183,7 @@ end
 
 module IfToOrInv : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
-  let fix = "rewariting using a boolean operator like `||` and `not`"
+  let fix = "rewriting using a boolean operator like `||` and `not`"
   let violation = "overly verbose if statement that can be simplified"
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
@@ -187,4 +193,40 @@ module IfToOrInv : EXPRCHECK = struct
       | _ -> ()
     end
     let name = "IfToOrInv", check
+end
+
+module RedundantOr : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
+  let fix = "simplifying further"
+  let violation = "Usage of the `||` is redundant"
+  let check st (E {location; source; pattern} : ctxt) =
+    begin match pattern with
+      | Pexp_apply (appl, [(_, l);(_, r)]) ->
+        if appl =~ "||" && (e_eq l r ||
+                            l =| "true" ||
+                            l =| "false" ||
+                            r =| "true" ||
+                            r =| "false") then
+          st := Hint.mk_hint location source fix violation :: !st
+      | _ -> ()
+    end
+    let name = "RedundantOr", check
+end
+
+module RedundantAnd : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
+  let fix = "simplifying further"
+  let violation = "Usage of the `&&` is redundant"
+  let check st (E {location; source; pattern} : ctxt) =
+    begin match pattern with
+      | Pexp_apply (appl, [(_, l);(_, r)]) ->
+        if appl =~ "&&" && (e_eq l r ||
+                            l =| "true" ||
+                            l =| "false" ||
+                            r =| "true" ||
+                            r =| "false") then
+          st := Hint.mk_hint location source fix violation :: !st
+      | _ -> ()
+    end
+    let name = "RedundantAnd", check
 end

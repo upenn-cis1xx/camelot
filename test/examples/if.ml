@@ -30,6 +30,13 @@ let t7 = if x then false else y
 (* if x then y else true *)
 let t8 = if x then y else true
     
+(* Should ding them twice - encouragement to fix *)
+let double_points = if x then x else true
+
+(* Slightly more complex examples *)
+
+let t9 = if 3 > 0 then 3 > 0 else false
+
 (* More complex examples *)
 
 let rec exists (l : int list) (i : int) =
