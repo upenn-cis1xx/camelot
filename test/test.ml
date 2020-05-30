@@ -303,22 +303,76 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, lines 54-55, columns: 2-15
+    File ./examples/match.ml, line 110, columns: 13-20
     Warning:
-    	using pattern matching on a tuple
+    	using an overly complex match clause
+    You wrote:
+    	 | y :: [] -> ...
+    Consider:
+    	expressing this match case more compactly
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, line 110, columns: 4-11
+    Warning:
+    	using an overly complex match clause
+    You wrote:
+    	 | x :: [] -> ...
+    Consider:
+    	expressing this match case more compactly
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, line 104, columns: 7-14
+    Warning:
+    	using an overly complex match clause
+    You wrote:
+    	 | x :: [] -> ...
+    Consider:
+    	expressing this match case more compactly
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, line 98, columns: 4-11
+    Warning:
+    	using an overly complex match clause
+    You wrote:
+    	 | x :: [] -> ...
+    Consider:
+    	expressing this match case more compactly
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, lines 79-80, columns: 2-15
+    Warning:
+    	using pattern matching on a tuple (for fewer than 2 cases)
     You wrote:
     	 match r with | (x, y) -> ()
     Consider:
-    	using a let pattern match statement to extract tuple fields
+    	using a let statement to extract tuple fields
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, lines 50-51, columns: 2-16
+    File ./examples/match.ml, lines 67-69, columns: 2-16
     Warning:
-    	using pattern matching on a record
+    	using pattern matching on a record (for fewer than 3 cases)
+    You wrote:
+    	 match r with | { x; y } -> () | { x;_} -> ()
+    Consider:
+    	using a let statement to extract record fields
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, lines 63-64, columns: 2-16
+    Warning:
+    	using pattern matching on a record (for fewer than 3 cases)
     You wrote:
     	 match r with | { x; y } -> ()
     Consider:
-    	using a let pattern match statement to extract record fields
+    	using a let statement to extract record fields
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, line 47, columns: 4-11
+    Warning:
+    	using an overly complex match clause
+    You wrote:
+    	 | x :: [] -> ...
+    Consider:
+    	expressing this match case more compactly
 
     (* ------------------------------------------------------------------------ *)
     File ./examples/match.ml, line 42, columns: 4-11
@@ -332,7 +386,7 @@ let%expect_test _ =
     (* ------------------------------------------------------------------------ *)
     File ./examples/match.ml, lines 12-15, columns: 15-5
     Warning:
-    	using pattern matching when `=` is better
+    	using integer pattern matching on fewer than 3 cases
     You wrote:
     	 match b with | 2 -> true | 3 -> false
     Consider:
@@ -341,11 +395,11 @@ let%expect_test _ =
     (* ------------------------------------------------------------------------ *)
     File ./examples/match.ml, lines 4-7, columns: 15-5
     Warning:
-    	using pattern matching when `=` is better
+    	using pattern matching on boolean literals
     You wrote:
     	 match b with | false -> true | true -> false
     Consider:
-    	using an if statement
+    	using an if statement or boolean operators
   |}]
 
 (* Run the tests in hof.ml *)

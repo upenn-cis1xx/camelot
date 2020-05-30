@@ -80,10 +80,10 @@ let is_pat_record (pat: Parsetree.pattern) : bool =
   | Ppat_record _ -> true
   |  _ -> false
 
-let is_case_constr (case: Parsetree.case) = is_pat_constr case.pc_lhs
+let is_case_constr (case: Parsetree.pattern) = is_pat_constr case
 
-let is_case_const (case: Parsetree.case) =
-  begin match case.pc_lhs.ppat_desc with 
+let is_case_const (case: Parsetree.pattern) =
+  begin match case.ppat_desc with 
     | Ppat_constant _ -> true
     | _ -> false
   end
