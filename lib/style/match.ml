@@ -6,7 +6,7 @@ open Check
 (* A pattern match that is considered long enough to override usual checks*)
 let long_pattern_match = 3
 
-let make_check (pred: Parsetree.pattern -> bool) gen_error override_len = 
+let make_check (pred: Parsetree.pattern -> bool) gen_error override_len enable_unwrap = 
   fun st (E {location; source; pattern} : Parsetree.expression_desc Pctxt.pctxt) -> 
 
     let rec unwrap_tuple (p : Parsetree.pattern) : Parsetree.pattern list =
@@ -19,9 +19,10 @@ let make_check (pred: Parsetree.pattern -> bool) gen_error override_len =
     begin match pattern with
     | Pexp_match (_, cases) -> 
         if List.length cases >= override_len then () 
-        else if None <> ( cases |>
-                          List.concat_map (fun (c: Parsetree.case) -> unwrap_tuple c.pc_lhs) |>
-                          List.find_opt pred )
+        else if None <> List.find_opt pred @@
+                          if enable_unwrap 
+                          then List.concat_map (fun (c: Parsetree.case) -> unwrap_tuple c.pc_lhs) cases
+                          else List.map (fun (c: Parsetree.case) -> c.pc_lhs) cases
         then gen_error location source st
     | _ -> ()
     end
@@ -34,6 +35,7 @@ module MatchBool : EXPRCHECK = struct
   let check = make_check (fun case -> is_case_constr case "true" || is_case_constr case "false") 
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
+                         true
 
   let name = "MatchBool", check
 end
@@ -45,6 +47,7 @@ module MatchInt : EXPRCHECK = struct
   let check = make_check is_case_const 
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
+                         true
   let name = "MatchInt", check
              
 end
@@ -56,6 +59,7 @@ module MatchRecord : EXPRCHECK = struct
   let check = make_check (fun case -> is_pat_record case)
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
+                         true
   let name = "MatchRecord", check
              
 end 
@@ -68,6 +72,7 @@ module MatchTuple : EXPRCHECK = struct
   let check = make_check (fun case -> is_pat_tuple case)
                          (fun location source st -> st := Hint.mk_hint location source fix violation :: !st)
                          2
+                         false
   let name = "MatchTuple", check
              
 end
@@ -84,9 +89,7 @@ module MatchListVerbose : EXPRCHECK = struct
       begin match pat.ppat_desc with
         | Ppat_construct ({txt = Lident "::";_}, Some matchcase) ->
           begin match matchcase.ppat_desc with
-            | Ppat_tuple ([_; cons_case]) ->
-
-              is_pat_constr cons_case "[]"
+            | Ppat_tuple ([_; cons_case]) -> is_pat_constr cons_case "[]"
             | _ -> false
           end
         | _ -> false 
