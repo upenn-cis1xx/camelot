@@ -13,9 +13,24 @@ let to_ast file =
   let src, f = safe_open file in
   src, ( f |> Lexing.from_channel |> Parse.implementation )
 
+let line_lint : bool ref = ref false 
 
 let lint_and_hint : (string * Parsetree.structure) -> unit = fun (file, ast) ->
   let store : Canonical.Hint.hint list ref = ref [] in
+  let line_length_lint : string -> unit = fun file ->
+    if not !line_lint then ()
+    else
+    let chan = open_in file in
+    let lref : int ref = ref 1 in
+    try
+      while true; do
+        let line = input_line chan in
+        (if (String.length line > 79) then store := Canonical.Hint.line_hint file !lref line :: !store;);
+        incr lref
+      done; ()
+    with End_of_file ->
+      close_in chan; () in
+  line_length_lint file;
   file |>
   Traverse.Iter.make_linterator store |>
   Traverse.Iter.apply_iterator ast;
@@ -24,19 +39,29 @@ let lint_and_hint : (string * Parsetree.structure) -> unit = fun (file, ast) ->
 
 (* Run the tests in lexical.ml *)
 let%expect_test _ =
+  line_lint := true;
   let file : string = "./examples/lexical.ml" in
   let to_lint = to_ast file in
   lint_and_hint to_lint;
+  line_lint := false;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/lexical.ml, line 2, columns: 40-197
+    File ./examples/lexical.ml, line 5, columns: 0-80
     Warning:
-    	exceeding the 80 character line limit. Only showing (1) such violation of this kind, although there may be others - fix this and re-run the linter to find them.
+    	exceeding the 80 character line limit
     You wrote:
-    	 [1;2;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]
+    	 let verylongvariablenamethisispainful = [1;2;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]
     Consider:
-    	indenting to avoid exceeding the line limit
-  |}]
+    	indenting to avoid exceeding the 80 character line limit
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/lexical.ml, line 2, columns: 0-80
+    Warning:
+    	exceeding the 80 character line limit
+    You wrote:
+    	 let verylongvariablenamethisispainful = [1;2;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]
+    Consider:
+    	indenting to avoid exceeding the 80 character line limit |}]
 
 (* Run the tests in equality.ml *)
 let%expect_test _ =
@@ -45,20 +70,20 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/equality.ml, line 9, columns: 8-20
+    File ./examples/equality.ml, line 15, columns: 8-41
     Warning:
-    	using `=` with lists
+    	using `=` with lists as a condition in an if statement
     You wrote:
-    	 [1; 2; 3] = []
+    	 if [1; 2; 3] = q then None else x
     Consider:
     	using a pattern match to check whether a list has a certain value
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/equality.ml, line 8, columns: 8-16
+    File ./examples/equality.ml, line 14, columns: 8-37
     Warning:
-    	using `=` with lists
+    	using `=` with lists as a condition in an if statement
     You wrote:
-    	 [] = [1]
+    	 if q = [1] then x else None
     Consider:
     	using a pattern match to check whether a list has a certain value
 
@@ -154,6 +179,42 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 53, columns: 14-48
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if p h then nonsense p t else true
+    Consider:
+    	rewariting using a boolean operator like `||` and `not`
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 48, columns: 14-45
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if p h then false else none p t
+    Consider:
+    	rewriting using a boolean operator like `&&` and `not`
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 43, columns: 14-47
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if p h then forall p t else false
+    Consider:
+    	rewriting using a boolean operator like `&&`
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 38, columns: 14-48
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if h = i then true else exists t i
+    Consider:
+    	rewriting using a boolean operator like `||`
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 31, columns: 9-30
     Warning:
     	overly verbose if statement that can be simplified
@@ -169,7 +230,7 @@ let%expect_test _ =
     You wrote:
     	 if x then false else y
     Consider:
-    	rewariting using a boolean operator like `&&` and `not`
+    	rewriting using a boolean operator like `&&` and `not`
 
     (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 25, columns: 9-31

@@ -137,8 +137,8 @@ module IfToOr : EXPRCHECK = struct
     
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
-      | Pexp_ifthenelse (cond, bthen, Some belse) ->
-        if is_exp_id cond && is_exp_id belse && bthen =| "true" then
+      | Pexp_ifthenelse (_cond, bthen, Some belse) ->
+        if not (belse =| "true") && not (belse =| "false")  && bthen =| "true" then
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
@@ -153,8 +153,8 @@ module IfToAnd : EXPRCHECK = struct
     
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
-      | Pexp_ifthenelse (cond, bthen, Some belse) ->
-        if is_exp_id cond && is_exp_id bthen && belse =| "false" then
+      | Pexp_ifthenelse (_cond, bthen, Some belse) ->
+        if not (bthen =| "true") && not (bthen =| "false") && belse =| "false" then
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
@@ -163,12 +163,12 @@ end
 
 module IfToAndInv : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
-  let fix = "rewariting using a boolean operator like `&&` and `not`"
+  let fix = "rewriting using a boolean operator like `&&` and `not`"
   let violation = "overly verbose if statement that can be simplified"
   let check st (E {location;source;pattern} : ctxt) =
     begin match pattern with
-      | Pexp_ifthenelse (cond, bthen, Some belse) ->
-        if is_exp_id cond && is_exp_id belse && bthen =| "false" then
+      | Pexp_ifthenelse (_cond, bthen, Some belse) ->
+        if not (belse =| "true") && not (belse =| "false")  && bthen =| "false" then
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
@@ -181,8 +181,8 @@ module IfToOrInv : EXPRCHECK = struct
   let violation = "overly verbose if statement that can be simplified"
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
-      | Pexp_ifthenelse (cond, bthen, Some belse) ->
-        if is_exp_id cond && is_exp_id bthen && belse =| "true" then
+      | Pexp_ifthenelse (_cond, bthen, Some belse) ->
+        if not (bthen =| "true") && not (bthen =| "false") && belse =| "true" then
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end

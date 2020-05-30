@@ -72,7 +72,7 @@ type files = file list
 type letname = string
 
 type arthur =
-  | Arthur of global * func list
+  | Arthur of files * global * func list
 and global =
   | Global of flag
 and func =
@@ -81,7 +81,7 @@ and flag =
   | Disable of files
 
 
-let rec pp_arthur : arthur -> string = fun (Arthur (glob, funcs)) ->
+let rec pp_arthur : arthur -> string = fun (Arthur (_files, glob, funcs)) ->
   "Arthur (\n" ^
   pp_global glob ^ "\n," ^
   pp_funcs funcs ^ "\n" ^ 
@@ -105,7 +105,7 @@ and pp_flag : flag -> string = fun (Disable fs) ->
   "disable: " ^ "[" ^ String.concat ", " fs ^ "]"
 
 let default : arthur =
-  Arthur (Global (Disable []), [])
+  Arthur ([], Global (Disable []), [])
 
 
 (** Looks for an arthur.json file *)
@@ -119,8 +119,17 @@ let rec json_to_arthur : Yojson.Basic.t option -> arthur = function
     default
   | Some json ->
     let glob = json_to_global json in
-    let locals = json_to_funcs json in 
-    Arthur (glob, locals)
+    let locals = json_to_funcs json in
+    let toLint = files json in
+    Arthur (toLint , glob, locals)
+
+and files : Yojson.Basic.t -> files = fun j ->
+  let open OptInst in
+  let l = PUtils.project "toLint" j in
+  let l' = l >>= (fun o -> PUtils.list o) |*> PUtils.string_list in
+  match l' with
+  | None -> []
+  | Some l -> l
       
 and json_to_global : Yojson.Basic.t -> global = fun j ->
   match PUtils.project "global" j with
