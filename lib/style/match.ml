@@ -4,6 +4,7 @@ open Astutils
 open Check
 
 (* A pattern match that is considered long enough to override usual checks*)
+let short_pattern_match = 2
 let long_pattern_match = 3
 
 let make_check (pred: Parsetree.pattern -> bool) gen_error override_len enable_unwrap = 
@@ -13,29 +14,32 @@ let make_check (pred: Parsetree.pattern -> bool) gen_error override_len enable_u
       begin match p.ppat_desc with
       | Ppat_tuple pat_list -> List.concat_map unwrap_tuple pat_list
       | _ -> [p]
-      end 
+      end
     in
 
     begin match pattern with
     | Pexp_match (_, cases) -> 
         if List.length cases >= override_len then () 
-        else if None <> List.find_opt pred @@
-                          if enable_unwrap 
-                          then List.concat_map (fun (c: Parsetree.case) -> unwrap_tuple c.pc_lhs) cases
-                          else List.map (fun (c: Parsetree.case) -> c.pc_lhs) cases
-        then gen_error location source pattern st
+        else if enable_unwrap then 
+          List.concat_map (fun (c: Parsetree.case) -> unwrap_tuple c.pc_lhs) cases |>
+          List.filter pred |>
+          List.iter (fun (p: Parsetree.pattern) -> gen_error location source p st)
+        else 
+          List.map (fun (c: Parsetree.case) -> c.pc_lhs) cases |>
+          List.filter pred |>
+          (fun l -> try gen_error location source (List.hd l) st with _ -> ())
     | _ -> ()
     end
     
 
 module MatchBool : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
-  let fix = "using an if statement"
-  let violation = "using pattern matching when `=` is better"
+  let fix = "using an if statement or boolean operators"
+  let violation = "using pattern matching on boolean literals"
   let check = make_check (fun case -> is_case_constr case "true" || is_case_constr case "false") 
                          (fun location source _ st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
-                         true
+                         false
 
   let name = "MatchBool", check
 end
@@ -43,23 +47,23 @@ end
 module MatchInt : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using an if statement and `=`"
-  let violation = "using pattern matching when `=` is better"
+  let violation = "using integer pattern matching on fewer than " ^ (string_of_int long_pattern_match) ^ " cases"
   let check = make_check is_case_const 
                          (fun location source _ st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
-                         true
+                         false
   let name = "MatchInt", check
              
 end
 
 module MatchRecord : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
-  let fix = "using a let pattern match statement to extract record fields"
-  let violation = "using pattern matching on a record"
+  let fix = "using a let statement to extract record fields"
+  let violation = "using pattern matching on a record (for fewer than " ^ (string_of_int long_pattern_match) ^ " cases)"
   let check = make_check (fun pat -> is_pat_record pat)
                          (fun location source _ st -> st := Hint.mk_hint location source fix violation :: !st)
                          long_pattern_match
-                         true
+                         false
   let name = "MatchRecord", check
              
 end 
@@ -67,11 +71,11 @@ end
 
 module MatchTuple : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
-  let fix = "using a let pattern match statement to extract tuple fields"
-  let violation = "using pattern matching on a tuple"
+  let fix = "using a let statement to extract tuple fields"
+  let violation = "using pattern matching on a tuple (for fewer than " ^ (string_of_int short_pattern_match) ^ " cases)"
   let check = make_check (fun pat -> is_pat_tuple pat)
                          (fun location source _ st -> st := Hint.mk_hint location source fix violation :: !st)
-                         2
+                         short_pattern_match
                          false
   let name = "MatchTuple", check
              
@@ -97,30 +101,16 @@ module MatchListVerbose : EXPRCHECK = struct
   let check = make_check 
     (pat_pred)
     (fun location source pattern st -> 
-      (* Wrapper for List.find_opt  *)
-      let contains_pattern pred patterns = List.find_opt pred patterns in
-
       (* Regexp that matches literal(0 or more spaces)::(0 or more space)[] *)
-      let matcher = "[a-zA-Z_]+[ ]*::[ ]*\\[\\]" |> Str.regexp in
-
-      (* Utility for checking for a given match  *)
-      
+      let matcher = Str.regexp "[a-zA-Z0-9_]+[ ]*::[ ]*\\[\\]" in
       let test s = try Str.search_forward matcher s 0 >= 0 with _ -> false in
-      begin match pattern with
-        | Pexp_match (_, cases) ->
-          let patterns = List.map (fun (c: Parsetree.case) -> c.pc_lhs) cases in
-          begin match contains_pattern pat_pred patterns with
-          | None -> ()
-          | Some p ->
-            let refined_loc = Warn.warn_loc_of_loc location.file p.ppat_loc in
-            let raw_source = IOUtils.code_at_loc refined_loc source in
-            if test raw_source then
-              st := Hint.mk_hint refined_loc ("| " ^ raw_source ^ " -> ...") fix violation :: !st 
-          end
-        | _ -> ()
-      end
+      if pat_pred pattern then
+        let refined_loc = Warn.warn_loc_of_loc location.file pattern.ppat_loc in
+        let raw_source = IOUtils.code_at_loc refined_loc source in
+        if test raw_source then
+          st := Hint.mk_hint refined_loc ("| " ^ raw_source ^ " -> ...") fix violation :: !st 
     )
-    max_int
+    Int.max_int
     true
    let name = "MatchListVerbose", check 
 end

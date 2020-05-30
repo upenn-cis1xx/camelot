@@ -48,12 +48,6 @@ let b l =
   | x :: y :: [] -> ()
   | _ -> ()
 
-let b l1 l2 =
-  match l1, l2 with
-  | x :: [], _ -> ()
-  | x :: y :: [], _ -> ()
-  | _ -> ()
-
 (* should not fire *)
 let b l =
   match l with
@@ -68,6 +62,18 @@ type t = {x: int; y: int}
 let b (r: t) =
   match r with
   | {x; y} -> ()
+
+let b (r: t) =
+  match r with
+  | {x; y} -> ()
+  | {x; _} -> ()
+
+(* shouldn't trigger *)
+let b (r: t) =
+  match r with
+  | {x; y} -> ()
+  | {x; _} -> ()
+  | {a; b} -> ()
 
 let b (r: int * int) =
   match r with
@@ -85,3 +91,22 @@ let b (r: int * int) =
   | (3,4) -> ()
   | (5,6) -> ()
              
+
+(* tuple unwrapping tests *)
+let b l1 l2 =
+  match l1, l2 with
+  | x :: [], _ -> ()
+  | x :: y :: [], _ -> ()
+  | _ -> ()
+
+let b l1 l2 =
+  match l1, l2 with
+  | _, x :: [] -> ()
+  | _, x :: y :: [] -> ()
+  | _ -> ()
+
+let b l1 l2 =
+  match l1, l2 with
+  | x :: [], y :: [] -> ()
+  | x :: y :: [], x :: y :: [] -> ()
+  | _ -> ()
