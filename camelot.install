@@ -1,9 +1,0 @@
-lib: [
-  "_build/install/default/lib/camelot/META"
-  "_build/install/default/lib/camelot/dune-package"
-  "_build/install/default/lib/camelot/opam"
-]
-doc: [
-  "_build/install/default/doc/camelot/LICENSE"
-  "_build/install/default/doc/camelot/README.md"
-]
