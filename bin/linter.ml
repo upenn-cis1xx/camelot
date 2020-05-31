@@ -10,7 +10,7 @@ let line_length_lint : string -> unit = fun file ->
   try
     while true; do
       let line = input_line chan in
-      (if (String.length line > 79) then store := Hint.line_hint file !lref line :: !store;);
+      (if (String.length line > 80) then store := Hint.line_hint file !lref line :: !store;);
       incr lref
     done; ()
   with End_of_file ->

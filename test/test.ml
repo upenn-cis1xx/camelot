@@ -25,7 +25,7 @@ let lint_and_hint : (string * Parsetree.structure) -> unit = fun (file, ast) ->
     try
       while true; do
         let line = input_line chan in
-        (if (String.length line > 79) then store := Canonical.Hint.line_hint file !lref line :: !store;);
+        (if (String.length line > 80) then store := Canonical.Hint.line_hint file !lref line :: !store;);
         incr lref
       done; ()
     with End_of_file ->
