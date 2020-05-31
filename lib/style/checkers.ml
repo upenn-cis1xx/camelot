@@ -17,6 +17,8 @@ let expr_checks = [
 ; Verbose.IfToOrInv.name
 ; Verbose.NestedIf.name
 ; Verbose.NestedMatch.name
+; Verbose.RedundantOr.name
+; Verbose.RedundantAnd.name
 ]
 
 let struct_checks = [

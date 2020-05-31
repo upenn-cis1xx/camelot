@@ -1,6 +1,12 @@
 open Parsetree
   
 type exp = Parsetree.expression
+
+
+let e_eq (l: exp) (r: exp) = Expeq.exp_eq l r
+
+let e_neq (l: exp) (r: exp) = not @@ Expeq.exp_eq l r
+           
              
 let is_id e id : bool = 
   match e.pexp_desc with 

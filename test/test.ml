@@ -179,16 +179,16 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 53, columns: 14-48
+    File ./examples/if.ml, line 60, columns: 14-48
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
     	 if p h then nonsense p t else true
     Consider:
-    	rewariting using a boolean operator like `||` and `not`
+    	rewriting using a boolean operator like `||` and `not`
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 48, columns: 14-45
+    File ./examples/if.ml, line 55, columns: 14-45
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
@@ -197,7 +197,7 @@ let%expect_test _ =
     	rewriting using a boolean operator like `&&` and `not`
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 43, columns: 14-47
+    File ./examples/if.ml, line 50, columns: 14-47
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
@@ -206,7 +206,7 @@ let%expect_test _ =
     	rewriting using a boolean operator like `&&`
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 38, columns: 14-48
+    File ./examples/if.ml, line 45, columns: 14-48
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
@@ -215,13 +215,40 @@ let%expect_test _ =
     	rewriting using a boolean operator like `||`
 
     (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 38, columns: 9-39
+    Warning:
+    	returning the condition of an if statement on success and a boolean literal otherwise
+    You wrote:
+    	 if 3 > 0 then 3 > 0 else false
+    Consider:
+    	returning just the condition or simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 34, columns: 20-41
+    Warning:
+    	overly verbose if statement that can be simplified
+    You wrote:
+    	 if x then x else true
+    Consider:
+    	rewriting using a boolean operator like `||` and `not`
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/if.ml, line 34, columns: 20-41
+    Warning:
+    	returning the condition of an if statement on success and a boolean literal otherwise
+    You wrote:
+    	 if x then x else true
+    Consider:
+    	returning just the condition or simplifying further
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 31, columns: 9-30
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
     	 if x then y else true
     Consider:
-    	rewariting using a boolean operator like `||` and `not`
+    	rewriting using a boolean operator like `||` and `not`
 
     (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 28, columns: 9-31
@@ -262,20 +289,11 @@ let%expect_test _ =
     (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 16, columns: 9-37
     Warning:
-    	overly verbose if statement that can be simplified
+    	returning the condition of an if statement on success and a boolean literal otherwise
     You wrote:
     	 if beta then beta else false
     Consider:
-    	rewriting using a boolean operator like `&&`
-
-    (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 16, columns: 9-37
-    Warning:
-    	returning the condition of an if statement on success and false otherwise
-    You wrote:
-    	 if beta then beta else false
-    Consider:
-    	returning just the condition
+    	returning just the condition or simplifying further
 
     (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 13, columns: 9-34
