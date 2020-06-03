@@ -12,11 +12,12 @@ let apply_iterator (structure: Parsetree.structure) (iter: Ast_iterator.iterator
    Defines a linter iterator for traversing the OCaml AST.
    You can write your own Custom expression handler 
 *)
-let rec linterator exp_handler structitem_handler = 
+let rec linterator exp_handler structitem_handler structure_handler = 
   {
     default_iterator with
     expr = expr_iterator exp_handler;
-    structure_item = structure_item_iterator structitem_handler
+    structure_item = structure_item_iterator structitem_handler;
+    structure = structure_iterator structure_handler
     
   }
 
@@ -30,10 +31,13 @@ and structure_item_iterator (handler: Parsetree.structure_item -> 'a) (iterator:
   handler structure_item;
   M.iter_structure_item iterator structure_item
 
-
+and structure_iterator (handler: Parsetree.structure -> 'a) (iterator: Ast_iterator.iterator)
+    (payload: Parsetree.structure) : unit =
+  handler payload;
+  ST.iter iterator payload
 
 (** Given a list ref and a filename, produce an iterator that runs the pass_checks method at each expression node in the
     OCaml ast. This will mutate the store by appending new hints the checkers find as they analyse the source code.
 *)
 let make_linterator = fun store fname -> 
-  linterator (pass_exprs store fname) (pass_structures store fname)
+  linterator (pass_exprs store fname) (pass_structures store fname) (pass_file store fname)

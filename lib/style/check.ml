@@ -16,3 +16,4 @@ module type EXPRCHECK = CHECK with type ctxt = Parsetree.expression_desc Pctxt.p
 
 module type STRUCTURECHECK = CHECK with type ctxt = Parsetree.structure_item_desc Pctxt.pctxt
   
+module type LEXICALCHECK = CHECK with type ctxt = Pctxt.file Pctxt.pctxt

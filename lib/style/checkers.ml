@@ -26,3 +26,7 @@ let struct_checks = [
 ; Hof.UseFold.name
 ; Hof.UseIter.name
 ]
+
+let lexical_checks = [
+  Lexical.LineLength.name
+]
