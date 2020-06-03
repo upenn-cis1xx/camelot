@@ -1,86 +1,24 @@
 (** 
-   Parser for the json type to an internal type 
+   Parser module for the json object to an internal representation 
 *)
-
-(* Retry *)
 
 
 (* Useful combinators *)
 
+(** Optional Instance: Provide combinators for monadic let bindings *)
 module OptInst = struct
 
   let return : 'a -> 'a option = fun e -> Some e
-
-  let pure : 'a -> 'a option = return
 
   let bind : 'a option -> ('a -> 'b option) -> 'b option = fun e f ->
     match e with
     | None -> None
     | Some i -> f i
 
-  let (>>=) e f = bind e f
-
   let (let*) e f = bind e f
-
-  let zap : ('a -> 'b) option -> 'a option -> 'b option = fun fo a ->
-    begin match fo, a with
-      | Some f, Some x -> Some (f x)
-      | _ -> None
-    end
-
-  let (<*>) f s = zap f s
-      
-  let map : ('a -> 'b) -> 'a option -> 'b option = fun f a ->
-    match a with
-    | None -> None
-    | Some x -> Some (f x)
-    
-  let ( <$> ) f a = map f a
-
-  let (let+) s f = map f s
-
-  let product : 'a option -> 'b option -> ('a * 'b) option = fun a b ->
-    match a, b with
-    | Some x, Some y -> Some (x,y)
-    | _ -> None
-
-  let (and+) a b = product a b
-  let (and*) a b = product a b 
-  
-  (* Functor pipe *)
-  let (|>>) s f = f <$> s
-
-  let (|*>) s f = pure f <*> s
-    
 end
 
-module Default = struct
-  type 'a default =
-    | Found of 'a
-    | Default of 'a
-
-  let return : 'a -> 'a default = fun x -> Found x
-
-  let pure : 'a -> 'a default = return
-
-  let bind : 'a default -> ('a -> 'b default) -> 'b default = fun e f ->
-    match e with
-    | Found e -> f e
-    | Default e -> f e
-
-  let (let*) e f = bind e f
-
-  let map : ('a -> 'b) -> 'a default -> 'b default = fun f -> function
-    | Found e -> Found (f e)
-    | Default e -> Default (f e)
-
-  let (let+) s f = map f s
-
-                     
-end
-
-
-(* Utility for working with YoJson o god so much fucking utility *)
+(** Utility for working with YoJson *)
 module PUtils = struct
   let fail : (unit -> 'a) -> 'a option = fun f ->
     try Some (f ()) with _ -> None
@@ -103,21 +41,31 @@ module PUtils = struct
       
 end
 
-
-type file = string
-type files = file list
-type letname = string
-
+(** The internal arthur type - 
+    Arthur's configuration is:
+    - a list of files to lint
+    - a global configuration, of rules to apply
+    - a local configuration of functions that have rules to disable
+ *)
 type arthur =
   | Arthur of files * global * func list
+
+(** A global is just a flag *)
 and global =
   | Global of flag
+
+(** A func is just a top-level function name, and a flag to apply *)
 and func =
   | Func of letname * flag
+
+(** A flag is just a list of files to disable *)
 and flag =
   | Disable of files
+and files = string list
+and letname = string
 
 
+(** A function for pretty_printing an arthur configuration *)
 let rec pp_arthur : arthur -> string = fun (Arthur (_files, glob, funcs)) ->
   "Arthur (\n" ^
   pp_global glob ^ "\n," ^
@@ -150,7 +98,7 @@ let from_file : string -> Yojson.Basic.t option = fun s ->
   try Some (Yojson.Basic.from_file s)
   with _ -> None
 
-(* Recursive descent parser for json to arthur *)
+(** Recursive descent parser for json to arthur *)
 let rec json_to_arthur : Yojson.Basic.t option -> arthur = fun tl ->
   let open OptInst in
   let parse_in = match tl with

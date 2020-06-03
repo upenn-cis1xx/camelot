@@ -2,7 +2,8 @@ open Canonical
 open Check
 open Utils
 open Astutils
-    
+
+(** -------------- Checks rules: If top-level let should use List.map -------------------- *)
 module UseMap : STRUCTURECHECK = struct
   type ctxt = Parsetree.structure_item_desc Pctxt.pctxt
 
@@ -32,6 +33,7 @@ module UseMap : STRUCTURECHECK = struct
 end
 
 
+(** -------------- Checks rules: If top-level let should use List.fold_right ------------- *)
 module UseFold : STRUCTURECHECK = struct
   type ctxt = Parsetree.structure_item_desc Pctxt.pctxt
 
@@ -60,6 +62,7 @@ module UseFold : STRUCTURECHECK = struct
   let name = "UseFold", check
 end
 
+(** -------------- Checks rules: If top-level let should use List.iter ------------------- *)
 module UseIter : STRUCTURECHECK = struct
   
   type ctxt = Parsetree.structure_item_desc Pctxt.pctxt

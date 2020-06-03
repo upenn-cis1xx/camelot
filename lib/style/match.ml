@@ -31,7 +31,7 @@ let make_check (pred: Parsetree.pattern -> bool) gen_error override_len enable_u
     | _ -> ()
     end
     
-
+(** --------------------- Checks rules: match _ with | true | false ----------------------------- *)
 module MatchBool : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using an if statement or boolean operators"
@@ -44,6 +44,7 @@ module MatchBool : EXPRCHECK = struct
   let name = "MatchBool", check
 end
 
+(** --------------------- Checks rules: match _ with | 0 | n ------------------------------------ *)
 module MatchInt : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using an if statement and `=`"
@@ -56,6 +57,7 @@ module MatchInt : EXPRCHECK = struct
              
 end
 
+(** --------------------- Checks rules: match _ with | {f1;f2;...} ------------------------------ *)
 module MatchRecord : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a let statement to extract record fields"
@@ -69,6 +71,7 @@ module MatchRecord : EXPRCHECK = struct
 end 
 
 
+(** --------------------- Checks rules: match _ with | (_, _ ..) -------------------------------- *)
 module MatchTuple : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a let statement to extract tuple fields"
@@ -82,6 +85,7 @@ module MatchTuple : EXPRCHECK = struct
 end
 
 
+(** --------------------- Checks rules: match _ with | x :: [] ---------------------------------- *)
 module MatchListVerbose : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "expressing this match case more compactly"

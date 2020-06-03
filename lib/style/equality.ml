@@ -4,7 +4,7 @@ open Astutils
 open Check
 
     
-(* ------------------ Checks rules: if (_ = [literals] | [literals] = _)  ----------------------- *)
+(** ------------------ Checks rules: if (_ = [literals] | [literals] = _)  ----------------------- *)
 module EqList : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a pattern match to check whether a list has a certain value"
@@ -24,8 +24,7 @@ module EqList : EXPRCHECK = struct
 end
 
 
-(* ------------------ Checks rules: _ = [Some _ | None] | [Some _ | None] = _ -------------  *)
-
+(** ------------------ Checks rules: _ = [Some _ | None] | [Some _ | None] = _ -------------  *)
 module EqOption : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a pattern match to check the presence of an option"
