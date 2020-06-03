@@ -1,3 +1,4 @@
+(** Expression checks *)
 let expr_checks = [
   Equality.EqList.name
 ; Equality.EqOption.name
@@ -21,12 +22,14 @@ let expr_checks = [
 ; Verbose.RedundantAnd.name
 ]
 
+(** Top-level structure checks *)
 let struct_checks = [
   Hof.UseMap.name
 ; Hof.UseFold.name
 ; Hof.UseIter.name
 ]
 
+(** Lexical checks *)
 let lexical_checks = [
   Lexical.LineLength.name
 ]

@@ -57,7 +57,7 @@ module MatchInt : EXPRCHECK = struct
              
 end
 
-(** --------------------- Checks rules: match _ with | {f1;f2;...} ------------------------------ *)
+(** --------------------- Checks rules: match _ with | \{f1;f2;...\} ------------------------------ *)
 module MatchRecord : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a let statement to extract record fields"

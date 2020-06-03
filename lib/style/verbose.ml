@@ -3,7 +3,7 @@ open Utils
 open Astutils
 open Check
 
-(** ----------------------- Checks rules: [_] @ _ ---------------------------- *)
+(** ----------------------- Checks rules: [_] \@ _ ---------------------------- *)
 module LitPrepend : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using `::` instead"
