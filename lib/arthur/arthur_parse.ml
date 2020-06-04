@@ -132,7 +132,9 @@ let rec json_to_arthur : Yojson.Basic.t option -> arthur = fun tl ->
     and+ toLint = files raw in
     return (Arthur (toLint, glob, locals)) <?> return default
   in
-  Option.get parse_in
+  match parse_in with
+  | None -> default
+  | Some v -> v
 
 and files : Yojson.Basic.t -> files option = fun j ->
   let open OptInst in
