@@ -443,3 +443,8 @@ module CE = struct
     sub.location sub pci_loc;
     sub.attributes sub pci_attributes
 end
+
+module ST = struct
+  let iter sub =
+    List.iter (sub.structure_item sub)
+end

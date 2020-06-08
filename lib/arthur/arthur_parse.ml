@@ -1,13 +1,13 @@
 (** 
-   Parser for the json type to an internal type 
+   Parser module for the json object to an internal representation 
 *)
-
-(* Retry *)
 
 
 (* Useful combinators *)
 
+(** Optional Instance: Provide combinators for monadic let bindings *)
 module OptInst = struct
+
   let return : 'a -> 'a option = fun e -> Some e
 
   let bind : 'a option -> ('a -> 'b option) -> 'b option = fun e f ->
@@ -15,35 +15,33 @@ module OptInst = struct
     | None -> None
     | Some i -> f i
 
-  let (>>=) e f = bind e f
+  let (let*) e f = bind e f
 
-  let pure : 'a -> 'a option = return
+  let with_default : 'a option -> 'a option -> 'a option = fun current replace ->
+    match current with
+    | None -> replace
+    | Some _ -> current
 
-  let zap : ('a -> 'b) option -> 'a option -> 'b option = fun fo a ->
-    begin match fo with
-    | None -> None
-    | Some f ->
-      begin match a with
-      | None -> None
-      | Some i -> Some (f i)
-      end
-    end
+  let prod : 'a option -> 'b option -> ('a * 'b) option = fun l r ->
+    match l, r with
+    | Some x, Some y -> Some (x,y)
+    | _ -> None
 
-  let (<*>) f s = zap f s
-      
-  let fmap : ('a -> 'b) -> 'a option -> 'b option = fun f a ->
-    a >>= (fun e -> pure (f e) )
-    
-  let ( <$> ) f a = fmap f a
-  (* Functor pipe *)
-  let (|>>) s f = f <$> s
 
-  let (|*>) s f = pure f <*> s
-    
+  let (and+) l r = prod l r
+  
+  (** x <?> y : read as optional choice combinator. If x exists choose it. If not choose y.
+      Intended as a choose default type of thing.
+      This is exactly haskells alternative. But for parsing, <?> looks better - signifies we're
+      working with optionals.
+  *)
+  let ( <?> ) a b = with_default a b
 end
 
+module Default = struct
+end
 
-(* Utility for working with YoJson o god so much fucking utility *)
+(** Utility for working with YoJson *)
 module PUtils = struct
   let fail : (unit -> 'a) -> 'a option = fun f ->
     try Some (f ()) with _ -> None
@@ -57,7 +55,8 @@ module PUtils = struct
   let string : Yojson.Basic.t -> string option = Yojson.Basic.Util.to_string_option
 
   let string_list : Yojson.Basic.t list -> string list = fun l -> 
-    List.filter_map (string) l
+     List.filter_map (string) l
+      
 
   let key_func : Yojson.Basic.t -> string option = fun o ->
     match Yojson.Basic.Util.keys o with
@@ -66,21 +65,31 @@ module PUtils = struct
       
 end
 
-
-type file = string
-type files = file list
-type letname = string
-
+(** The internal arthur type - 
+    Arthur's configuration is:
+    - a list of files to lint
+    - a global configuration, of rules to apply
+    - a local configuration of functions that have rules to disable
+ *)
 type arthur =
   | Arthur of files * global * func list
+
+(** A global is just a flag *)
 and global =
   | Global of flag
+
+(** A func is just a top-level function name, and a flag to apply *)
 and func =
   | Func of letname * flag
+
+(** A flag is just a list of files to disable *)
 and flag =
   | Disable of files
+and files = string list
+and letname = string
 
 
+(** A function for pretty_printing an arthur configuration *)
 let rec pp_arthur : arthur -> string = fun (Arthur (_files, glob, funcs)) ->
   "Arthur (\n" ^
   pp_global glob ^ "\n," ^
@@ -113,57 +122,50 @@ let from_file : string -> Yojson.Basic.t option = fun s ->
   try Some (Yojson.Basic.from_file s)
   with _ -> None
 
-(* Recursive descent parser for json to arthur *)
-let rec json_to_arthur : Yojson.Basic.t option -> arthur = function
-  | None -> 
-    default
-  | Some json ->
-    let glob = json_to_global json in
-    let locals = json_to_funcs json in
-    let toLint = files json in
-    Arthur (toLint , glob, locals)
-
-and files : Yojson.Basic.t -> files = fun j ->
+(** Recursive descent parser for json to arthur *)
+let rec json_to_arthur : Yojson.Basic.t option -> arthur = fun tl ->
   let open OptInst in
-  let l = PUtils.project "toLint" j in
-  let l' = l >>= (fun o -> PUtils.list o) |*> PUtils.string_list in
-  match l' with
-  | None -> []
-  | Some l -> l
+  let parse_in =
+    let* raw = tl in 
+    let* glob = json_to_global raw
+    and+ locals = json_to_funcs raw
+    and+ toLint = files raw in
+    return (Arthur (toLint, glob, locals)) <?> return default
+  in
+  match parse_in with
+  | None -> default
+  | Some v -> v
+
+and files : Yojson.Basic.t -> files option = fun j ->
+  let open OptInst in
+  let* toLint = PUtils.project "toLint" j in
+  let* lint_list = PUtils.list toLint <?> (return []) in
+  return @@ PUtils.string_list lint_list
       
-and json_to_global : Yojson.Basic.t -> global = fun j ->
-  match PUtils.project "global" j with
-  | None ->
-    (* Default action: Globally, disable nothing *)
-    Global (Disable [])
-  | Some o -> Global (json_to_flag o)
-
-and json_to_funcs : Yojson.Basic.t -> func list = fun j ->
+and json_to_global : Yojson.Basic.t -> global option = fun j ->
   let open OptInst in
-  let l = PUtils.project "locals" j >>=
-    (fun o ->
-       PUtils.list o |*>
-       List.map (json_to_func) |*>
-       List.filter_map (fun e -> e)) in
-  match l with
-  | None -> []
-  | Some i -> i
+  let* globs = PUtils.project "global" j in
+  let* gls = json_to_flag globs <?> return @@ (Disable []) in
+  return @@ Global gls
 
+and json_to_funcs : Yojson.Basic.t -> func list option= fun j ->
+  let open OptInst in
+  let* locals = PUtils.project "locals" j in
+  let* listlocals = PUtils.list locals in
+  let lv = listlocals |> List.filter_map (json_to_func) in
+  return lv
+    
 and json_to_func : Yojson.Basic.t -> func option = fun j ->
   let open OptInst in
-  let func_name = PUtils.key_func j in
-  let flag = func_name
-    >>= (fun s -> PUtils.project s j)
-            |>> json_to_flag in
-  match func_name, flag with
-  | Some n, Some f -> Some (Func (n, f))
-  | _ -> None
+  let* func_name = PUtils.key_func j in
+  let* proj_field = PUtils.project func_name j in
+  let* flag = json_to_flag proj_field in
+  return (Func(func_name, flag))
     
-and json_to_flag : Yojson.Basic.t -> flag = fun j ->
-  let l = PUtils.project "disable" j in
-  let ls = match l with
-    | None -> []
-    | Some v -> match PUtils.list v with | None -> [] | Some e -> e in
+and json_to_flag : Yojson.Basic.t -> flag option  = fun j ->
+  let open OptInst in
+  let* l = PUtils.project "disable" j in
+  let* ls = PUtils.list l <?> return [] in
   let ls' = PUtils.string_list ls in
-  Disable ls'
+  return @@ Disable ls'
     

@@ -46,6 +46,24 @@ let%expect_test _ =
   line_lint := false;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
+    File ./examples/lexical.ml, line 4, columns: 0-80
+    Warning:
+    	exceeding the 80 character line limit
+    You wrote:
+    	 let verylongvariablenamethisispainful = [1;2;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]
+    Consider:
+    	indenting to avoid exceeding the 80 character line limit
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/lexical.ml, line 1, columns: 0-80
+    Warning:
+    	exceeding the 80 character line limit
+    You wrote:
+    	 let verylongvariablenamethisispainful = [1;2;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1]
+    Consider:
+    	indenting to avoid exceeding the 80 character line limit
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/lexical.ml, line 5, columns: 0-80
     Warning:
     	exceeding the 80 character line limit
@@ -170,6 +188,24 @@ let%expect_test _ =
     	 [1] @ t
     Consider:
     	using `::` instead
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 49, columns: 0-80
+    Warning:
+    	exceeding the 80 character line limit
+    You wrote:
+    	 let z = if x then 1 else if y then 2 else if x & y then 3 else if z = 4 then 3 else 9
+    Consider:
+    	indenting to avoid exceeding the 80 character line limit
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 12, columns: 0-80
+    Warning:
+    	exceeding the 80 character line limit
+    You wrote:
+    	 (* Nested ifs :( - we skip local lets and sequencing to get the actual return type for now *)
+    Consider:
+    	indenting to avoid exceeding the 80 character line limit
   |}]
   
 (* Run the tests in if.ml *)

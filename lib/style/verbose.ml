@@ -3,7 +3,7 @@ open Utils
 open Astutils
 open Check
 
-
+(** ----------------------- Checks rules: [_] \@ _ ---------------------------- *)
 module LitPrepend : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using `::` instead"
@@ -20,6 +20,7 @@ module LitPrepend : EXPRCHECK = struct
 end
 
 
+(** ----------------------- Checks rules: fst/snd t -------------------------- *)
 module TupleProj : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a let pattern match statement instead"
@@ -34,6 +35,7 @@ module TupleProj : EXPRCHECK = struct
     let name = "TupleProj", check
 end
 
+(** ----------------------- Checks rules: Nesting if >= 3 levels ------------- *)
 module NestedIf : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using let statements or helper methods / rethinking logic"
@@ -53,6 +55,7 @@ module NestedIf : EXPRCHECK = struct
     let name = "NestedIf", check
 end
 
+(** -------------------- Checks rules: Nesting match >= 3 levels ------------- *)
 module NestedMatch : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using let statements or helper methods / rethinking logic"
@@ -81,7 +84,7 @@ module NestedMatch : EXPRCHECK = struct
     let name = "NestedMatch", check
 end
 
-
+(** ------------ Checks rules: if _ then/else true | false  ------------------ *)
 module IfReturnsLit : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "returning just the condition (+ some tweaks)"
@@ -97,7 +100,7 @@ module IfReturnsLit : EXPRCHECK = struct
     let name = "IfReturnsLit", check
 end
 
-
+(** ------------ Checks rules: if cond then cond | if cond then _ else cond -- *)
 module IfCondThenCond : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "returning just the condition or simplifying further"
@@ -113,6 +116,7 @@ module IfCondThenCond : EXPRCHECK = struct
 end
 
 
+(** ------------ Checks rules: if not cond then x else y --------------------- *)
 module IfNotCond : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "swapping the then and else branches of the if statement"
@@ -130,6 +134,7 @@ module IfNotCond : EXPRCHECK = struct
     let name = "IfNotCond", check
 end
 
+(** ------------ Checks rules: if x then true else y ------------------------- *)
 module IfToOr : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewriting using a boolean operator like `||`"
@@ -148,6 +153,7 @@ module IfToOr : EXPRCHECK = struct
   let name = "IfToOr", check
 end
 
+(** ------------ Checks rules: if x then y else false ------------------------ *)
 module IfToAnd : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewriting using a boolean operator like `&&`"
@@ -167,6 +173,7 @@ module IfToAnd : EXPRCHECK = struct
     let name = "IfToAnd", check
 end
 
+(** ------------ Checks rules: if x then false else y ------------------------ *)
 module IfToAndInv : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewriting using a boolean operator like `&&` and `not`"
@@ -181,6 +188,7 @@ module IfToAndInv : EXPRCHECK = struct
     let name = "IfToAndInv", check
 end
 
+(** ------------ Checks rules: if x then y else true ------------------------ *)
 module IfToOrInv : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewriting using a boolean operator like `||` and `not`"
@@ -195,6 +203,7 @@ module IfToOrInv : EXPRCHECK = struct
     let name = "IfToOrInv", check
 end
 
+(** ------------ Checks rules: ... || true | true || ... | false || ... | ... || false -- *)
 module RedundantOr : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "simplifying further"
@@ -213,6 +222,7 @@ module RedundantOr : EXPRCHECK = struct
     let name = "RedundantOr", check
 end
 
+(** ------------ Checks rules: ... && true | true && ... | false && ... | ... && false -- *)
 module RedundantAnd : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "simplifying further"

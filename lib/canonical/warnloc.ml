@@ -24,3 +24,5 @@ let warn_loc_of_loc f (l: Location.t) : warn_loc =
     fin.pos_lnum
     (start.pos_cnum - start.pos_bol)
     (fin.pos_cnum - fin.pos_bol)
+
+let no_loc f = {file = f; line_start = 0; line_end = 0; col_start = 0; col_end = 0}

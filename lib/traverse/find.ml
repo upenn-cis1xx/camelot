@@ -48,3 +48,8 @@ let pass_structures (store: Hint.hint list ref) (f: string) (structure : Parsetr
   List.iter (fun check -> check store pc) checks
 
   
+let pass_file (store: Hint.hint list ref) (f: string) (_payload: Parsetree.structure) : unit =
+  let pc = Pctxt.ctxt_for_lexical f (open_in f) in
+  let checks =
+    Style.Checkers.lexical_checks |> Arthur.extract (Lazy.force cfg) in
+  List.iter (fun (_, check) -> check store pc) checks
