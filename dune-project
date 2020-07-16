@@ -17,7 +17,7 @@
   (ocaml (>= 4.10.0))
   (ANSITerminal (>= 0.8))
   (yojson (>= 1.7.0))
-  (ppx_expect (and :with-test (>= 0.13.0)))
+  (ppx_expect (and :with-test (>= v0.13.0)))
   (odoc (and :with-doc (>= 1.5.0)))
  )
 )
