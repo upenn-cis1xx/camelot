@@ -38,9 +38,6 @@ module OptInst = struct
   let ( <?> ) a b = with_default a b
 end
 
-module Default = struct
-end
-
 (** Utility for working with YoJson *)
 module PUtils = struct
   let fail : (unit -> 'a) -> 'a option = fun f ->
