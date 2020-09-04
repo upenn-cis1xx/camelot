@@ -1,18 +1,5 @@
 open Warnloc
 
-type _ gt =
-  | Int : {e: int; f: int} -> int gt
-  | Bool : {e: int; f: bool} -> bool gt
-  | Str : {e: int; f: string} -> string gt
-
-let f : string gt -> string = fun s ->
-  match s with
-  | Str s -> s.f
-
-
-
-
-
 type _ pctxt =
   (* Expression constructor *)
   | E : { location: warn_loc;
