@@ -16,7 +16,7 @@ module LitPrepend : EXPRCHECK = struct
           st := Hint.mk_hint location raw fix violation :: !st
       | _ -> ()
     end
-    let name = "LitPrepend", check
+  let name = "LitPrepend", check
 end
 
 
@@ -32,7 +32,7 @@ module TupleProj : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "TupleProj", check
+  let name = "TupleProj", check
 end
 
 (** ----------------------- Checks rules: Nesting if >= 3 levels ------------- *)
@@ -46,13 +46,13 @@ module NestedIf : EXPRCHECK = struct
       begin match p with 
         | Pexp_ifthenelse (_, bthen, Some belse) -> 
           if depth = 1 then true else 
-          find_nesting ((skip_seq_let bthen).pexp_desc) (depth - 1) ||
-          find_nesting ((skip_seq_let belse).pexp_desc) (depth - 1) 
+            find_nesting ((skip_seq_let bthen).pexp_desc) (depth - 1) ||
+            find_nesting ((skip_seq_let belse).pexp_desc) (depth - 1) 
         | _ -> false
       end 
     in 
     if find_nesting pattern 4 then st := Hint.mk_hint location source fix violation :: !st
-    let name = "NestedIf", check
+  let name = "NestedIf", check
 end
 
 (** -------------------- Checks rules: Nesting match >= 3 levels ------------- *)
@@ -65,23 +65,23 @@ module NestedMatch : EXPRCHECK = struct
       (* Layer one *)
       | Pexp_match (_, cs) ->
         let matches_three = List.map (fun (c: Parsetree.case) -> c.pc_rhs |> skip_seq_let) cs |>
-                     (* Grab the second layer *)
-                     List.map (fun (e: Parsetree.expression) ->
-                         match e.pexp_desc with
-                         | Pexp_match (_, cs) ->
-                           List.map (fun (c: Parsetree.case) -> c.pc_rhs |> skip_seq_let) cs
-                         | _ -> []
-                       ) |> List.flatten |>
-                       (* Grab the third layer *)
-                       List.exists (fun (e: Parsetree.expression) ->
-                           match e.pexp_desc with
-                           | Pexp_match _ -> true
-                           | _ -> false ) in
+                            (* Grab the second layer *)
+                            List.map (fun (e: Parsetree.expression) ->
+                                match e.pexp_desc with
+                                | Pexp_match (_, cs) ->
+                                  List.map (fun (c: Parsetree.case) -> c.pc_rhs |> skip_seq_let) cs
+                                | _ -> []
+                              ) |> List.flatten |>
+                            (* Grab the third layer *)
+                            List.exists (fun (e: Parsetree.expression) ->
+                                match e.pexp_desc with
+                                | Pexp_match _ -> true
+                                | _ -> false ) in
         if matches_three then
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "NestedMatch", check
+  let name = "NestedMatch", check
 end
 
 (** ------------ Checks rules: if _ then/else true | false  ------------------ *)
@@ -97,7 +97,7 @@ module IfReturnsLit : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "IfReturnsLit", check
+  let name = "IfReturnsLit", check
 end
 
 (** ------------ Checks rules: if cond then cond | if cond then _ else cond -- *)
@@ -109,10 +109,10 @@ module IfCondThenCond : EXPRCHECK = struct
     begin match pattern with
       | Pexp_ifthenelse (cond, bthen, Some belse) ->
         if e_eq cond bthen && (belse =| "false" || belse =| "true") then
-               st := Hint.mk_hint location source fix violation :: !st
+          st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "IfCondThenCond", check
+  let name = "IfCondThenCond", check
 end
 
 
@@ -131,7 +131,7 @@ module IfNotCond : EXPRCHECK = struct
         end
       | _ -> ()
     end
-    let name = "IfNotCond", check
+  let name = "IfNotCond", check
 end
 
 (** ------------ Checks rules: if x then true else y ------------------------- *)
@@ -139,7 +139,7 @@ module IfToOr : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewriting using a boolean operator like `||`"
   let violation = "overly verbose if statement that can be simplified"
-    
+
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (_cond, bthen, Some belse) ->
@@ -158,7 +158,7 @@ module IfToAnd : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "rewriting using a boolean operator like `&&`"
   let violation = "overly verbose if statement that can be simplified"
-    
+
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_ifthenelse (cond, bthen, Some belse) ->
@@ -170,7 +170,7 @@ module IfToAnd : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "IfToAnd", check
+  let name = "IfToAnd", check
 end
 
 (** ------------ Checks rules: if x then false else y ------------------------ *)
@@ -185,7 +185,7 @@ module IfToAndInv : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "IfToAndInv", check
+  let name = "IfToAndInv", check
 end
 
 (** ------------ Checks rules: if x then y else true ------------------------ *)
@@ -200,7 +200,7 @@ module IfToOrInv : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "IfToOrInv", check
+  let name = "IfToOrInv", check
 end
 
 (** ------------ Checks rules: ... || true | true || ... | false || ... | ... || false -- *)
@@ -219,7 +219,7 @@ module RedundantOr : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "RedundantOr", check
+  let name = "RedundantOr", check
 end
 
 (** ------------ Checks rules: ... && true | true && ... | false && ... | ... && false -- *)
@@ -238,5 +238,5 @@ module RedundantAnd : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "RedundantAnd", check
+  let name = "RedundantAnd", check
 end

@@ -5,7 +5,7 @@ type violation = string
 type fix = string
 
 type hint = {
-loc: warn_loc
+  loc: warn_loc
 ; raw: string
 ; fix: fix
 ; violation : string
@@ -23,7 +23,7 @@ let line_hint file line content =
   {loc = warn;
    raw = content;
    fix = "indenting to avoid exceeding the 80 character line limit";
-  violation = "exceeding the 80 character line limit"}
+   violation = "exceeding the 80 character line limit"}
 
 
 

@@ -43,7 +43,7 @@ let display_brief : Hint.hint -> unit =
 
 (* Display methods to expose *)
 (* TODO: Write an mli file exposing as appropriate *)
-    
+
 let student_display : Hint.hint list -> unit =
   List.iter (display_verbose)
 
@@ -56,4 +56,4 @@ let ta_display : Hint.hint list -> unit = fun l ->
 let gradescope_display : Hint.hint list -> unit = fun l ->
   let score = string_of_int (Grade.simple l) in
   print_string score
-    
+

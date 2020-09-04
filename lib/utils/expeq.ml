@@ -1,7 +1,7 @@
 
 (** Limited notion of expression equality - trees should look the same
     for commonly used expressions eee
- *)
+*)
 let rec exp_eq (el: Parsetree.expression) (er: Parsetree.expression) =
   match el.pexp_desc, er.pexp_desc with
   | Pexp_ident {txt = Lident i; _}, Pexp_ident {txt = Lident j; _} -> i = j
@@ -16,7 +16,7 @@ let rec exp_eq (el: Parsetree.expression) (er: Parsetree.expression) =
   | Pexp_construct ({txt = Lident l; _}, _), Pexp_construct ({txt = Lident r; _}, _) ->
     l = r
   | _ -> false
-    
+
 
 and value_binding_eq (el: Parsetree.value_binding) (er: Parsetree.value_binding) =
   exp_eq el.pvb_expr er.pvb_expr &&
@@ -24,5 +24,5 @@ and value_binding_eq (el: Parsetree.value_binding) (er: Parsetree.value_binding)
 
 and pat_eq (_el: Parsetree.pattern) (_er: Parsetree.pattern) =
   false
-  
+
 and const_eq (el: Parsetree.constant) (er: Parsetree.constant) = el = er

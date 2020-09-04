@@ -19,23 +19,23 @@ let pass_exprs (store: Hint.hint list ref) (f: string) (expr : Parsetree.express
   let pc = Pctxt.ctxt_of_expr f expr in
   (* Fetch the lint config *)
   let expr_checks =
-  Style.Checkers.expr_checks |> Arthur.extract ( Lazy.force cfg ) in
-  
+    Style.Checkers.expr_checks |> Arthur.extract ( Lazy.force cfg ) in
+
   let checks = expr_checks |> Arthur.refine (Lazy.force cfg) !currently_linting in
   List.iter (fun check -> check store pc) checks
 
 
 let set_toplevel : Parsetree.structure_item -> unit = fun i ->
- begin match i.pstr_desc with
-   | Pstr_value (_, [vb]) ->
-     begin match vb.pvb_pat.ppat_desc with
-       | Ppat_var {txt = i; loc = _} -> currently_linting := i
-       | _ -> ()
-     end
-   | _ -> ()
- end
- 
-    
+  begin match i.pstr_desc with
+    | Pstr_value (_, [vb]) ->
+      begin match vb.pvb_pat.ppat_desc with
+        | Ppat_var {txt = i; loc = _} -> currently_linting := i
+        | _ -> ()
+      end
+    | _ -> ()
+  end
+
+
 
 let pass_structures (store: Hint.hint list ref) (f: string) (structure : Parsetree.structure_item) : unit =
   (* Flag the currently linted toplevel function *)
@@ -43,11 +43,11 @@ let pass_structures (store: Hint.hint list ref) (f: string) (structure : Parsetr
   let pc = Pctxt.ctxt_of_structure f structure in
 
   let struct_checks =
-  Style.Checkers.struct_checks |> Arthur.extract (Lazy.force cfg) in
+    Style.Checkers.struct_checks |> Arthur.extract (Lazy.force cfg) in
   let checks = struct_checks |> Arthur.refine (Lazy.force cfg) !currently_linting in
   List.iter (fun check -> check store pc) checks
 
-  
+
 let pass_file (store: Hint.hint list ref) (f: string) (_payload: Parsetree.structure) : unit =
   let pc = Pctxt.ctxt_for_lexical f (open_in f) in
   let checks =

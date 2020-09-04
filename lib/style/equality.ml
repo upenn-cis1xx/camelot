@@ -3,7 +3,7 @@ open Utils
 open Astutils
 open Check
 
-    
+
 (** ------------------ Checks rules: if (_ = [literals] | [literals] = _)  ----------------------- *)
 module EqList : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
@@ -13,10 +13,10 @@ module EqList : EXPRCHECK = struct
     begin match pattern with
       | Pexp_ifthenelse (cond, _, _) ->
         begin match cond.pexp_desc with
-      | Pexp_apply (application, [(_,lop); (_,rop)]) ->
-        if application =~ "=" && (is_list_lit lop || is_list_lit rop) then
-          st := Hint.mk_hint location source fix violation :: !st
-      | _ -> ()
+          | Pexp_apply (application, [(_,lop); (_,rop)]) ->
+            if application =~ "=" && (is_list_lit lop || is_list_lit rop) then
+              st := Hint.mk_hint location source fix violation :: !st
+          | _ -> ()
         end
       | _ -> ()
     end
@@ -36,5 +36,5 @@ module EqOption : EXPRCHECK = struct
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end
-    let name = "EqOption", check
+  let name = "EqOption", check
 end
