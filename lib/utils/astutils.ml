@@ -1,13 +1,13 @@
 open Parsetree
-  
+
 type exp = Parsetree.expression
 
 
 let e_eq (l: exp) (r: exp) = Expeq.exp_eq l r
 
 let e_neq (l: exp) (r: exp) = not @@ Expeq.exp_eq l r
-           
-             
+
+
 let is_id e id : bool = 
   match e.pexp_desc with 
   | Pexp_ident {txt = Lident i;_} -> i = id
@@ -57,13 +57,13 @@ let are_idents_same (el: Parsetree.expression) (er: Parsetree.expression) =
 
 let is_singleton_list : exp -> bool = fun e ->
   begin match e.pexp_desc with
-  | Pexp_construct ({txt = Lident "::";_}, Some cons) ->
-    begin match cons.pexp_desc with
-      | Pexp_tuple [e_id; e_empty] ->
-        (is_exp_const e_id || is_exp_id e_id) && e_empty =| "[]"
-      | _ -> false
-    end
-  | _ -> false
+    | Pexp_construct ({txt = Lident "::";_}, Some cons) ->
+      begin match cons.pexp_desc with
+        | Pexp_tuple [e_id; e_empty] ->
+          (is_exp_const e_id || is_exp_id e_id) && e_empty =| "[]"
+        | _ -> false
+      end
+    | _ -> false
   end
 
 
@@ -102,33 +102,33 @@ let ident_of_let (pat: Parsetree.value_binding) : string =
 
 let binding_of_lcase (case: Parsetree.case) : string =
   begin match case.pc_lhs.ppat_desc with
-  | Ppat_construct ({txt = Lident "::"; loc = _}, Some bound) ->
-   begin match bound.ppat_desc with
-    | Ppat_tuple [_; tail] ->
-      begin match tail.ppat_desc with
-        | Ppat_var {txt = t; loc = _} -> t
+    | Ppat_construct ({txt = Lident "::"; loc = _}, Some bound) ->
+      begin match bound.ppat_desc with
+        | Ppat_tuple [_; tail] ->
+          begin match tail.ppat_desc with
+            | Ppat_var {txt = t; loc = _} -> t
+            | _ -> ""
+          end
         | _ -> ""
       end
-    | _ -> ""
-   end
     | _ -> ""
   end
 
 let uses_func_recursively_list (case: Parsetree.case) func_name tail_binding : bool =
   begin match case.pc_rhs.pexp_desc with
-  | Pexp_construct ({txt = Lident "::"; loc = _},
-                    Some bound) ->
-    begin match bound.pexp_desc with
-      | Pexp_tuple ([_; tl]) ->
-        begin match tl.pexp_desc with
-          | Pexp_apply (func, args) ->
-            func =~ func_name &&
-            List.exists (fun (_, arg) ->  arg =~ tail_binding) args
-          | _ -> false
-        end
-      | _ -> false
-    end
-  | _ -> false
+    | Pexp_construct ({txt = Lident "::"; loc = _},
+                      Some bound) ->
+      begin match bound.pexp_desc with
+        | Pexp_tuple ([_; tl]) ->
+          begin match tl.pexp_desc with
+            | Pexp_apply (func, args) ->
+              func =~ func_name &&
+              List.exists (fun (_, arg) ->  arg =~ tail_binding) args
+            | _ -> false
+          end
+        | _ -> false
+      end
+    | _ -> false
   end
 
 
@@ -139,15 +139,15 @@ let uses_func_recursively_list_any (case: Parsetree.case) func_name tail_binding
     | Pexp_apply (func, args) -> func =~ func_name &&
                                  List.exists (fun (_, arg) -> arg =~ tail_binding) args
     | _ -> false in
-  
+
   begin match skipped.pexp_desc with
     | Pexp_apply ( func, l) ->
 
       not (func =~ "::") && List.exists (fun (_, combine_arg) ->
           contains_recursive_call combine_arg
         ) l
-  | _ -> false
-    end
+    | _ -> false
+  end
 
 (** Has to be recursive, since functions of multiple arguments are curried 
     That's why we interleave skipping sequencing and lets with calls to
@@ -165,8 +165,8 @@ let uses_func_recursively_seq (case: Parsetree.case) func_name tail_binding : bo
   let rhs_fixpoint = rhs |> body_of_fun |> skip_seq_let in
   match rhs_fixpoint.pexp_desc with
   | Pexp_apply (func, args) ->
-            func =~ func_name &&
-            List.exists (fun (_, arg) ->  arg =~ tail_binding) args
+    func =~ func_name &&
+    List.exists (fun (_, arg) ->  arg =~ tail_binding) args
   | _ -> false
 
-  
+

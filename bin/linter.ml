@@ -2,7 +2,7 @@ open Canonical
 open Traverse
 
 let store : Hint.hint list ref = ref []
-        
+
 (* Build a list of hints using the patterns *)
 
 let lint : (string * Parsetree.structure) list -> unit =

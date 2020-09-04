@@ -4,7 +4,7 @@ open Canonical
 
 let read_at_loc (loc: Warn.warn_loc) =
   (* Produce a line-by-line stream from a file *)
-  
+
   let chan = open_in loc.file in
   let stream_of_chan chan =
     Stream.from
@@ -28,4 +28,4 @@ let read_at_loc (loc: Warn.warn_loc) =
 
 let code_at_loc (loc: Warn.warn_loc) (default: string) =
   try read_at_loc loc
-        with _ -> default
+  with _ -> default

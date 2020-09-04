@@ -1,18 +1,5 @@
 open Warnloc
 
-type _ gt =
-  | Int : {e: int; f: int} -> int gt
-  | Bool : {e: int; f: bool} -> bool gt
-  | Str : {e: int; f: string} -> string gt
-
-let f : string gt -> string = fun s ->
-  match s with
-  | Str s -> s.f
-
-
-
-
-
 type _ pctxt =
   (* Expression constructor *)
   | E : { location: warn_loc;
@@ -51,7 +38,7 @@ Therefore, we have to produce an explicit wrapping for it.
 
 *)
 and file = F of in_channel
-             
+
 let ctxt_of_expr filename (expr: Parsetree.expression) : Parsetree.expression_desc pctxt =
   let loc = Warnloc.warn_loc_of_loc filename expr.pexp_loc in
   let raw = Pprintast.string_of_expression expr in

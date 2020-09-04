@@ -6,7 +6,7 @@
 
 open Canonical
 open Report
-    
+
 let lint_dir : string ref = ref "./" (* lint the current directory if none provided *)
 let recurse : bool ref = ref false (* Do not recurse the directory by default *)
 let lint_file : string option ref = ref None (*  lint a given file*)
@@ -44,8 +44,8 @@ let parse_src (src, lexbuf) =
   src, Parse.implementation lexbuf
 
 let sanitize_dir d =
-    if d.[String.length d - 1] = '/' then d 
-    else d ^ "/"
+  if d.[String.length d - 1] = '/' then d 
+  else d ^ "/"
 
 let files_in_dir dirname = 
   let open Sys in
@@ -66,12 +66,12 @@ let files_to_lint dirname =
   let config = Lazy.force (Arthur.parse ()) in
   let files = Arthur.files config in
   begin match files with
-  | [] -> begin match !lint_file with
-    | Some f -> [f]
-    | None -> dirname |> if ! recurse then files_in_dir_rec else files_in_dir
-    end
-  | _ -> files
-end
+    | [] -> begin match !lint_file with
+        | Some f -> [f]
+        | None -> dirname |> if ! recurse then files_in_dir_rec else files_in_dir
+      end
+    | _ -> files
+  end
 
 
 let parse_sources_in dirname : (string * Parsetree.structure) list = 
@@ -98,7 +98,7 @@ let spec =
     "-r", Set recurse, 
     "\t If calling on a directory using -d, recurse into its subdirectories"
   ;  "-d", Set_string lint_dir, 
-    "\t Invoke the linter on the provided directory, defaulting to the current directory, non re"
+     "\t Invoke the linter on the provided directory, defaulting to the current directory, non re"
   ; "-show", String set_display_type,
     " Make the linter output display for either ta's | students | gradescope"
   ; "-f", String set_lint_file,

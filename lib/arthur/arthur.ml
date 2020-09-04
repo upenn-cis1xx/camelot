@@ -7,7 +7,7 @@ let lint_config_file : string ref = ref "arthur.json"
 
 let print_config : t -> unit = fun v ->
   print_string @@ Arthur_parse.pp_arthur v
-    
+
 let parse : unit -> t lazy_t = fun _ ->
   lazy (Arthur_parse.json_to_arthur (Arthur_parse.from_file !lint_config_file))
 

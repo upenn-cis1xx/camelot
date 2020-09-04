@@ -18,7 +18,7 @@ let rec linterator exp_handler structitem_handler structure_handler =
     expr = expr_iterator exp_handler;
     structure_item = structure_item_iterator structitem_handler;
     structure = structure_iterator structure_handler
-    
+
   }
 
 (* Iterator for traversing expressions *)
