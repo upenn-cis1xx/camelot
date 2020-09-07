@@ -46,7 +46,7 @@ let%expect_test _ =
   line_lint := false;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/lexical.ml, line 4, columns: 0-80
+    File ./examples/lexical.ml, line 5, columns: 0-80
     Warning:
     	exceeding the 80 character line limit
     You wrote:
@@ -55,7 +55,7 @@ let%expect_test _ =
     	indenting to avoid exceeding the 80 character line limit
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/lexical.ml, line 1, columns: 0-80
+    File ./examples/lexical.ml, line 2, columns: 0-80
     Warning:
     	exceeding the 80 character line limit
     You wrote:
@@ -190,7 +190,7 @@ let%expect_test _ =
     	using `::` instead
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/verbose.ml, line 49, columns: 0-80
+    File ./examples/verbose.ml, line 50, columns: 0-80
     Warning:
     	exceeding the 80 character line limit
     You wrote:
@@ -199,7 +199,7 @@ let%expect_test _ =
     	indenting to avoid exceeding the 80 character line limit
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/verbose.ml, line 12, columns: 0-80
+    File ./examples/verbose.ml, line 13, columns: 0-80
     Warning:
     	exceeding the 80 character line limit
     You wrote:

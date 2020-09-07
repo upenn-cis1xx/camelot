@@ -12,8 +12,9 @@ module LineLength : LEXICALCHECK = struct
 
   let check st (L {source; pattern = Pctxt.F chan}: ctxt) =
     let filestream : (int * string) Stream.t =
+      (* Stream.from 0 indexes file lines, but line numbers start at 1. Have to increment so that the line numbers are consistent with editors :) *)
       Stream.from
-        (fun line -> try (Some (line, input_line chan))
+        (fun line -> try (Some (line + 1, input_line chan))
           with End_of_file -> None
         ) in
 
