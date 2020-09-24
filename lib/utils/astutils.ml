@@ -39,14 +39,12 @@ let get_branches (e: Parsetree.expression) : (Parsetree.expression * Parsetree.e
 let is_list_lit : exp -> bool = fun e ->
   e =| "::" || e =| "[]"
 
+let is_bool_lit : exp -> bool = fun e ->
+  e =| "true" || e =| "false"
+
 let is_exp_const : exp -> bool = fun e ->
   match e.pexp_desc with
   | Pexp_constant _ -> true
-  | _ -> false
-
-let is_exp_bool : exp -> bool = fun e ->
-  match e.pexp_desc with
-  | Pexp_construct ({txt = Lident l; _}, _) -> l = "true" || l = "false"
   | _ -> false
 
 let is_exp_id : exp -> bool = fun e ->

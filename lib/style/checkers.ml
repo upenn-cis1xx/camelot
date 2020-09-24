@@ -2,6 +2,7 @@
 let expr_checks = [
   Equality.EqList.name
 ; Equality.EqOption.name
+; Equality.EqBool.name
 ; Match.MatchBool.name
 ; Match.MatchInt.name
 ; Match.MatchListVerbose.name
@@ -20,7 +21,6 @@ let expr_checks = [
 ; Verbose.NestedMatch.name
 ; Verbose.RedundantOr.name
 ; Verbose.RedundantAnd.name
-; Verbose.EqBool.name
 ]
 
 (** Top-level structure checks *)
