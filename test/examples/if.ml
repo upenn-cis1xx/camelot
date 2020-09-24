@@ -37,7 +37,6 @@ let double_points = if x then x else true
 
 let t9 = if 3 > 0 then 3 > 0 else false
 
-
 (* More complex examples *)
 
 let rec exists (l : int list) (i : int) =
