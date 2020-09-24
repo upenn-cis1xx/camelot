@@ -44,8 +44,10 @@ let display_brief : Hint.hint -> unit =
 (* Display methods to expose *)
 (* TODO: Write an mli file exposing as appropriate *)
 
-let student_display : Hint.hint list -> unit =
-  List.iter (display_verbose)
+let student_display : Hint.hint list -> unit = fun l ->
+  if List.length l > 0 then List.iter (display_verbose) l else
+    let set = [ANSITerminal.green; ANSITerminal.Bold] in
+    ANSITerminal.print_string set "No style violations"
 
 let ta_display : Hint.hint list -> unit = fun l ->
   List.iter (display_brief) l;
