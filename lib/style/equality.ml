@@ -38,3 +38,18 @@ module EqOption : EXPRCHECK = struct
     end
   let name = "EqOption", check
 end
+
+(** ------------------ Checks rules: (_ = :bool | :bool = _)  ----------------------- *)
+module EqBool : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
+  let fix = "using the variable itself to represent the value"
+  let violation = "using `=` with a boolean literal"
+  let check st (E {location; source; pattern}: ctxt) = 
+    begin match pattern with
+      | Pexp_apply (application, [(_,lop); (_,rop)]) ->
+        if application =~ "=" && (is_bool_lit lop || is_bool_lit rop) then
+          st := Hint.mk_hint location source fix violation :: !st
+      | _ -> ()
+    end
+  let name = "EqBool", check
+end

@@ -20,16 +20,16 @@ let lint_and_hint : (string * Parsetree.structure) -> unit = fun (file, ast) ->
   let line_length_lint : string -> unit = fun file ->
     if not !line_lint then ()
     else
-    let chan = open_in file in
-    let lref : int ref = ref 1 in
-    try
-      while true; do
-        let line = input_line chan in
-        (if (String.length line > 80) then store := Canonical.Hint.line_hint file !lref line :: !store;);
-        incr lref
-      done; ()
-    with End_of_file ->
-      close_in chan; () in
+      let chan = open_in file in
+      let lref : int ref = ref 1 in
+      try
+        while true; do
+          let line = input_line chan in
+          (if (String.length line > 80) then store := Canonical.Hint.line_hint file !lref line :: !store;);
+          incr lref
+        done; ()
+      with End_of_file ->
+        close_in chan; () in
   line_length_lint file;
   file |>
   Traverse.Iter.make_linterator store |>
@@ -88,6 +88,42 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
+    File ./examples/equality.ml, line 23, columns: 9-23
+    Warning:
+    	using `=` with a boolean literal
+    You wrote:
+    	 false = bfalse
+    Consider:
+    	using the variable itself to represent the value
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/equality.ml, line 22, columns: 9-21
+    Warning:
+    	using `=` with a boolean literal
+    You wrote:
+    	 true = btrue
+    Consider:
+    	using the variable itself to represent the value
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/equality.ml, line 21, columns: 9-23
+    Warning:
+    	using `=` with a boolean literal
+    You wrote:
+    	 bfalse = false
+    Consider:
+    	using the variable itself to represent the value
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/equality.ml, line 20, columns: 9-21
+    Warning:
+    	using `=` with a boolean literal
+    You wrote:
+    	 btrue = true
+    Consider:
+    	using the variable itself to represent the value
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/equality.ml, line 15, columns: 8-41
     Warning:
     	using `=` with lists as a condition in an if statement
@@ -123,7 +159,7 @@ let%expect_test _ =
     Consider:
     	using a pattern match to check the presence of an option
   |}]
-  
+
 (* Run the tests in verbose.ml *)
 let%expect_test _ =
   let file : string = "./examples/verbose.ml" in
@@ -207,7 +243,7 @@ let%expect_test _ =
     Consider:
     	indenting to avoid exceeding the 80 character line limit
   |}]
-  
+
 (* Run the tests in if.ml *)
 let%expect_test _ =
   let file : string = "./examples/if.ml" in
@@ -349,7 +385,7 @@ let%expect_test _ =
     Consider:
     	returning just the condition (+ some tweaks)
   |}]
-  
+
 (* Run the tests in match.ml *)
 let%expect_test _ =
   let file : string = "./examples/match.ml" in

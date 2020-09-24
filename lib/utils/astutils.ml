@@ -39,6 +39,9 @@ let get_branches (e: Parsetree.expression) : (Parsetree.expression * Parsetree.e
 let is_list_lit : exp -> bool = fun e ->
   e =| "::" || e =| "[]"
 
+let is_bool_lit : exp -> bool = fun e ->
+  e =| "true" || e =| "false"
+
 let is_exp_const : exp -> bool = fun e ->
   match e.pexp_desc with
   | Pexp_constant _ -> true
