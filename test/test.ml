@@ -251,7 +251,7 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 61, columns: 14-48
+    File ./examples/if.ml, line 60, columns: 14-48
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
@@ -260,7 +260,7 @@ let%expect_test _ =
     	rewriting using a boolean operator like `||` and `not`
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 56, columns: 14-45
+    File ./examples/if.ml, line 55, columns: 14-45
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
@@ -269,7 +269,7 @@ let%expect_test _ =
     	rewriting using a boolean operator like `&&` and `not`
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 51, columns: 14-47
+    File ./examples/if.ml, line 50, columns: 14-47
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
@@ -278,49 +278,13 @@ let%expect_test _ =
     	rewriting using a boolean operator like `&&`
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 46, columns: 14-48
+    File ./examples/if.ml, line 45, columns: 14-48
     Warning:
     	overly verbose if statement that can be simplified
     You wrote:
     	 if h = i then true else exists t i
     Consider:
     	rewriting using a boolean operator like `||`
-
-    (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 45, columns: 10-20
-    Warning:
-    	using `=` with boolean as a comparison
-    You wrote:
-    	 false = t2
-    Consider:
-    	using the variable itself to represent the value
-
-    (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 44, columns: 10-19
-    Warning:
-    	using `=` with boolean as a comparison
-    You wrote:
-    	 true = t1
-    Consider:
-    	using the variable itself to represent the value
-
-    (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 43, columns: 10-20
-    Warning:
-    	using `=` with boolean as a comparison
-    You wrote:
-    	 t2 = false
-    Consider:
-    	using the variable itself to represent the value
-
-    (* ------------------------------------------------------------------------ *)
-    File ./examples/if.ml, line 42, columns: 10-19
-    Warning:
-    	using `=` with boolean as a comparison
-    You wrote:
-    	 t1 = true
-    Consider:
-    	using the variable itself to represent the value
 
     (* ------------------------------------------------------------------------ *)
     File ./examples/if.ml, line 38, columns: 9-39
