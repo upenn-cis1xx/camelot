@@ -240,3 +240,18 @@ module RedundantAnd : EXPRCHECK = struct
     end
   let name = "RedundantAnd", check
 end
+
+(** ------------------ Checks rules: (_ = :bool | :bool = _)  ----------------------- *)
+module EqBool : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
+  let fix = "using the variable itself to represent the value"
+  let violation = "using `=` with boolean as a comparison"
+  let check st (E {location; source; pattern}: ctxt) = 
+    begin match pattern with
+      | Pexp_apply (application, [(_,lop); (_,rop)]) ->
+        if application =~ "=" && (is_exp_bool lop || is_exp_bool rop) then
+          st := Hint.mk_hint location source fix violation :: !st
+      | _ -> ()
+    end
+  let name = "EqBool", check
+end
