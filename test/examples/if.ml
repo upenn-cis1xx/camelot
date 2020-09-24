@@ -37,12 +37,6 @@ let double_points = if x then x else true
 
 let t9 = if 3 > 0 then 3 > 0 else false
 
-(* comparing boolean literals *)
-(* x = true --> x, y = false ---> not y *)
-let t10 = t1 = true 
-let t11 = t2 = false
-let t12 = true = t1
-let t13 = false = t2
 
 (* More complex examples *)
 
