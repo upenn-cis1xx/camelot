@@ -12,6 +12,16 @@ let string_of_warnloc : Warn.warn_loc -> string =
     "columns: " ^ (string_of_int col_start) ^ "-" ^ (string_of_int col_end)
   )    
 
+let json_of_hint : Hint.hint -> Yojson.Basic.t =
+  fun {loc; raw; fix; violation} ->
+  `Assoc [
+    ("filename", `String loc.file);
+    ("line", `List [`Int loc.line_start; `Int loc.line_end]);
+    ("col", `List [`Int loc.col_start; `Int loc.col_end]);
+    ("source", `String raw);
+    ("fix", `String fix);
+    ("violation", `String violation)
+  ]
 
 (* Utility display methods *)
 (* TODO: in the mli file, don't expose these methods  *)
@@ -59,3 +69,6 @@ let gradescope_display : Hint.hint list -> unit = fun l ->
   let score = string_of_int (Grade.simple l) in
   print_string score
 
+
+let json_display : Hint.hint list -> unit = fun l ->
+  print_string (Yojson.Basic.to_string (`List (List.map json_of_hint l)))
