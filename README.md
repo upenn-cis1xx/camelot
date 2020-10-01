@@ -62,7 +62,7 @@ If you implement a new rule, you'll have to do the following:
 
 ## IDE Support
 
-Camelot has syntax highlighting support for Visual Studio Code with the [camelot-vscode extension](https://github.com/esinx/camelot-vscode).
+Camelot has syntax highlighting support for Visual Studio Code using the [camelot-vscode extension](https://github.com/esinx/camelot-vscode).
 
 ## Acknowledgements
 This project wouldn't have been possible without the following three repos:
