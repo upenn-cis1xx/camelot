@@ -18,6 +18,7 @@ let set_display_type : string -> unit = fun s ->
   match s with
   | "ta" -> show_type := Display.ta_display
   | "gradescope" -> show_type := Display.gradescope_display
+  | "json" -> show_type := Display.json_display
   | _ -> show_type := Display.student_display
 
 let set_config_file : string -> unit = fun s ->
