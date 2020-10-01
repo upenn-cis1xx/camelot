@@ -39,7 +39,7 @@ If you implement a new rule, you'll have to do the following:
   in the `examples/` directory.
   * If you create a new file in the `examples/` directory, edit the `dune` file's deps stanza to make it visible to the
   build system. If you create a new programs file in `examples/`, you'll have to add a new `let%expect_test` in the style of the ones prior to the
-  file `test.ml`, except with the ``[%expect {| ... |} ]``` clause blank.
+  file `test.ml`, except with the `[%expect {| ... |} ]` clause blank.
   * If you added a test program to an existing file, it'll automatically be linted by the appropriate expect_test.
 * Run `dune runtest`. If your code for linting worked, `runtest` should
   highlight that there was a difference due to your new rule - run `dune promote` to accept this difference.
@@ -52,10 +52,17 @@ If you implement a new rule, you'll have to do the following:
 
 `-d <lintdir>` : Specify the directory in which to lint
 
-`-show <ta | student | gradescope>` : Specify the reporting type - does a student see this output or a ta?
-If this argument is malformed or not present, the reporting type defaults to student
-
+`-show <student | ta | gradescope | json>` : Configure reporting output
+  - `gradescope` outputs the number of violations and nothing more.
+  - `ta` outputs a quick description of violation, and where it occurred (lines/columns).
+  - `json` outputs the same information as `ta`, but in a json payload that can be utilized by an IDE for syntax highlighting (see IDE section below). 
+  - `student` is the most verbose and outputs a quick description of violation, where it occurred (lines/columns), and how to fix it.
+  
 `-f <filename>` : Lints the given file
+
+## IDE Support
+
+Camelot has syntax highlighting support for Visual Studio Code using the [camelot-vscode extension](https://github.com/esinx/camelot-vscode).
 
 ## Acknowledgements
 This project wouldn't have been possible without the following three repos:
