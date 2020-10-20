@@ -57,7 +57,7 @@ let display_brief : Hint.hint -> unit =
 let student_display : Hint.hint list -> unit = fun l ->
   if List.length l > 0 then List.iter (display_verbose) l else
     let set = [ANSITerminal.green; ANSITerminal.Bold] in
-    ANSITerminal.print_string set "No style violations"
+    ANSITerminal.print_string set "No style violations\n"
 
 let ta_display : Hint.hint list -> unit = fun l ->
   List.iter (display_brief) l;
