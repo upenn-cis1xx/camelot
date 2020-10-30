@@ -448,3 +448,8 @@ module ST = struct
   let iter sub =
     List.iter (sub.structure_item sub)
 end
+
+let iterator_sans_attrs = {
+    Ast_iterator.default_iterator with
+    attribute = fun _ _ -> ();
+  }
