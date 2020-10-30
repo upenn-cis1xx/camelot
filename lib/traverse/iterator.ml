@@ -14,7 +14,7 @@ let apply_iterator (structure: Parsetree.structure) (iter: Ast_iterator.iterator
 *)
 let rec linterator exp_handler structitem_handler structure_handler = 
   {
-    default_iterator with
+    iterator_sans_attrs with
     expr = expr_iterator exp_handler;
     structure_item = structure_item_iterator structitem_handler;
     structure = structure_iterator structure_handler
