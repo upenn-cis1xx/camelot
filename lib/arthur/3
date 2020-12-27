@@ -33,7 +33,15 @@ module EitherM = struct
     | Ok a -> f a
     | Error e -> raise e 
 
+  let prod : ('a, 'e) t -> ('b, 'e) t -> ('a * 'b, 'e) t = fun l r ->
+    match l, r with
+    | Ok a, Ok b -> return (a,b)
+    | Error a, _ | _, Error a -> return a
+
+
   let (let*) e f = bind e f
+  let (and+) l r = prod l r
+
 end
 
 (** Configuration type here *)
@@ -291,9 +299,6 @@ let pp_config (config: config) : string =
 let print_config (config: config) : unit =
   config |> pp_config |> print_string
 
-let print_config_plan (config: config) : unit =
-  print_config config
-
 let eval_config config filename funcname checks =
   run_arthur config checks filename funcname 
 
@@ -332,18 +337,24 @@ and local_rule_to_yaml (rule: local_rule) : string * Y.value =
   | LocalRule (toplevel, None, r) ->
      (toplevel, `A [ rule_to_yaml r ])
 
-let write_config ?file:(arg1="arthur.yaml") (config: config) : unit =
+let write_config (config: config) ?file:(arg2="arthur.yaml") : unit =
   let yaml = config_to_yaml config in
-  let encoding : Y.encoding = `Utf8 in
-  let layout : Y.layout_style = `Block in
-  let sc_style : Y.scalar_style = `Any in
-  let y_str = Y.to_string
-                ~encoding:encoding
-                ~scalar_style:sc_style
-                ~layout_style:layout yaml in
+  let encoding : Y.encoding = Y.(`Utf8) in
+  let layout : Y.layout_style = Y.`Block in
+  let sc_style : Y.scalar_style = Y.`Any in
+  let y_str = Y.to_string encoding sc_style layout yaml in
   match y_str with
-  | Ok st -> write_str_file st arg1
+  | Ok st -> write_str_file st arg2
   | Error (`Msg m) -> failwith m
 
-let check_config : unit = ()
+
+let test () : _  =
+  "arthur.yaml" |>
+    read_file_str |>
+    Yaml.of_string |>
+    Result.get_ok |>
+    parse_arthur |>
+    Result.get_ok |>
+    pp_arthur |>
+    print_string
 

@@ -13,7 +13,7 @@ let lint_file : string option ref = ref None (*  lint a given file*)
 let show_type : (Hint.hint list -> unit) ref = ref Report.Display.student_display (* default to showing hints for students *)
 (* The spec we'll be using to format command line arguments *)
 
-
+(** TODO: sort out this camelot config stuff tomorrow *)
 let set_display_type : string -> unit = fun s ->
   match s with
   | "ta" -> show_type := Display.ta_display

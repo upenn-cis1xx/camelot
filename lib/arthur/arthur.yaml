@@ -1,0 +1,33 @@
+---
+# Example arthur configuration file
+# Configure the linter here
+files:
+  - gctx.ml
+  - paint.ml
+  - other.ml
+  - check.ml
+
+# Global rules are ones that are always considered during iteration
+# You can either enable or disable them
+globals:
+  enable:
+    - rule1
+    - rule2
+    - rule3
+# Local rules are ones that apply at each function
+# Locals require a (top level) function name + a
+# specification of what rules to enable or disable
+append:
+  - filename (optional)
+  # OR
+  - disable:
+      - rule 1
+      - rule 2
+      - rule 3
+test:
+  # OR
+  - enable:
+      - rule 1
+      - rule 2
+      - rule 3
+...

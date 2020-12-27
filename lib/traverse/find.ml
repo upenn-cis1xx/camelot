@@ -4,10 +4,7 @@
 open Canonical
 open Parsetree
 
-(* force computation *)
-let cfg = Arthur.parse ()
-
-
+module Config = Arthur
 let currently_linting : string ref = ref ""
 
 
@@ -18,11 +15,13 @@ let currently_linting : string ref = ref ""
 let pass_exprs (store: Hint.hint list ref) (f: string) (expr : Parsetree.expression) : unit =
   let pc = Pctxt.ctxt_of_expr f expr in
   (* Fetch the lint config *)
-  let expr_checks =
-    Style.Checkers.expr_checks |> Arthur.extract ( Lazy.force cfg ) in
-
-  let checks = expr_checks |> Arthur.refine (Lazy.force cfg) !currently_linting in
-  List.iter (fun check -> check store pc) checks
+  let config : Config.config = !Iterator.current_config in
+  let checks = Config.eval_config
+                      config
+                      f
+                      !currently_linting
+                      Style.Checkers.expr_checks in
+  List.iter (fun (_, check) -> check store pc) checks
 
 
 let set_toplevel : Parsetree.structure_item -> unit = fun i ->
@@ -35,21 +34,23 @@ let set_toplevel : Parsetree.structure_item -> unit = fun i ->
     | _ -> ()
   end
 
-
-
 let pass_structures (store: Hint.hint list ref) (f: string) (structure : Parsetree.structure_item) : unit =
   (* Flag the currently linted toplevel function *)
   set_toplevel structure;
   let pc = Pctxt.ctxt_of_structure f structure in
-
-  let struct_checks =
-    Style.Checkers.struct_checks |> Arthur.extract (Lazy.force cfg) in
-  let checks = struct_checks |> Arthur.refine (Lazy.force cfg) !currently_linting in
-  List.iter (fun check -> check store pc) checks
+  let checks = Config.eval_config
+                      config
+                      f
+                      !currently_linting
+                      Style.Checkers.struct_checks in
+  List.iter (fun (_, check) -> check store pc) checks
 
 
 let pass_file (store: Hint.hint list ref) (f: string) (_payload: Parsetree.structure) : unit =
   let pc = Pctxt.ctxt_for_lexical f (open_in f) in
-  let checks =
-    Style.Checkers.lexical_checks |> Arthur.extract (Lazy.force cfg) in
+  let checks = Config.eval_config
+                      config
+                      f
+                      !currently_linting
+                      Style.Checkers.lexical_checks in
   List.iter (fun (_, check) -> check store pc) checks
