@@ -332,6 +332,39 @@ and local_rule_to_yaml (rule: local_rule) : string * Y.value =
   | LocalRule (toplevel, None, r) ->
      (toplevel, `A [ rule_to_yaml r ])
 
+
+
+(* Utility for reading files *)
+let sanitize_dir d =
+  if d.[String.length d - 1] = '/' then d 
+  else d ^ "/"
+
+
+let files_in_dir dirname = 
+  let open Sys in
+  let dir = sanitize_dir dirname in
+  let fail msg = prerr_endline msg; exit 1 in
+  if not (file_exists dir && is_directory dir) 
+  then  fail @@ dir ^ " doesn't exist or isn't a directory!"; 
+  readdir dir |> Array.to_list |> List.map (fun file -> dir ^ file)
+
+let rec files_in_dir_rec dirname = 
+  let open Sys in
+  let dir = sanitize_dir dirname in
+  if not (file_exists dir && is_directory dir) then []
+  else 
+    let children = files_in_dir dirname in
+    children @ List.concat_map files_in_dir_rec children
+
+let current_config : config ref = ref default
+let get_config : unit -> config = fun _ -> !current_config
+let set_config : config -> unit = fun c -> current_config := c
+
+let files_to_lint : bool -> string -> string list = fun recurse dirname ->
+  match get_config () with
+  | Top (All, _, _) -> (if recurse then files_in_dir_rec else files_in_dir) dirname
+  | Top (Specific fs, _, _) -> fs
+
 let write_config ?file:(arg1="arthur.yaml") (config: config) : unit =
   let yaml = config_to_yaml config in
   let encoding : Y.encoding = `Utf8 in
@@ -346,4 +379,5 @@ let write_config ?file:(arg1="arthur.yaml") (config: config) : unit =
   | Error (`Msg m) -> failwith m
 
 let check_config : unit = ()
+
 

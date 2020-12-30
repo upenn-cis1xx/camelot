@@ -2,5 +2,3 @@
 *)
 
 module Iter = Iterator
-(* Use a default config - we'll parse this in main and change it *)
-let current_config : Config.config ref = Config.default

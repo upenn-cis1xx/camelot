@@ -36,6 +36,19 @@ val default : config
 (** Writes a config back to file *)
 val write_config :  ?file:string -> config -> unit 
 
+(** Gets the files to_lint, based on the current config !! 
+    Uses a bool argument to specify whether to traverse dirs
+    recursively.
+*)
+val files_to_lint : bool -> string -> string list
+
 
 (** Checks a configuration file *)
 val check_config : unit 
+
+
+(** Static accessor for the current_configuration *)
+val get_config : unit -> config
+
+(** Static modifier for the current_configuration *)
+val set_config : config -> unit

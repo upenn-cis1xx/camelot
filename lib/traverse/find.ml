@@ -15,7 +15,7 @@ let currently_linting : string ref = ref ""
 let pass_exprs (store: Hint.hint list ref) (f: string) (expr : Parsetree.expression) : unit =
   let pc = Pctxt.ctxt_of_expr f expr in
   (* Fetch the lint config *)
-  let config : Config.config = !Iterator.current_config in
+  let config : Config.config = Config.get_config () in
   let checks = Config.eval_config
                       config
                       f
@@ -38,6 +38,7 @@ let pass_structures (store: Hint.hint list ref) (f: string) (structure : Parsetr
   (* Flag the currently linted toplevel function *)
   set_toplevel structure;
   let pc = Pctxt.ctxt_of_structure f structure in
+  let config : Config.config = Config.get_config () in
   let checks = Config.eval_config
                       config
                       f
@@ -48,6 +49,7 @@ let pass_structures (store: Hint.hint list ref) (f: string) (structure : Parsetr
 
 let pass_file (store: Hint.hint list ref) (f: string) (_payload: Parsetree.structure) : unit =
   let pc = Pctxt.ctxt_for_lexical f (open_in f) in
+  let config : Config.config = Config.get_config () in
   let checks = Config.eval_config
                       config
                       f

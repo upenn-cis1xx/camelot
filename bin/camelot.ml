@@ -6,12 +6,16 @@
 
 open Canonical
 open Report
-
+module Config = Arthur
 let lint_dir : string ref = ref "./" (* lint the current directory if none provided *)
 let recurse : bool ref = ref false (* Do not recurse the directory by default *)
 let lint_file : string option ref = ref None (*  lint a given file*)
 let show_type : (Hint.hint list -> unit) ref = ref Report.Display.student_display (* default to showing hints for students *)
+let config_file : string ref = ref "arthur.yaml" (* Use the following file as a configuration *)
 (* The spec we'll be using to format command line arguments *)
+
+let set_config_file : string -> unit = fun s ->
+  config_file := s
 
 (** TODO: sort out this camelot config stuff tomorrow *)
 let set_display_type : string -> unit = fun s ->
@@ -21,8 +25,7 @@ let set_display_type : string -> unit = fun s ->
   | "json" -> show_type := Display.json_display
   | _ -> show_type := Display.student_display
 
-let set_config_file : string -> unit = fun s ->
-  Arthur.lint_config_file := s
+let fail msg = prerr_endline msg; exit 1
 
 let set_lint_file : string -> unit = fun s ->
   let exist = try
@@ -30,8 +33,6 @@ let set_lint_file : string -> unit = fun s ->
       Some s
     with Sys_error _ -> None in
   lint_file := exist
-
-let fail msg = prerr_endline msg; exit 1
 
 let safe_open src =
   try src, open_in src 
@@ -44,47 +45,22 @@ let lex_src file =
 let parse_src (src, lexbuf) =
   src, Parse.implementation lexbuf
 
-let sanitize_dir d =
-  if d.[String.length d - 1] = '/' then d 
-  else d ^ "/"
 
-let files_in_dir dirname = 
-  let open Sys in
-  let dir = sanitize_dir dirname in
-  if not (file_exists dir && is_directory dir) 
-  then fail @@ dir ^ " doesn't exist or isn't a directory!";
-  readdir dir |> Array.to_list |> List.map (fun file -> dir ^ file)
-
-let rec files_in_dir_rec dirname = 
-  let open Sys in
-  let dir = sanitize_dir dirname in
-  if not (file_exists dir && is_directory dir) then []
-  else 
-    let children = files_in_dir dirname in
-    children @ List.concat_map files_in_dir_rec children
-
-let files_to_lint dirname =
-  let config = Lazy.force (Arthur.parse ()) in
-  let files = Arthur.files config in
-  begin match files with
-    | [] -> begin match !lint_file with
-        | Some f -> [f]
-        | None -> dirname |> if ! recurse then files_in_dir_rec else files_in_dir
-      end
-    | _ -> files
+let to_lint dirname =
+  begin match !lint_file with
+  | Some f -> [f]
+  | None -> (* We don't want to lint a single *)
+     (* Instead use the arthur config system *)
+     Config.files_to_lint !recurse dirname
   end
 
-
-let parse_sources_in dirname : (string * Parsetree.structure) list = 
+let parse_sources_in (files: string list) : (string * Parsetree.structure) list = 
   let open Sys in
-  let to_lint =
-    dirname |>
-    files_to_lint |>
+    files |>
     List.filter (fun f -> not (is_directory f)) |> (* remove directories *)
     List.filter (fun f -> Filename.check_suffix f ".ml") |> (* only want to lint *.ml files *)
-    List.map (lex_src) |> (* Lex the files *)
-    List.map (parse_src) (* Parse the files *) in
-  to_lint
+    List.map (lex_src) |> (* Tokenize the files *)
+    List.map (parse_src) (* Parse the files *)
 
 let usage_msg =
   "invoke with -r (only works if -d is set too) to recurse into subdirectories\n" ^
@@ -105,12 +81,20 @@ let spec =
   ; "-f", String set_lint_file,
     "\t Invoke the linter on a single file"
   ; "-c", String (set_config_file),
-    "\t Invoke the linter using the provided arthur.json config file"
+    "\t Invoke the linter using the provided arthur.yaml config file"
   ] 
 
 let () =
+  (* Initialize things *)
   Arg.parse spec (fun _ -> ()) usage_msg;
-  (* Lint the files in the lint directory *)
-  parse_sources_in !lint_dir |> Linter.lint;
+  begin
+    (* set the config file here *)
+    match Config.parse_file_config !config_file with
+    | Ok config -> Config.set_config config
+    | Error e -> fail e
+  end;
+  (* Figure out what files to lint *)
+  let sources : string list = to_lint !lint_dir in
+  sources |> parse_sources_in |> Linter.lint;
   (* Display the hints *)
   Linter.hints () |> List.rev |> !show_type
