@@ -192,6 +192,10 @@ let rec run_arthur
       (current_func: string)
     : (string * 'a) list = 
   match cfg with
+  | Top (files, GlobalRule r, []) ->
+     if (run_files files current_file) then
+       run_rule_global r checks
+     else []
   | Top (files, glob, locals) ->
      if (run_files files current_file) then
           run_locals glob locals checks current_file current_func
@@ -209,7 +213,10 @@ and run_locals (glob: global_rule)
                (current_func: string) : (string * 'a) list =
   loc |>
     List.fold_left
-      (fun acc x -> acc @ (run_local glob x checks current_file current_func)) [] |>
+      (fun acc x ->
+        let checks = run_local glob x checks current_file current_func in
+        acc @ (checks)) [] |>
+    
     List.sort_uniq (fun (l,_) (r,_) -> String.compare l r)
  
 and run_local
@@ -221,7 +228,7 @@ and run_local
   (* Turns into a list of rules to run *)
   let set_compute u global local : string list =
     let diff a b : string list = List.filter (fun s ->
-                       List.exists (fun s' -> s = s') b
+                       not @@  List.exists (fun s' -> s = s') b
                      ) a |>
                      List.sort_uniq (String.compare)
                      in
@@ -237,12 +244,12 @@ and run_local
  | GlobalRule r, LocalRule (toplevel_func, Some f, rule) ->
     if (toplevel_func = current_func && f = current_file) then
       let rules = set_compute checks r rule in
-      List.filter (fun (s, _) -> List.exists (fun s' -> s = s') rules ) checks
+      List.filter (fun (a,_) -> List.exists (fun r -> r = a) rules) checks
    else run_rule_global r checks
  | GlobalRule r, LocalRule (toplevel_func, None, rule) ->
     if (toplevel_func = current_func) then
       let rules = set_compute checks r rule in
-      List.filter (fun (s, _) -> List.exists (fun s' -> s = s') rules ) checks
+      List.filter (fun (a,_) -> List.exists (fun r -> r = a) rules) checks
    else run_rule_global r checks
        
  end
@@ -262,7 +269,7 @@ and run_rule_global
   | Disable ds ->
      (* Disable should take the rules in checks and remove the checks in ds *)
      checks |>
-       List.filter (fun (s, _) -> List.exists (fun s' -> s' = s) ds) |>
+       List.filter (fun (s, _) -> not @@ List.exists (fun s' -> s' = s) ds) |>
        List.sort_uniq cmp_check
      
 

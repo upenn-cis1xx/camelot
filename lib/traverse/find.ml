@@ -12,6 +12,9 @@ let currently_linting : string ref = ref ""
     the linter needs to know what the arthur.json looks like! 
 *)
 
+let print_rules ls
+  = ls |> List.map (fst) |> List.fold_left (fun acc x -> acc ^ " | " ^ x) "" |> print_endline
+
 let pass_exprs (store: Hint.hint list ref) (f: string) (expr : Parsetree.expression) : unit =
   let pc = Pctxt.ctxt_of_expr f expr in
   (* Fetch the lint config *)
@@ -21,6 +24,10 @@ let pass_exprs (store: Hint.hint list ref) (f: string) (expr : Parsetree.express
                       f
                       !currently_linting
                       Style.Checkers.expr_checks in
+  (*
+  Printf.printf "Linting function %s in file %s" !currently_linting f;
+  print_rules checks;
+   *)
   List.iter (fun (_, check) -> check store pc) checks
 
 

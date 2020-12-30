@@ -1,0 +1,13 @@
+---
+files:
+  - tmp.ml
+  - tmp2.ml
+
+globals:
+  disable:
+    - EqList
+
+test:
+  - enable:
+      - EqBool
+...
