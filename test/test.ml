@@ -393,7 +393,7 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, line 111, columns: 13-20
+    File ./examples/match.ml, line 112, columns: 13-20
     Warning:
     	using an overly complex match clause
     You wrote:
@@ -402,7 +402,7 @@ let%expect_test _ =
     	expressing this match case more compactly, such as: | [y] -> ...
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, line 111, columns: 4-11
+    File ./examples/match.ml, line 112, columns: 4-11
     Warning:
     	using an overly complex match clause
     You wrote:
@@ -411,7 +411,7 @@ let%expect_test _ =
     	expressing this match case more compactly, such as: | [x] -> ...
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, line 105, columns: 7-14
+    File ./examples/match.ml, line 106, columns: 7-14
     Warning:
     	using an overly complex match clause
     You wrote:
@@ -420,7 +420,7 @@ let%expect_test _ =
     	expressing this match case more compactly, such as: | [x] -> ...
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, line 99, columns: 4-11
+    File ./examples/match.ml, line 100, columns: 4-11
     Warning:
     	using an overly complex match clause
     You wrote:
@@ -429,7 +429,7 @@ let%expect_test _ =
     	expressing this match case more compactly, such as: | [x] -> ...
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, lines 80-81, columns: 2-15
+    File ./examples/match.ml, lines 81-82, columns: 2-15
     Warning:
     	using pattern matching on a tuple (for fewer than 2 cases)
     You wrote:
@@ -438,7 +438,7 @@ let%expect_test _ =
     	using a let statement to extract tuple fields
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, lines 68-70, columns: 2-16
+    File ./examples/match.ml, lines 69-71, columns: 2-16
     Warning:
     	using pattern matching on a record (for fewer than 3 cases)
     You wrote:
@@ -447,13 +447,22 @@ let%expect_test _ =
     	using a let statement to extract record fields
 
     (* ------------------------------------------------------------------------ *)
-    File ./examples/match.ml, lines 64-65, columns: 2-16
+    File ./examples/match.ml, lines 65-66, columns: 2-16
     Warning:
     	using pattern matching on a record (for fewer than 3 cases)
     You wrote:
     	 match r with | { x; y } -> ()
     Consider:
     	using a let statement to extract record fields
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/match.ml, line 48, columns: 4-13
+    Warning:
+    	using an overly complex match clause
+    You wrote:
+    	 | abc :: [] -> ...
+    Consider:
+    	expressing this match case more compactly, such as: | [abc] -> ...
 
     (* ------------------------------------------------------------------------ *)
     File ./examples/match.ml, line 47, columns: 4-11
