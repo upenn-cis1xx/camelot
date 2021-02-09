@@ -105,14 +105,16 @@ module MatchListVerbose : EXPRCHECK = struct
   let check = make_check 
       (pat_pred)
       (fun location source pattern st -> 
-         (* Regexp that matches literal(0 or more spaces)::(0 or more space)[] *)
-         let matcher = Str.regexp "[a-zA-Z0-9_]+[ ]*::[ ]*\\[\\]" in
-         let test s = try Str.search_forward matcher s 0 >= 0 with _ -> false in
-         if pat_pred pattern then
-           let refined_loc = Warn.warn_loc_of_loc location.file pattern.ppat_loc in
-           let raw_source = IOUtils.code_at_loc refined_loc source in
-           if test raw_source then
-             st := Hint.mk_hint refined_loc ("| " ^ raw_source ^ " -> ...") fix violation :: !st 
+        (* Regexp that matches literal(0 or more spaces)::(0 or more space)[] *)
+        let matcher = Str.regexp "\\([a-zA-Z0-9_]+\\)[ ]*::[ ]*\\[\\]" in
+        let test s = try Str.search_forward matcher s 0 >= 0 with _ -> false in
+        if pat_pred pattern then
+          let refined_loc = Warn.warn_loc_of_loc location.file pattern.ppat_loc in
+          let raw_source = IOUtils.code_at_loc refined_loc source in
+          if test raw_source then
+            let literal = Str.matched_group 1 raw_source in
+            let fix = "expressing this match case more compactly, such as: | [" ^ literal ^ "] -> ..." in
+            st := Hint.mk_hint refined_loc ("| " ^ raw_source ^ " -> ...") fix violation :: !st
       )
       Int.max_int
       true
