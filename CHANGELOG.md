@@ -8,4 +8,5 @@
       Now includes the preferred syntax (`[x]`) that should be used 
       in place of the above.
     * Added new tests for the match patterns.
+    * Add ocaml.4.11.1 to CI runners.
     * Added CHANGELOG.md (finally)
