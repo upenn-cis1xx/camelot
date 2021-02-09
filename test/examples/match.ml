@@ -45,6 +45,7 @@ let b l =
 let b l =
   match l with
   | x :: [] -> ()
+  | abc :: [] -> ()
   | x :: y :: [] -> ()
   | _ -> ()
 
