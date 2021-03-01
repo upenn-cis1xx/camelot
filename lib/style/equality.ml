@@ -24,7 +24,7 @@ module EqList : EXPRCHECK = struct
 end
 
 
-(** ------------------ Checks rules: _ = [Some _ | None] | [Some _ | None] = _ -------------  *)
+(** ------------------ Checks rules: _ = [None] | [None] = _ -------------  *)
 module EqOption : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using a pattern match to check the presence of an option"
@@ -32,7 +32,7 @@ module EqOption : EXPRCHECK = struct
   let check st (E {location; source; pattern}: ctxt) =
     begin match pattern with
       | Pexp_apply (application, [(_, lop); (_, rop)]) ->
-        if application =~ "=" && (is_option_lit lop || is_option_lit rop) then
+        if application =~ "=" && (is_some_lit lop || is_some_lit rop) then
           st := Hint.mk_hint location source fix violation :: !st
       | _ -> ()
     end

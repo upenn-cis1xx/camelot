@@ -149,15 +149,6 @@ let%expect_test _ =
     	 (Some 1) = (Some 1)
     Consider:
     	using a pattern match to check the presence of an option
-
-    (* ------------------------------------------------------------------------ *)
-    File ./examples/equality.ml, line 4, columns: 8-16
-    Warning:
-    	using `=` with options
-    You wrote:
-    	 x = None
-    Consider:
-    	using a pattern match to check the presence of an option
   |}]
 
 (* Run the tests in verbose.ml *)

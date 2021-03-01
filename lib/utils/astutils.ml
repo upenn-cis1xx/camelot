@@ -73,6 +73,8 @@ let is_singleton_list : exp -> bool = fun e ->
 let is_option_lit : exp -> bool = fun e ->
   e =| "Some" || e =| "None"
 
+let is_some_lit : exp -> bool = fun e ->
+  e =| "Some"
 
 let is_pat_constr (pat: Parsetree.pattern) lident_name =
   match pat.ppat_desc with
