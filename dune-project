@@ -5,7 +5,7 @@
 (version 1.7.0)
 
 (source (github upenn-cis1xx/camelot))
-(license "Apache License 2.0")
+(license "Apache-2.0")
 (authors "Vighnesh Vijay" "Daniel Like" "William Goeller")
 (maintainers "William Goeller <william@williamgoeller.com>")
 
