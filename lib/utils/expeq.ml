@@ -13,8 +13,10 @@ let rec exp_eq (el: Parsetree.expression) (er: Parsetree.expression) =
     exp_eq el er &&
     List.for_all2 (fun (_, l) (_, r) -> exp_eq l r ) largs rargs
   | Pexp_tuple ls, Pexp_tuple rs -> List.for_all2 (exp_eq) ls rs
-  | Pexp_construct ({txt = Lident l; _}, _), Pexp_construct ({txt = Lident r; _}, _) ->
-    l = r
+  | Pexp_construct ({txt = Lident l; _}, None), Pexp_construct ({txt = Lident r; _}, None) ->
+    l = r 
+  | Pexp_construct ({txt = Lident l; _}, Some el), Pexp_construct ({txt = Lident r; _}, Some er) ->
+    l = r && exp_eq el er 
   | _ -> false
 
 
