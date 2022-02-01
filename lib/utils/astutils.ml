@@ -185,9 +185,9 @@ let rec smash_boolean_tree (exp: Parsetree.expression_desc) : Parsetree.expressi
   | _ -> [exp]
 
 (** Returns true if any two expressions in the provided list are equal. *)
-let rec e_eq_list_any (exps: Parsetree.expression_desc list) : bool =
+let rec e_eq_any (exps: Parsetree.expression_desc list) : bool =
   let contains_e e = List.exists (Expeq.exp_desc_eq e) in
   match exps with
   | [] -> false
-  | e :: rest -> (contains_e e rest) || e_eq_list_any rest 
+  | e :: rest -> (contains_e e rest) || e_eq_any rest 
 
