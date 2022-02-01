@@ -48,3 +48,28 @@ let z = if x then 1 else if y then 2 else if x & y then 3 else 4
 
 (* If statement four layers deep *)
 let z = if x then 1 else if y then 2 else if x & y then 3 else if z = 4 then 3 else 9
+
+(* shouldn't trigger *)
+let z = (x = TConstr 3 || x = TConstr 4)
+let z = (x = [12] || x = [50])
+let z = (x = 5 || x = 6)
+let z = (x = TConstr 3 && x = TConstr 4)
+let z = (x = [12] && x = [50])
+let z = (x = 5 && x = 6)
+
+(* TODO: perhaps this one should trigger and say just change to true *)
+let z = (x = TConstr 3 || not (x = TConstr 3))
+
+(* should trigger *)
+let z = (x = [] || x = [])
+let z = (x = None || x = None)
+let z = (x = 5 || x = 5)
+let z = (x = TConstr 3 || x = TConstr 3)
+let z = (x = TConstr 3 || x = TConstr 3 || x = TConstr 4)
+let z = (x = TConstr 3 || x = TConstr 4 || x = TConstr 3)
+let z = (x = [] && x = [])
+let z = (x = None && x = None)
+let z = (x = 5 && x = 5)
+let z = (x = TConstr 3 && x = TConstr 3)
+let z = (x = TConstr 3 && x = TConstr 3 && x = TConstr 4)
+let z = (x = TConstr 3 && x = TConstr 4 && x = TConstr 3)

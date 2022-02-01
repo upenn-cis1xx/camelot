@@ -211,7 +211,7 @@ module RedundantOr : EXPRCHECK = struct
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_apply (appl, [(_, l);(_, r)]) ->
-        if appl =~ "||" && (e_eq l r ||
+        if appl =~ "||" && (e_eq_list_any (smash_boolean_tree pattern) ||
                             l =| "true" ||
                             l =| "false" ||
                             r =| "true" ||
@@ -230,7 +230,7 @@ module RedundantAnd : EXPRCHECK = struct
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       | Pexp_apply (appl, [(_, l);(_, r)]) ->
-        if appl =~ "&&" && (e_eq l r ||
+        if appl =~ "&&" && (e_eq_list_any (smash_boolean_tree pattern) ||
                             l =| "true" ||
                             l =| "false" ||
                             r =| "true" ||
