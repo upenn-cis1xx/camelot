@@ -175,3 +175,19 @@ let uses_func_recursively_seq (case: Parsetree.case) func_name tail_binding : bo
   | _ -> false
 
 
+(** Smash a tree of || and && exps into a list of the expressions contained within. *)
+let rec smash_boolean_tree (exp: Parsetree.expression_desc) : Parsetree.expression_desc list =
+  match exp with
+  | Pexp_apply (appl, [(_, l);(_, r)]) ->
+    if appl =~ "&&" || appl =~ "||" 
+    then (smash_boolean_tree l.pexp_desc) @ (smash_boolean_tree r.pexp_desc)
+    else [exp]
+  | _ -> [exp]
+
+(** Returns true if any two expressions in the provided list are equal. *)
+let rec e_eq_any (exps: Parsetree.expression_desc list) : bool =
+  let contains_e e = List.exists (Expeq.exp_desc_eq e) in
+  match exps with
+  | [] -> false
+  | e :: rest -> (contains_e e rest) || e_eq_any rest 
+

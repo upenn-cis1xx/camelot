@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.7.1 (2022-02-01)
+
+  Fixes: 
+  * Type constructor equality bugs such as `x = Some 5 || x = Some 6`.
+    The above expression would show a warning to simplify the `||` statement
+    because it didn't check that the values inside the `Some`s are the same.
+  * Descent down trees of boolean expressions with `||` and `&&`s. If two
+    expressions in the tree are the same, it should warn the user that it can be
+    simplified.
+
 ## 1.7.0 (2021-03-01)
 
   Fix undesired `_ = None | None = _` style warnings

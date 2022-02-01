@@ -158,6 +158,114 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 75, columns: 8-57
+    Warning:
+    	Usage of the `&&` is redundant
+    You wrote:
+    	 (x = (TConstr 3)) && ((x = (TConstr 4)) && (x = (TConstr 3)))
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 74, columns: 8-57
+    Warning:
+    	Usage of the `&&` is redundant
+    You wrote:
+    	 (x = (TConstr 3)) && ((x = (TConstr 3)) && (x = (TConstr 4)))
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 73, columns: 8-40
+    Warning:
+    	Usage of the `&&` is redundant
+    You wrote:
+    	 (x = (TConstr 3)) && (x = (TConstr 3))
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 72, columns: 8-24
+    Warning:
+    	Usage of the `&&` is redundant
+    You wrote:
+    	 (x = 5) && (x = 5)
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 71, columns: 8-30
+    Warning:
+    	Usage of the `&&` is redundant
+    You wrote:
+    	 (x = None) && (x = None)
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 70, columns: 8-26
+    Warning:
+    	Usage of the `&&` is redundant
+    You wrote:
+    	 (x = []) && (x = [])
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 69, columns: 8-57
+    Warning:
+    	Usage of the `||` is redundant
+    You wrote:
+    	 (x = (TConstr 3)) || ((x = (TConstr 4)) || (x = (TConstr 3)))
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 68, columns: 8-57
+    Warning:
+    	Usage of the `||` is redundant
+    You wrote:
+    	 (x = (TConstr 3)) || ((x = (TConstr 3)) || (x = (TConstr 4)))
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 67, columns: 8-40
+    Warning:
+    	Usage of the `||` is redundant
+    You wrote:
+    	 (x = (TConstr 3)) || (x = (TConstr 3))
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 66, columns: 8-24
+    Warning:
+    	Usage of the `||` is redundant
+    You wrote:
+    	 (x = 5) || (x = 5)
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 65, columns: 8-30
+    Warning:
+    	Usage of the `||` is redundant
+    You wrote:
+    	 (x = None) || (x = None)
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/verbose.ml, line 64, columns: 8-26
+    Warning:
+    	Usage of the `||` is redundant
+    You wrote:
+    	 (x = []) || (x = [])
+    Consider:
+    	simplifying further
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/verbose.ml, line 50, columns: 8-85
     Warning:
     	using nested if statements more than three layers deep
