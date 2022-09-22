@@ -107,7 +107,7 @@ let ident_of_let (pat: Parsetree.value_binding) : string =
 
 let binding_of_lcase (case: Parsetree.case) : string =
   begin match case.pc_lhs.ppat_desc with
-    | Ppat_construct ({txt = Lident "::"; loc = _}, Some bound) ->
+    | Ppat_construct ({txt = Lident "::"; loc = _}, Some (_, bound)) ->
       begin match bound.ppat_desc with
         | Ppat_tuple [_; tail] ->
           begin match tail.ppat_desc with
