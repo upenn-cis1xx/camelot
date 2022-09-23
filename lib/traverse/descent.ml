@@ -113,7 +113,7 @@ module T = struct
     sub.attributes sub ptyexn_attributes
 
   let iter_extension_constructor_kind sub = function
-      Pext_decl(_, ctl, cto) ->
+      Pext_decl(ctl, cto) ->
       iter_constructor_arguments sub ctl; iter_opt (sub.typ sub) cto
     | Pext_rebind li ->
       iter_loc sub li
