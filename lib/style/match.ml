@@ -94,7 +94,7 @@ module MatchListVerbose : EXPRCHECK = struct
   (* Predicate for checking that a match case looks like x :: [] *) 
   let pat_pred (pat: Parsetree.pattern) : bool =
     begin match pat.ppat_desc with
-      | Ppat_construct ({txt = Lident "::";_}, Some matchcase) ->
+      | Ppat_construct ({txt = Lident "::";_}, Some (_, matchcase)) ->
         begin match matchcase.ppat_desc with
           | Ppat_tuple ([_; cons_case]) -> is_pat_constr cons_case "[]"
           | _ -> false

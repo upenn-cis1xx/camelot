@@ -198,6 +198,10 @@ module MT = struct
       iter_loc sub lid; sub.type_declaration sub d
     | Pwith_modsubst (s, lid) ->
       iter_loc sub s; iter_loc sub lid
+    | Pwith_modtype (lid, m) ->
+      sub.module_type sub m; iter_loc sub lid
+    | Pwith_modtypesubst (lid, m) ->
+      sub.module_type sub m; iter_loc sub lid
 
   let iter_signature_item sub {psig_desc = desc; psig_loc = loc} =
     sub.location sub loc;
@@ -213,6 +217,7 @@ module MT = struct
     | Psig_recmodule l ->
       List.iter (sub.module_declaration sub) l
     | Psig_modtype x -> sub.module_type_declaration sub x
+    | Psig_modtypesubst x -> sub.module_type_declaration sub x
     | Psig_open x -> sub.open_description sub x
     | Psig_include x -> sub.include_description sub x
     | Psig_class l -> List.iter (sub.class_description sub) l
@@ -368,7 +373,7 @@ module P = struct
     | Ppat_interval _ -> ()
     | Ppat_tuple pl -> List.iter (sub.pat sub) pl
     | Ppat_construct (l, p) ->
-      iter_loc sub l; iter_opt (sub.pat sub) p
+      iter_loc sub l; iter_opt (sub.pat sub) (Option.map snd p)
     | Ppat_variant (_l, p) -> iter_opt (sub.pat sub) p
     | Ppat_record (lpl, _cf) ->
       List.iter (iter_tuple (iter_loc sub) (sub.pat sub)) lpl

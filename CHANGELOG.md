@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0 (2022-09-29)
+
+  Move from supporting OCaml 4.10.0 to instead support OCaml 4.13.0:
+  * Migrate from `Stream` in the stdlib to `camlp-streams`, an opam package with the same functionality.
+  * `Parsetree` was updated and required code changes:
+    * Support for `Pwith_modtype` and `Pwith_modtypesubst` variants.
+    * Support for `Psig_modtypesubst` variant.
+    * Rearranging some type deconstruction for `Ppat_construct` which was restructured slightly.
+
 ## 1.7.1 (2022-02-01)
 
   Fixes: 
