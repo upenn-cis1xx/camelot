@@ -35,7 +35,7 @@ module TupleProj : EXPRCHECK = struct
   let name = "TupleProj", check
 end
 
-(** ----------------------- Checks rules: Nesting if >= 3 levels ------------- *)
+(** ----------------------- Checks rules: Nesting if > 3 levels ------------- *)
 module NestedIf : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using let statements or helper methods / rethinking logic"
@@ -45,9 +45,9 @@ module NestedIf : EXPRCHECK = struct
       depth = 0 ||
       begin match p with 
         | Pexp_ifthenelse (_, bthen, Some belse) -> 
-          if depth = 1 then true else 
-            find_nesting ((skip_seq_let bthen).pexp_desc) (depth - 1) ||
-            find_nesting ((skip_seq_let belse).pexp_desc) (depth - 1) 
+          depth = 1
+            || find_nesting ((skip_seq_let bthen).pexp_desc) (depth - 1)
+            || find_nesting ((skip_seq_let belse).pexp_desc) (depth - 1) 
         | _ -> false
       end 
     in 
@@ -59,7 +59,7 @@ end
 module NestedMatch : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using let statements or helper methods / rethinking logic"
-  let violation = "using nested match statements more than three layers deep"
+  let violation = "using nested match statements three or more layers deep"
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       (* Layer one *)
