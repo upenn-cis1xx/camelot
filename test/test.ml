@@ -277,7 +277,7 @@ let%expect_test _ =
     (* ------------------------------------------------------------------------ *)
     File ./examples/verbose.ml, lines 32-43, columns: 2-5
     Warning:
-    	using nested match statements more than three layers deep
+    	using nested match statements three or more layers deep
     You wrote:
     	 match l with
     | [] ->
