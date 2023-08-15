@@ -25,6 +25,18 @@ let f () = if x then
   else y
 
 
+(* No Flagging here - only 2 match levels deep *)
+let f () =
+  let l = [] in
+  begin match l with
+    | [] ->
+      begin match l with
+        | [] -> true
+        | _ -> false
+      end
+    | _ -> true
+  end
+
 (* Nested matched bad as well *)
 
 let f () =

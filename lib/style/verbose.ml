@@ -59,7 +59,7 @@ end
 module NestedMatch : EXPRCHECK = struct
   type ctxt = Parsetree.expression_desc Pctxt.pctxt
   let fix = "using let statements or helper methods / rethinking logic"
-  let violation = "using nested match statements more than three layers deep"
+  let violation = "using nested match statements three or more layers deep"
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
       (* Layer one *)
