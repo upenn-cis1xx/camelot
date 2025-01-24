@@ -21,3 +21,7 @@ let b1 = btrue = true
 let b2 = bfalse = false
 let b3 = true = btrue
 let b4 = false = bfalse
+
+(* Physical equality (should raise issues) *)
+let g = 1 == 1
+let h = "ocaml" == "ocaml"
