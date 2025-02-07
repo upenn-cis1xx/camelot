@@ -3,6 +3,7 @@ let expr_checks = [
   Equality.EqList.name
 ; Equality.EqOption.name
 ; Equality.EqBool.name
+; Equality.EqPhysical.name
 ; Match.MatchBool.name
 ; Match.MatchInt.name
 ; Match.MatchListVerbose.name
