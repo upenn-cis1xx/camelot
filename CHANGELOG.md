@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1 (2025-02-07)
+  Add new check for physical equality called `EqPhysical`
+
 ## 2.0.0 (2022-09-29)
 
   Move from supporting OCaml 4.10.0 to instead support OCaml 4.13.0:
