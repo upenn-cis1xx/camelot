@@ -18,7 +18,7 @@
   (ANSITerminal (>= 0.8))
   (yojson (>= 1.7.0))
   (camlp-streams (>= 5.0.1))
-  (ppx_expect (and :with-test (>= v0.13.0)))
+  (ppx_expect (and :with-test (<= v0.15.1)))
   (odoc (and :with-doc (>= 1.5.0)))
  )
 )
