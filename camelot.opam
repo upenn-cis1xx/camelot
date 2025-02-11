@@ -13,7 +13,7 @@ depends: [
   "ANSITerminal" {>= "0.8"}
   "yojson" {>= "1.7.0"}
   "camlp-streams" {>= "5.0.1"}
-  "ppx_expect" {with-test & >= "v0.13.0"}
+  "ppx_expect" {with-test & <= "v0.15.1"}
   "odoc" {with-doc & >= "1.5.0"}
 ]
 dev-repo: "git+https://github.com/upenn-cis1xx/camelot.git"
