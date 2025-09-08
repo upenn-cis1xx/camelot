@@ -68,3 +68,18 @@ module EqPhysical : EXPRCHECK = struct
     end
   let name = "EqPhysical", check
 end
+
+(** ------------------ Checks rules: (_ != _)  ----------------------- *)
+module NeqPhysical : EXPRCHECK = struct
+  type ctxt = Parsetree.expression_desc Pctxt.pctxt
+  let fix = "using `<>` to evaluate structural inequality"
+  let violation = "using `!=` when structural equality is intended"
+  let check st (E {location; source; pattern}: ctxt) =
+    begin match pattern with
+      | Pexp_apply (application, [(_,_); (_,_)]) ->
+        if application =~ "!=" then
+          st := Hint.mk_hint location source fix violation :: !st
+      | _ -> ()
+    end
+  let name = "NeqPhysical", check
+end

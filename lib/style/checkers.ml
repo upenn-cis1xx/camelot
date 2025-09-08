@@ -4,6 +4,7 @@ let expr_checks = [
 ; Equality.EqOption.name
 ; Equality.EqBool.name
 ; Equality.EqPhysical.name
+; Equality.NeqPhysical.name
 ; Match.MatchBool.name
 ; Match.MatchInt.name
 ; Match.MatchListVerbose.name

@@ -25,3 +25,5 @@ let b4 = false = bfalse
 (* Physical equality (should raise issues) *)
 let g = 1 == 1
 let h = "ocaml" == "ocaml"
+let i = 1 != 1
+let j = "ocaml" != "ocaml"
