@@ -88,6 +88,24 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
+    File ./examples/equality.ml, line 29, columns: 8-26
+    Warning:
+    	using `!=` when structural equality is intended
+    You wrote:
+    	 "ocaml" != "ocaml"
+    Consider:
+    	using `<>` to evaluate structural inequality
+
+    (* ------------------------------------------------------------------------ *)
+    File ./examples/equality.ml, line 28, columns: 8-14
+    Warning:
+    	using `!=` when structural equality is intended
+    You wrote:
+    	 1 != 1
+    Consider:
+    	using `<>` to evaluate structural inequality
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/equality.ml, line 27, columns: 8-26
     Warning:
     	using `==` when structural equality is intended
