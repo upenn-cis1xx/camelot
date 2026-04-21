@@ -145,12 +145,24 @@ let uses_func_recursively_list_any (case: Parsetree.case) func_name tail_binding
                                  List.exists (fun (_, arg) -> arg =~ tail_binding) args
     | _ -> false in
 
-  begin match skipped.pexp_desc with
-    | Pexp_apply ( func, l) ->
+  let is_short_circuit (func: Parsetree.expression) =
+    match func.pexp_desc with
+    | Pexp_ident {txt = lident; _} ->
+        begin match lident with
+        | Longident.Lident "||" | Longident.Ldot (_, {txt = "||"; _})
+        | Longident.Lident "&&" | Longident.Ldot (_, {txt = "&&"; _})
+        | Longident.Lident "or"  | Longident.Ldot (_, {txt = "or"; _})
+        | Longident.Lident "and" | Longident.Ldot (_, {txt = "and"; _}) -> true
+        | _ -> false
+        end
+    | _ -> false
+  in
 
-      not (func =~ "::") && List.exists (fun (_, combine_arg) ->
+  begin match skipped.pexp_desc with
+    | Pexp_apply (func, l) ->
+      not (func =~ "::") && not (is_short_circuit func) && List.exists (fun (_, combine_arg) ->
           contains_recursive_call combine_arg
-        ) l
+      ) l
     | _ -> false
   end
 

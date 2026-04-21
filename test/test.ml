@@ -643,6 +643,16 @@ let%expect_test _ =
   lint_and_hint to_lint;
   [%expect{|
     (* ------------------------------------------------------------------------ *)
+    File ./examples/hof.ml, lines 35-39, columns: 0-5
+    Warning:
+    overly verbose function implementation
+    You wrote:
+    let rec fold (combine : 'a -> 'b -> 'b) (base : 'b) (l : 'a list) : 'b=
+      match l with | [] -> base | x::xs -> combine x (fold combine base xs)
+    Consider:
+    using a higher order function like fold
+
+    (* ------------------------------------------------------------------------ *)
     File ./examples/hof.ml, lines 17-20, columns: 0-31
     Warning:
     	overly verbose function implementation
