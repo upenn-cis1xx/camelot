@@ -49,7 +49,9 @@ module T = struct
     | Ptyp_var _ -> ()
     | Ptyp_arrow (_lab, t1, t2) ->
       sub.typ sub t1; sub.typ sub t2
-    | Ptyp_tuple tyl -> List.iter (sub.typ sub) tyl
+    (* Unpack the label tuple for 5.4.1 *)
+    | Ptyp_tuple tyl -> 
+      List.iter (fun (_, t) -> sub.typ sub t) tyl
     | Ptyp_constr (lid, tl) ->
       iter_loc sub lid; List.iter (sub.typ sub) tl
     | Ptyp_object (ol, _o) ->
@@ -60,10 +62,13 @@ module T = struct
     | Ptyp_variant (rl, _b, _ll) ->
       List.iter (row_field sub) rl
     | Ptyp_poly (_, t) -> sub.typ sub t
-    | Ptyp_package (lid, l) ->
+    (* Unpack the new package_type record for 5.4.1 *)
+    | Ptyp_package { ppt_path = lid; ppt_cstrs = l; _ } ->
       iter_loc sub lid;
       List.iter (iter_tuple (iter_loc sub) (sub.typ sub)) l
     | Ptyp_extension x -> sub.extension sub x
+    | Ptyp_open (lid, t) ->
+      iter_loc sub lid; sub.typ sub t
 
   let iter_type_declaration sub
       {ptype_name; ptype_params; ptype_cstrs;
@@ -113,7 +118,7 @@ module T = struct
     sub.attributes sub ptyexn_attributes
 
   let iter_extension_constructor_kind sub = function
-      Pext_decl(ctl, cto) ->
+      Pext_decl(_, ctl, cto) ->
       iter_constructor_arguments sub ctl; iter_opt (sub.typ sub) cto
     | Pext_rebind li ->
       iter_loc sub li
@@ -244,6 +249,7 @@ module M = struct
       sub.module_expr sub body
     | Pmod_apply (m1, m2) ->
       sub.module_expr sub m1; sub.module_expr sub m2
+    | Pmod_apply_unit m -> sub.module_expr sub m
     | Pmod_constraint (m, mty) ->
       sub.module_expr sub m; sub.module_type sub mty
     | Pmod_unpack e -> sub.expr sub e
@@ -284,17 +290,35 @@ module E = struct
     | Pexp_let (_r, vbs, e) ->
       List.iter (sub.value_binding sub) vbs;
       sub.expr sub e
-    | Pexp_fun (_lab, def, p, e) ->
-      iter_opt (sub.expr sub) def;
-      sub.pat sub p;
-      sub.expr sub e
-    | Pexp_function pel -> sub.cases sub pel
+    (* Handle consolidated Pexp_function in >=5.2 *)
+    | Pexp_function (params, constraint_opt, body) ->
+      List.iter
+        (fun param ->
+           match param.pparam_desc with
+           | Pparam_val (_lab, def, p) ->
+             iter_opt (sub.expr sub) def;
+             sub.pat sub p
+           | Pparam_newtype _ -> ()
+        ) params;
+        
+      begin match constraint_opt with
+        | Some (Pconstraint ty) -> sub.typ sub ty
+        | Some (Pcoerce (ty1_opt, ty2)) ->
+            iter_opt (sub.typ sub) ty1_opt;
+            sub.typ sub ty2
+        | None -> ()
+      end;
+      
+      begin match body with
+        | Pfunction_body e -> sub.expr sub e
+        | Pfunction_cases (cases, _loc, _attrs) -> sub.cases sub cases
+      end
     | Pexp_apply (e, l) ->
       sub.expr sub e; List.iter (iter_snd (sub.expr sub)) l
     | Pexp_match (e, pel) ->
       sub.expr sub e; sub.cases sub pel
     | Pexp_try (e, pel) -> sub.expr sub e; sub.cases sub pel
-    | Pexp_tuple el -> List.iter (sub.expr sub) el
+    | Pexp_tuple el -> List.iter (fun (_, pat) -> (sub.expr sub pat)) el
     | Pexp_construct (lid, arg) ->
       iter_loc sub lid; iter_opt (sub.expr sub) arg
     | Pexp_variant (_lab, eo) ->
@@ -341,7 +365,15 @@ module E = struct
       sub.expr sub e; iter_opt (sub.typ sub) t
     | Pexp_object cls -> sub.class_structure sub cls
     | Pexp_newtype (_s, e) -> sub.expr sub e
-    | Pexp_pack me -> sub.module_expr sub me
+    | Pexp_pack (me, pt_opt) ->
+      sub.module_expr sub me;
+      (* Unpack and traverse the optional package_type record *)
+      begin match pt_opt with
+        | Some { ppt_path = lid; ppt_cstrs = l; _ } ->
+          iter_loc sub lid;
+          List.iter (iter_tuple (iter_loc sub) (sub.typ sub)) l
+        | None -> ()
+      end
     | Pexp_open (o, e) ->
       sub.open_declaration sub o; sub.expr sub e
     | Pexp_letop {let_; ands; body} ->
@@ -371,7 +403,7 @@ module P = struct
     | Ppat_alias (p, s) -> sub.pat sub p; iter_loc sub s
     | Ppat_constant _ -> ()
     | Ppat_interval _ -> ()
-    | Ppat_tuple pl -> List.iter (sub.pat sub) pl
+    | Ppat_tuple (pl, _) -> List.iter (fun (_, pat) -> sub.pat sub pat) pl
     | Ppat_construct (l, p) ->
       iter_loc sub l; iter_opt (sub.pat sub) (Option.map snd p)
     | Ppat_variant (_l, p) -> iter_opt (sub.pat sub) p
@@ -388,6 +420,7 @@ module P = struct
     | Ppat_extension x -> sub.extension sub x
     | Ppat_open (lid, p) ->
       iter_loc sub lid; sub.pat sub p
+    | Ppat_effect (p1, p2) -> sub.pat sub p1; sub.pat sub p2
 
 end
 

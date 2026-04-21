@@ -62,7 +62,7 @@ let is_singleton_list : exp -> bool = fun e ->
   begin match e.pexp_desc with
     | Pexp_construct ({txt = Lident "::";_}, Some cons) ->
       begin match cons.pexp_desc with
-        | Pexp_tuple [e_id; e_empty] ->
+        | Pexp_tuple [(_, e_id); (_, e_empty)] ->
           (is_exp_const e_id || is_exp_id e_id) && e_empty =| "[]"
         | _ -> false
       end
@@ -109,7 +109,7 @@ let binding_of_lcase (case: Parsetree.case) : string =
   begin match case.pc_lhs.ppat_desc with
     | Ppat_construct ({txt = Lident "::"; loc = _}, Some (_, bound)) ->
       begin match bound.ppat_desc with
-        | Ppat_tuple [_; tail] ->
+        | Ppat_tuple ([_; (_, tail)], _) ->
           begin match tail.ppat_desc with
             | Ppat_var {txt = t; loc = _} -> t
             | _ -> ""
@@ -124,7 +124,7 @@ let uses_func_recursively_list (case: Parsetree.case) func_name tail_binding : b
     | Pexp_construct ({txt = Lident "::"; loc = _},
                       Some bound) ->
       begin match bound.pexp_desc with
-        | Pexp_tuple ([_; tl]) ->
+        | Pexp_tuple ([_; (_, tl)]) ->
           begin match tl.pexp_desc with
             | Pexp_apply (func, args) ->
               func =~ func_name &&
@@ -161,7 +161,7 @@ let uses_func_recursively_list_any (case: Parsetree.case) func_name tail_binding
 let rec body_of_fun (exp: Parsetree.expression) : Parsetree.expression =
   let skipped = skip_seq_let exp in
   begin match skipped.pexp_desc with
-    | Pexp_fun (_, _, _, e) -> e |> skip_seq_let |> body_of_fun
+    | Pexp_function (_, _, Pfunction_body e) -> e |> skip_seq_let |> body_of_fun
     | _ -> skipped
   end
 
