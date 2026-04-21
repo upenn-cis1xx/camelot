@@ -12,7 +12,8 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-        ocaml-compiler: 5
+        ocaml-compiler:
+          - 5
 
     runs-on: ${{ matrix.os }}
 
