@@ -12,7 +12,7 @@ let make_check (pred: Parsetree.pattern -> bool) gen_error override_len enable_u
 
   let rec unwrap_tuple (p : Parsetree.pattern) : Parsetree.pattern list =
     begin match p.ppat_desc with
-      | Ppat_tuple pat_list -> List.concat_map unwrap_tuple pat_list
+      | Ppat_tuple (pat_list, _) -> List.concat_map (fun (_, pat) -> unwrap_tuple pat) pat_list
       | _ -> [p]
     end
   in
@@ -96,7 +96,7 @@ module MatchListVerbose : EXPRCHECK = struct
     begin match pat.ppat_desc with
       | Ppat_construct ({txt = Lident "::";_}, Some (_, matchcase)) ->
         begin match matchcase.ppat_desc with
-          | Ppat_tuple ([_; cons_case]) -> is_pat_constr cons_case "[]"
+          | Ppat_tuple ([_; (_, cons_case)], _) -> is_pat_constr cons_case "[]"
           | _ -> false
         end
       | _ -> false 

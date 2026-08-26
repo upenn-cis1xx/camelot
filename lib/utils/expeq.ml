@@ -15,7 +15,8 @@ and exp_desc_eq (el: Parsetree.expression_desc) (er: Parsetree.expression_desc) 
   | Pexp_apply (el,largs), Pexp_apply (er, rargs) ->
     exp_eq el er &&
     List.for_all2 (fun (_, l) (_, r) -> exp_eq l r ) largs rargs
-  | Pexp_tuple ls, Pexp_tuple rs -> List.for_all2 (exp_eq) ls rs
+  | Pexp_tuple ls, Pexp_tuple rs -> 
+    List.for_all2 (fun (_, l_exp) (_, r_exp) -> exp_eq l_exp r_exp) ls rs (* Handle labeled tuples*)
   | Pexp_construct ({txt = Lident l; _}, None), Pexp_construct ({txt = Lident r; _}, None) ->
     l = r 
   | Pexp_construct ({txt = Lident l; _}, Some el), Pexp_construct ({txt = Lident r; _}, Some er) ->
@@ -29,4 +30,5 @@ and value_binding_eq (el: Parsetree.value_binding) (er: Parsetree.value_binding)
 and pat_eq (_el: Parsetree.pattern) (_er: Parsetree.pattern) =
   false
 
-and const_eq (el: Parsetree.constant) (er: Parsetree.constant) = el = er
+and const_eq (c : Parsetree.constant) (d : Parsetree.constant) =
+  c.pconst_desc = d.pconst_desc

@@ -12,9 +12,8 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-        ocaml-version:
-          - 4.13.0
-          - 4.13.1
+        ocaml-compiler:
+          - 5
 
     runs-on: ${{ matrix.os }}
 
@@ -22,10 +21,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Use OCaml ${{ matrix.ocaml-version }}
-        uses: avsm/setup-ocaml@v1
+      - name: Setup OCaml
+        uses: avsm/setup-ocaml@v3
         with:
-          ocaml-version: ${{ matrix.ocaml-version }}
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
 
       - name: Set git user
         run: |
