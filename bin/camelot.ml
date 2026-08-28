@@ -33,16 +33,16 @@ let set_lint_file : string -> unit = fun s ->
 
 let fail msg = prerr_endline msg; exit 1
 
-let safe_open src =
-  try src, open_in src 
-  with Sys_error msg -> fail msg
-
-let lex_src file =
-  let src, f = safe_open file in
-  src, Lexing.from_channel f
-
-let parse_src (src, lexbuf) =
-  src, Parse.implementation lexbuf
+let parse_src file =
+  try
+    let ch = open_in file in
+    let lexbuf = Lexing.from_channel ch in
+    let tree = Parse.implementation lexbuf in
+    close_in ch;
+    tree
+  with
+  | Sys_error msg -> fail (Printf.sprintf "error when parsing %s: %s" file msg)
+  | _ -> fail (Printf.sprintf "unknown error when parsing %s" file)
 
 let sanitize_dir d =
   if d.[String.length d - 1] = '/' then d 
@@ -82,8 +82,8 @@ let parse_sources_in dirname : (string * Parsetree.structure) list =
     files_to_lint |>
     List.filter (fun f -> not (is_directory f)) |> (* remove directories *)
     List.filter (fun f -> Filename.check_suffix f ".ml") |> (* only want to lint *.ml files *)
-    List.map (lex_src) |> (* Lex the files *)
-    List.map (parse_src) (* Parse the files *) in
+    List.map (fun f -> f, parse_src f) (* Parse the files *)
+  in
   to_lint
 
 let usage_msg =
