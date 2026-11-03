@@ -58,3 +58,7 @@ let rec nonsense (p: 'a -> bool) (l : 'a list) =
   match l with
   | [] -> false
   | h :: t -> if p h then nonsense p t else true
+
+(* IfNotCond should not flag negated conditions without an else branch *)
+let test_if_not_without_else (b: bool) =
+  if not b then print_endline "Hello"
