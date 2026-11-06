@@ -123,7 +123,7 @@ module IfNotCond : EXPRCHECK = struct
   let violation = "checking negation in the if condition"
   let check st (E {location; source; pattern} : ctxt) =
     begin match pattern with
-      | Pexp_ifthenelse (cond, _, _) ->
+      | Pexp_ifthenelse (cond, _, Some _) ->
         begin match cond.pexp_desc with
           | Pexp_apply (func, [_]) -> if func =~ "not" then
               st := Hint.mk_hint location source fix violation :: !st
