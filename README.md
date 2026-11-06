@@ -1,13 +1,13 @@
 # Camelot [![Build and Test Status](https://github.com/upenn-cis1xx/camelot/workflows/Build%20&%20Test/badge.svg)](https://github.com/upenn-cis1xx/camelot/actions?query=workflow%3A%22Build+%26+Test%22)
-A modular and fully-configurable OCaml Linter / Style Checker for OCaml compiler version >= 4.10.0 < 4.14.0 (temporarily).
+A modular and fully-configurable OCaml Linter / Style Checker for OCaml compiler version 5.4.1.
 
 ## Dependencies (handled by opam)
-- ocaml >= v4.10.0 < 4.14.0
+- ocaml >= 5.4.1 and < 5.5.0
 - dune >= 2.5.0
 - compiler-libs.common
 - fswatch (for Build + Watch)
 - ANSITerminal
-- ppx_expect >= 0.13.1 (for testing)
+- ppx_expect >= 0.17.3 (for testing)
 - yojson >= 1.7.0
 - odoc (for documentation builds)
 
